@@ -4,51 +4,51 @@ export default function AnimatedBackground() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none bg-[#08080a]"
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none bg-[#08080a]"
     >
-      {/* 1. Subtle Ledger Grid Texture (Fades smoothly with radial mask) */}
+      {/* 1. Subtle Ledger Grid Texture */}
       <div
         className="absolute inset-0 opacity-[0.22]"
         style={{
           backgroundImage: `
-            radial-gradient(rgba(204, 145, 102, 0.18) 1px, transparent 1px),
-            radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)
+            radial-gradient(rgba(204, 145, 102, 0.3) 1px, transparent 1px),
+            radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px)
           `,
-          backgroundSize: '40px 40px, 20px 20px',
-          maskImage: 'radial-gradient(ellipse 90% 70% at 50% 25%, black 30%, transparent 85%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at 50% 25%, black 30%, transparent 85%)',
+          backgroundSize: '48px 48px, 24px 24px',
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 90%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 90%)',
         }}
       />
 
       {/* 2. Top Gilded Accent Beam */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-5xl h-[1px] opacity-40"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 max-w-5xl h-[1.5px] opacity-75"
         style={{
-          background: 'linear-gradient(90deg, transparent, #cc9166 45%, #ffd49c 50%, #cc9166 55%, transparent)',
+          background: 'linear-gradient(90deg, transparent, #cc9166 40%, #ffe0b2 50%, #cc9166 60%, transparent)',
         }}
       />
 
       {/* 3. Floating Orb 1: Warm Copper & Gold (Top-Right / Center) */}
       <div
-        className="absolute -top-32 right-[-10%] sm:right-[10%] w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] rounded-full blur-[140px] animate-ambient-1"
+        className="absolute -top-24 right-[-5%] sm:right-[15%] w-[450px] h-[450px] sm:w-[600px] sm:h-[600px] rounded-full blur-[85px] animate-ambient-1"
         style={{
-          background: 'radial-gradient(circle, rgba(204, 145, 102, 0.35) 0%, rgba(174, 147, 87, 0.18) 45%, transparent 72%)',
+          background: 'radial-gradient(circle, rgba(204, 145, 102, 0.5) 0%, rgba(174, 147, 87, 0.3) 45%, transparent 72%)',
         }}
       />
 
-      {/* 4. Floating Orb 2: Deep Cosmic Indigo (Mid-Left) */}
+      {/* 4. Floating Orb 2: Deep Cosmic Violet / Indigo (Mid-Left) */}
       <div
-        className="absolute top-[25%] left-[-15%] sm:left-[5%] w-[450px] h-[450px] sm:w-[650px] sm:h-[650px] rounded-full blur-[150px] animate-ambient-2"
+        className="absolute top-[20%] left-[-10%] sm:left-[5%] w-[400px] h-[400px] sm:w-[550px] sm:h-[550px] rounded-full blur-[90px] animate-ambient-2"
         style={{
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(67, 56, 202, 0.12) 50%, transparent 75%)',
+          background: 'radial-gradient(circle, rgba(129, 140, 248, 0.4) 0%, rgba(79, 70, 229, 0.22) 48%, transparent 74%)',
         }}
       />
 
       {/* 5. Floating Orb 3: Soft Amber Rose Glow (Bottom / Subtle Depth) */}
       <div
-        className="absolute top-[60%] right-[-5%] sm:right-[20%] w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] rounded-full blur-[160px] animate-ambient-3"
+        className="absolute top-[55%] right-[-5%] sm:right-[15%] w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] rounded-full blur-[95px] animate-ambient-3"
         style={{
-          background: 'radial-gradient(circle, rgba(217, 119, 6, 0.2) 0%, rgba(180, 83, 9, 0.08) 55%, transparent 80%)',
+          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, rgba(180, 83, 9, 0.18) 52%, transparent 76%)',
         }}
       />
 
@@ -56,7 +56,7 @@ export default function AnimatedBackground() {
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at center, transparent 40%, rgba(8, 8, 10, 0.6) 100%)',
+          background: 'radial-gradient(circle at center, transparent 45%, rgba(8, 8, 10, 0.6) 100%)',
         }}
       />
     </div>

@@ -60,21 +60,23 @@ export default function RootLayout({
       <body className="font-sans min-h-screen flex flex-col bg-[#08080a] text-[#e2e3e9] antialiased">
         <LanguageProvider>
           <AnimatedBackground />
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <div className="relative z-10 flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
 
-          {/* Clean Floating Badge linking to Contact page */}
-          <Link
-            href="/contact"
-            title="تواصل مع المبرمج محمد حجو (HACCO)"
-            className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
-            <span className="font-sans text-[11px] font-medium">المبرمج محمد حجو</span>
-          </Link>
+            {/* Clean Floating Badge linking to Contact page */}
+            <Link
+              href="/contact"
+              title="تواصل مع المبرمج محمد حجو (HACCO)"
+              className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
+              <span className="font-sans text-[11px] font-medium">المبرمج محمد حجو</span>
+            </Link>
+          </div>
         </LanguageProvider>
       </body>
     </html>
