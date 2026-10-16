@@ -105,38 +105,59 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Account */}
-          <div>
+          {/* Developer & Contact */}
+          <div className="space-y-3">
             <span className="text-[11px] font-semibold tracking-wider uppercase text-[#cc9166] block mb-3 font-mono">
-              الاشتراك والحساب
+              تواصل مع المبرمج
             </span>
-            <ul className="space-y-2.5 text-xs">
-              <li>
-                <Link href="/pricing" className="text-[#cc9166] hover:underline transition-colors">
-                  ترقية الحساب لـ Pro
+            <div className="p-3.5 rounded-[10px] bg-[#040406] border border-[#1c1d22] space-y-2">
+              <p className="text-xs text-[#ffffff] font-medium">المبرمج محمد حجو HACCO</p>
+              <div className="space-y-1 text-xs">
+                <a
+                  href="https://wa.me/905319666195"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#9194a1] hover:text-[#ffffff] flex items-center gap-1 font-mono transition-colors"
+                  dir="ltr"
+                >
+                  <span>+90 531 966 6195</span>
+                </a>
+                <a
+                  href="mailto:muradhaco@gmail.com"
+                  className="text-[#9194a1] hover:text-[#ffffff] block font-mono text-[11px] truncate transition-colors"
+                >
+                  muradhaco@gmail.com
+                </a>
+              </div>
+              <div className="pt-2 flex items-center gap-2">
+                <a
+                  href="https://wa.me/905319666195"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded-full text-[10px] font-mono text-[#000000] bg-[#ffffff] hover:bg-[#e2e3e9] transition-colors font-semibold"
+                >
+                  واتساب
+                </a>
+                <Link
+                  href="/contact"
+                  className="px-2.5 py-1 rounded-full text-[10px] font-mono text-[#cc9166] bg-[#121317] hover:bg-[#1c1d22] border border-[#1c1d22] transition-colors"
+                >
+                  تواصل معنا
                 </Link>
-              </li>
-              <li>
-                <Link href="/auth" className="hover:text-[#ffffff] transition-colors">
-                  تسجيل الدخول / إنشاء حساب
-                </Link>
-              </li>
-              <li>
-                <Link href="/account" className="hover:text-[#ffffff] transition-colors">
-                  إدارة سيرك الذاتية
-                </Link>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
 
         </div>
 
         {/* Bottom */}
         <div className="pt-8 mt-12 border-t border-[#1c1d22] text-xs text-[#5e616e] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} منصة أدواتك — جميع الحقوق محفوظة.</p>
-          <p className="text-[11px] text-[#777a88] font-mono">
-            VAULT SYSTEM / DARK EDITORIAL
-          </p>
+          <p>© {new Date().getFullYear()} منصة أدواتك — تطوير وبرمجة: محمد حجو (HACCO)</p>
+          <div className="flex items-center gap-4 text-[11px] text-[#777a88] font-mono">
+            <Link href="/contact" className="hover:text-[#ffffff]">تواصل معنا</Link>
+            <span>/</span>
+            <span>HACCO DEV</span>
+          </div>
         </div>
       </div>
     </footer>

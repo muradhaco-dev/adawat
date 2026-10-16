@@ -58,6 +58,18 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+
+        {/* Floating Quick WhatsApp / Contact Pill */}
+        <a
+          href="https://wa.me/905319666195"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="تواصل مع المبرمج محمد حجو عبر واتساب"
+          className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2.5 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#25D366] transition-all shadow-2xl group"
+        >
+          <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
+          <span className="font-sans font-medium">تواصل مع المبرمج (واتساب)</span>
+        </a>
       </body>
     </html>
   );

@@ -43,6 +43,7 @@ export default function Navbar() {
     { href: '/pdf-tools', label: 'أدوات الـ PDF' },
     { href: '/remove-bg', label: 'إزالة الخلفية' },
     { href: '/pricing', label: 'الاشتراكات' },
+    { href: '/contact', label: 'تواصل معنا' },
   ];
 
   return (
