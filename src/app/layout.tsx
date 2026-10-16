@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
+import AnimatedBackground from "@/components/AnimatedBackground";
 import Link from "next/link";
 
 const cairo = Cairo({
@@ -58,6 +59,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" className={`${cairo.variable} ${inter.variable} ${playfair.variable} dark`}>
       <body className="font-sans min-h-screen flex flex-col bg-[#08080a] text-[#e2e3e9] antialiased">
         <LanguageProvider>
+          <AnimatedBackground />
           <Navbar />
           <main className="flex-1">
             {children}

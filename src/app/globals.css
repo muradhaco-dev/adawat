@@ -44,6 +44,7 @@ body {
   background-color: #08080a;
   font-family: var(--font-cairo), var(--font-inter), system-ui, sans-serif;
   letter-spacing: -0.01em;
+  overflow-x: hidden;
 }
 
 ::selection {
@@ -74,4 +75,53 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #2e3038;
+}
+
+/* Ambient Animated Glow Keyframes (Warm, subtle, eye-pleasing) */
+@keyframes float-ambient-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.18;
+  }
+  50% {
+    transform: translate3d(50px, -30px, 0) scale(1.18);
+    opacity: 0.32;
+  }
+}
+
+@keyframes float-ambient-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate3d(-60px, 45px, 0) scale(0.92);
+    opacity: 0.28;
+  }
+}
+
+@keyframes float-ambient-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translate3d(35px, 50px, 0) scale(1.12);
+    opacity: 0.22;
+  }
+}
+
+.animate-ambient-1 {
+  animation: float-ambient-1 18s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-ambient-2 {
+  animation: float-ambient-2 24s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-ambient-3 {
+  animation: float-ambient-3 20s ease-in-out infinite;
+  will-change: transform, opacity;
 }
