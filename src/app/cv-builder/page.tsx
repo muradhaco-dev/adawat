@@ -1,23 +1,15 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Link from 'next/link';
 import { 
-  FileText, 
   Download, 
   Plus, 
   Trash2, 
-  Sparkles, 
   Check, 
   Save, 
   Phone, 
   Mail, 
-  MapPin, 
-  Briefcase, 
-  GraduationCap, 
-  Languages, 
-  Wrench,
-  RotateCcw
+  MapPin
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
@@ -242,38 +234,37 @@ export default function CVBuilderPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-200">
+      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-6 pb-8 border-b border-[#1c1d22]">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>متوافق مع أنظمة التوظيف ATS ومعايير العمل في تركيا وألمانيا والخليج</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-3">
+            <span>ATS-READY / معتمد لسوق العمل</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
-            صانع السيرة الذاتية الاحترافية بالعربي
+          <h1 className="text-3xl sm:text-5xl font-serif text-[#ffffff] font-normal tracking-tight">
+            صانع السيرة الذاتية المهنية
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            املأ بياناتك في النموذج على اليمين وشاهد المعاينة الحية فوراً، ثم حمّل ملف PDF جاهزاً للتقديم
+          <p className="text-xs sm:text-sm text-[#9194a1] mt-2">
+            املأ بياناتك في الاستمارة وشاهد المعاينة الحية فوراً مع تصدير مباشر لملف PDF عالي الدقة.
           </p>
         </div>
 
-        {/* Action Controls */}
+        {/* Action Controls: Slash Pill Buttons */}
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleSaveToSupabase}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-bold text-sm shadow-sm transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#2e3038] hover:border-[#777a88] bg-[#040406] text-[#e2e3e9] text-xs font-medium transition-colors"
           >
             {saveSuccess ? (
               <>
-                <Check className="w-4 h-4 text-emerald-600" />
-                <span className="text-emerald-700">تم الحفظ بحسابك!</span>
+                <Check className="w-3.5 h-3.5 text-[#cc9166]" />
+                <span className="text-[#cc9166]">تم الحفظ في حسابك</span>
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 text-gray-500" />
+                <Save className="w-3.5 h-3.5 text-[#777a88]" />
                 <span>{saving ? 'جاري الحفظ...' : 'حفظ في حسابي'}</span>
               </>
             )}
@@ -282,49 +273,48 @@ export default function CVBuilderPage() {
           <button
             onClick={handleDownloadPDF}
             disabled={downloading}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-200 transition-all active:scale-95"
+            className="flex items-center gap-2 px-5 py-2 rounded-full bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium transition-all active:scale-95 shadow-sm"
           >
-            <Download className="w-4 h-4" />
-            <span>{downloading ? 'جاري تصدير PDF...' : 'تحميل السيرة الذاتية PDF'}</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>{downloading ? 'جاري التصدير...' : 'تحميل PDF'}</span>
           </button>
         </div>
       </div>
 
-      {/* Ad slot */}
       <AdBanner slot="cv-builder-top" />
 
-      {/* Template Switcher */}
-      <div className="my-6 p-3 bg-white rounded-2xl border border-gray-200 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-        <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-          اختر تصميم القالب:
+      {/* Template Switcher: Slash Pill */}
+      <div className="my-8 p-3 bg-[#040406] rounded-[10px] border border-[#1c1d22] flex flex-wrap items-center justify-between gap-3">
+        <span className="text-xs font-mono uppercase text-[#cc9166]">
+          قالب التصميم:
         </span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setTemplate('modern')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
               template === 'modern'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
             العصري (Modern Indigo)
           </button>
           <button
             onClick={() => setTemplate('executive')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
               template === 'executive'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
             التنفيذي الأوروبي (Executive Dark)
           </button>
           <button
             onClick={() => setTemplate('minimal')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
               template === 'minimal'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
             البسيط النظيف (Minimalist)
@@ -335,150 +325,148 @@ export default function CVBuilderPage() {
       {/* Grid: Editor Left, Live Preview Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Editor Form (7 cols on lg) */}
+        {/* Editor Form (6 cols on lg) */}
         <div className="lg:col-span-6 space-y-6">
           
           {/* Section 1: Personal Info */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 pb-2 border-b border-gray-100">
-              <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">1</span>
-              المعلومات الشخصية وبيانات الاتصال
+          <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-4">
+            <h2 className="text-xs font-mono uppercase tracking-wider text-[#cc9166] pb-3 border-b border-[#1c1d22] flex items-center justify-between">
+              <span>01 / المعلومات الشخصية</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">الاسم الكامل</label>
+                <label className="block text-xs font-mono text-[#9194a1] mb-1">الاسم الكامل</label>
                 <input
                   type="text"
                   value={cvData.fullName}
                   onChange={(e) => setCvData({ ...cvData, fullName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+                  className="w-full px-3 py-2 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] outline-none"
                   placeholder="محمد العبدالله"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">المسمى الوظيفي المستهدف</label>
+                <label className="block text-xs font-mono text-[#9194a1] mb-1">المسمى الوظيفي</label>
                 <input
                   type="text"
                   value={cvData.jobTitle}
                   onChange={(e) => setCvData({ ...cvData, jobTitle: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
-                  placeholder="محاسب مالي / مطور برمجيات"
+                  className="w-full px-3 py-2 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] outline-none"
+                  placeholder="مهندس برمجيات"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">البريد الإلكتروني</label>
+                <label className="block text-xs font-mono text-[#9194a1] mb-1">البريد الإلكتروني</label>
                 <input
                   type="email"
                   value={cvData.email}
                   onChange={(e) => setCvData({ ...cvData, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+                  className="w-full px-3 py-2 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] outline-none"
                   placeholder="name@example.com"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">رقم الهاتف / واتساب</label>
+                <label className="block text-xs font-mono text-[#9194a1] mb-1">الهاتف</label>
                 <input
                   type="text"
                   value={cvData.phone}
                   onChange={(e) => setCvData({ ...cvData, phone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-left"
+                  className="w-full px-3 py-2 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] outline-none text-left font-mono"
                   placeholder="+90 5XX XXX XXXX"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">مكان الإقامة / المدينة والدولة</label>
+              <label className="block text-xs font-mono text-[#9194a1] mb-1">مكان الإقامة / الدولة والمدينة</label>
               <input
                 type="text"
                 value={cvData.location}
                 onChange={(e) => setCvData({ ...cvData, location: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+                className="w-full px-3 py-2 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] outline-none"
                 placeholder="إسطنبول، تركيا / برلين، ألمانيا"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">نبذة تعريفية (الملخص المهني)</label>
+              <label className="block text-xs font-mono text-[#9194a1] mb-1">النبذة التعريفية</label>
               <textarea
                 rows={3}
                 value={cvData.summary}
                 onChange={(e) => setCvData({ ...cvData, summary: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none leading-relaxed"
-                placeholder="اكتب فقرة ملخصة وجذابة عن شغفك وخبراتك..."
+                className="w-full px-3 py-2 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-[10px] text-xs text-[#ffffff] outline-none leading-relaxed"
+                placeholder="اكتب ملخصك المهني هنا..."
               />
             </div>
           </div>
 
           {/* Section 2: Experience */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">2</span>
-                الخبرات المهنية وسجل العمل
+          <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1c1d22]">
+              <h2 className="text-xs font-mono uppercase tracking-wider text-[#cc9166]">
+                02 / الخبرات المهنية
               </h2>
               <button
                 onClick={addExperience}
-                className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg"
+                className="flex items-center gap-1 text-xs font-mono text-[#9194a1] hover:text-[#ffffff] bg-[#121317] px-3 py-1 rounded-full border border-[#1c1d22]"
               >
-                <Plus className="w-3.5 h-3.5" /> إضافة خبرة
+                <Plus className="w-3 h-3" /> إضافة خبرة
               </button>
             </div>
 
             <div className="space-y-4">
-              {cvData.experiences.map((exp, idx) => (
-                <div key={exp.id} className="p-4 rounded-xl border border-gray-100 bg-slate-50/50 space-y-3 relative">
+              {cvData.experiences.map((exp) => (
+                <div key={exp.id} className="p-4 rounded-[10px] border border-[#1c1d22] bg-[#08080a] space-y-3 relative">
                   <button
                     onClick={() => removeExperience(exp.id)}
-                    className="absolute top-3 left-3 text-gray-400 hover:text-red-600 p-1 rounded-md"
-                    title="حذف هذه الخبرة"
+                    className="absolute top-3 left-3 text-[#5e616e] hover:text-red-400 p-1"
+                    title="حذف"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pr-1">
                     <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">المسمى الوظيفي</label>
+                      <label className="block text-[10px] font-mono text-[#9194a1] mb-1">المسمى الوظيفي</label>
                       <input
                         type="text"
                         value={exp.title}
                         onChange={(e) => updateExperience(exp.id, 'title', e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                        className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">اسم الشركة / المؤسسة</label>
+                      <label className="block text-[10px] font-mono text-[#9194a1] mb-1">اسم المؤسسة</label>
                       <input
                         type="text"
                         value={exp.company}
                         onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                        className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 mb-1">الفترة الزمنية (من - إلى)</label>
+                    <label className="block text-[10px] font-mono text-[#9194a1] mb-1">الفترة الزمنية</label>
                     <input
                       type="text"
                       value={exp.period}
                       onChange={(e) => updateExperience(exp.id, 'period', e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
-                      placeholder="2021 - 2023 أو 2022 - حتى الآن"
+                      className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none font-mono"
+                      placeholder="2021 - حتى الآن"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 mb-1">أبرز المهام والإنجازات</label>
+                    <label className="block text-[10px] font-mono text-[#9194a1] mb-1">أبرز الإنجازات والمهام</label>
                     <textarea
                       rows={2}
                       value={exp.details}
                       onChange={(e) => updateExperience(exp.id, 'details', e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                      className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-[10px] text-xs text-[#ffffff] outline-none"
                     />
                   </div>
                 </div>
@@ -487,58 +475,57 @@ export default function CVBuilderPage() {
           </div>
 
           {/* Section 3: Education */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">3</span>
-                التعليم والشهادات الأكاديمية
+          <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1c1d22]">
+              <h2 className="text-xs font-mono uppercase tracking-wider text-[#cc9166]">
+                03 / التعليم والمؤهلات
               </h2>
               <button
                 onClick={addEducation}
-                className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg"
+                className="flex items-center gap-1 text-xs font-mono text-[#9194a1] hover:text-[#ffffff] bg-[#121317] px-3 py-1 rounded-full border border-[#1c1d22]"
               >
-                <Plus className="w-3.5 h-3.5" /> إضافة مؤهل
+                <Plus className="w-3 h-3" /> إضافة مؤهل
               </button>
             </div>
 
             <div className="space-y-4">
               {cvData.education.map((edu) => (
-                <div key={edu.id} className="p-4 rounded-xl border border-gray-100 bg-slate-50/50 space-y-3 relative">
+                <div key={edu.id} className="p-4 rounded-[10px] border border-[#1c1d22] bg-[#08080a] space-y-3 relative">
                   <button
                     onClick={() => removeEducation(edu.id)}
-                    className="absolute top-3 left-3 text-gray-400 hover:text-red-600 p-1 rounded-md"
+                    className="absolute top-3 left-3 text-[#5e616e] hover:text-red-400 p-1"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pr-1">
                     <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">الشهادة / التخصص</label>
+                      <label className="block text-[10px] font-mono text-[#9194a1] mb-1">الشهادة / التخصص</label>
                       <input
                         type="text"
                         value={edu.degree}
                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                        className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">الجامعة / المعهد</label>
+                      <label className="block text-[10px] font-mono text-[#9194a1] mb-1">الجامعة / المعهد</label>
                       <input
                         type="text"
                         value={edu.institution}
                         onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                        className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 mb-1">سنة التخرج</label>
+                    <label className="block text-[10px] font-mono text-[#9194a1] mb-1">سنة التخرج</label>
                     <input
                       type="text"
                       value={edu.year}
                       onChange={(e) => updateEducation(edu.id, 'year', e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                      className="w-full px-2.5 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none font-mono"
                       placeholder="2018 - 2022"
                     />
                   </div>
@@ -548,11 +535,10 @@ export default function CVBuilderPage() {
           </div>
 
           {/* Section 4: Skills & Languages */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+          <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-6">
             <div>
-              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 pb-2 border-b border-gray-100 mb-3">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">4</span>
-                المهارات والكفاءات
+              <h2 className="text-xs font-mono uppercase tracking-wider text-[#cc9166] pb-3 border-b border-[#1c1d22] mb-3">
+                04 / المهارات واللغات
               </h2>
 
               <div className="flex gap-2 mb-3">
@@ -562,12 +548,12 @@ export default function CVBuilderPage() {
                   onChange={(e) => setNewSkill(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addSkill()}
                   placeholder="أضف مهارة واضغط إضافة..."
-                  className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs outline-none focus:border-blue-500"
+                  className="flex-1 px-3 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => addSkill()}
-                  className="px-3 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-lg hover:bg-blue-700"
+                  className="px-4 py-1.5 bg-[#ffffff] text-[#000000] font-medium text-xs rounded-full hover:bg-[#e2e3e9]"
                 >
                   إضافة
                 </button>
@@ -577,13 +563,13 @@ export default function CVBuilderPage() {
                 {cvData.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg border border-blue-100"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#121317] text-[#e2e3e9] text-xs rounded-full border border-[#1c1d22]"
                   >
                     {skill}
                     <button
                       type="button"
                       onClick={() => removeSkill(skill)}
-                      className="hover:text-red-600"
+                      className="text-[#5e616e] hover:text-red-400"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -594,12 +580,12 @@ export default function CVBuilderPage() {
 
             {/* Languages */}
             <div>
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
-                <h3 className="text-xs font-bold text-gray-700">اللغات</h3>
+              <div className="flex items-center justify-between pb-2 border-b border-[#1c1d22] mb-3">
+                <h3 className="text-xs font-mono text-[#9194a1]">اللغات</h3>
                 <button
                   type="button"
                   onClick={addLanguage}
-                  className="text-xs font-bold text-blue-600 hover:text-blue-700"
+                  className="text-xs font-mono text-[#cc9166] hover:underline"
                 >
                   + إضافة لغة
                 </button>
@@ -613,19 +599,19 @@ export default function CVBuilderPage() {
                       value={lang.name}
                       onChange={(e) => updateLanguage(idx, 'name', e.target.value)}
                       placeholder="اسم اللغة"
-                      className="flex-1 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                      className="flex-1 px-3 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none"
                     />
                     <input
                       type="text"
                       value={lang.level}
                       onChange={(e) => updateLanguage(idx, 'level', e.target.value)}
-                      placeholder="المستوى (مثال: C1 أو ممتاز)"
-                      className="w-36 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none"
+                      placeholder="المستوى (C1)"
+                      className="w-32 px-3 py-1.5 bg-[#121317] border border-[#1c1d22] rounded-full text-xs text-[#ffffff] outline-none font-mono"
                     />
                     <button
                       type="button"
                       onClick={() => removeLanguage(idx)}
-                      className="text-gray-400 hover:text-red-500 p-1"
+                      className="text-[#5e616e] hover:text-red-400 p-1"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -640,21 +626,21 @@ export default function CVBuilderPage() {
 
         {/* Live Preview Column (6 cols on lg, sticky on desktop) */}
         <div className="lg:col-span-6 sticky top-20">
-          <div className="bg-gray-100 p-4 rounded-2xl border border-gray-200 shadow-inner">
-            <div className="flex items-center justify-between pb-3 text-xs text-gray-500 font-bold border-b border-gray-200 mb-3">
-              <span>معاينة حية للصفحة (A4 جاهز للتنزيل)</span>
-              <span className="text-blue-600">تحديث تلقائي</span>
+          <div className="bg-[#040406] p-4 rounded-[10px] border border-[#1c1d22]">
+            <div className="flex items-center justify-between pb-3 text-xs text-[#5e616e] font-mono border-b border-[#1c1d22] mb-4">
+              <span>استوديو المعاينة — قياس A4 الدولي</span>
+              <span className="text-[#cc9166]">تحديث فوري</span>
             </div>
 
-            {/* A4 Paper Canvas */}
+            {/* A4 Paper Canvas: Pure White for Pristine PDF Output */}
             <div
               ref={resumeRef}
-              className={`bg-white shadow-xl rounded-lg p-8 min-h-[750px] text-gray-900 border border-gray-100 transition-all ${
+              className={`bg-white shadow-2xl rounded-sm p-8 min-h-[750px] text-gray-900 border border-gray-200 transition-all ${
                 template === 'executive'
-                  ? 'border-t-8 border-t-slate-800'
+                  ? 'border-t-8 border-t-slate-900'
                   : template === 'minimal'
-                  ? 'border-t-8 border-t-emerald-600'
-                  : 'border-t-8 border-t-blue-600'
+                  ? 'border-t-8 border-t-[#cc9166]'
+                  : 'border-t-8 border-t-blue-700'
               }`}
               style={{ direction: 'rtl' }}
             >
@@ -664,7 +650,7 @@ export default function CVBuilderPage() {
                   {cvData.fullName || 'اسمك الكامل'}
                 </h1>
                 <p className={`text-sm font-bold mt-1 ${
-                  template === 'executive' ? 'text-slate-700' : template === 'minimal' ? 'text-emerald-700' : 'text-blue-600'
+                  template === 'executive' ? 'text-slate-800' : template === 'minimal' ? 'text-[#cc9166]' : 'text-blue-700'
                 }`}>
                   {cvData.jobTitle || 'المسمى الوظيفي'}
                 </p>
@@ -717,7 +703,7 @@ export default function CVBuilderPage() {
                           <span>{exp.title || 'المسمى الوظيفي'}</span>
                           <span className="text-[11px] text-gray-500 font-normal">{exp.period}</span>
                         </div>
-                        <div className="text-[11px] text-blue-600 font-semibold mb-1">
+                        <div className="text-[11px] text-blue-700 font-semibold mb-1">
                           {exp.company}
                         </div>
                         <p className="text-gray-600 text-[11px] leading-relaxed">

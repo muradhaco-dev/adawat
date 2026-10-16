@@ -5,11 +5,9 @@ import Link from 'next/link';
 import { 
   Check, 
   Crown, 
-  Sparkles, 
-  Zap, 
   ShieldCheck, 
-  HelpCircle,
-  ArrowLeft
+  Zap, 
+  HelpCircle 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase/client';
@@ -37,7 +35,6 @@ export default function PricingPage() {
     });
   }, []);
 
-  // Demo direct upgrade handler for testing & Supabase integration
   const handleUpgradeToPro = async () => {
     if (!user) {
       alert('يرجى تسجيل الدخول أو إنشاء حساب أولاً للاشتراك وتفعيل الباقة بحسابك');
@@ -47,6 +44,7 @@ export default function PricingPage() {
 
     try {
       setLoading(true);
+
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -58,9 +56,9 @@ export default function PricingPage() {
 
       if (error) throw error;
 
-      setMessage('تهانينا! تم تفعيل اشتراكك في باقة Pro بنجاح على قاعدة بيانات Supabase 🎉');
+      setMessage('تهانينا! تم تفعيل اشتراكك في باقة Pro بنجاح على حسابك 🎉');
       setProfile((prev: any) => ({ ...prev, subscription_tier: 'pro' }));
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
     } catch (err: any) {
       alert('حدث خطأ: ' + (err.message || ''));
     } finally {
@@ -71,152 +69,153 @@ export default function PricingPage() {
   const isPro = profile?.subscription_tier === 'pro';
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
       
-      {/* Heading */}
-      <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold mb-3 border border-amber-200">
-          <Crown className="w-4 h-4 text-amber-600" />
-          <span>خطط مرنة وبسيطة للأفراد والشركات</span>
+      {/* Editorial Header */}
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
+          <Crown className="w-3.5 h-3.5 text-[#cc9166]" />
+          <span>خطط الاستخدام والترقية</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-black text-gray-950">
-          استثمر في سرعتك وانطلق بدون قيود
+        
+        <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
+          كفاءة غير مقيدة، بسعر بسيط
         </h1>
-        <p className="text-gray-600 text-sm sm:text-base mt-3 leading-relaxed">
-          جميع الأدوات الأساسية مجانية للجميع للأبد. اشترك في باقة Pro للحصول على سعة غير محدودة، وتجربة خالية تماماً من الإعلانات، وقوالب السيرة الذاتية الحصرية.
+
+        <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
+          جميع الأدوات الأساسية مجانية للجميع للأبد. اشترك في باقة Pro لتجربة خالية تماماً من الإعلانات، وسعة حفظ غير محدودة، وقوالب السيرة الذاتية الحصرية.
         </p>
 
-        {/* Billing Switcher */}
-        <div className="mt-8 flex items-center justify-center gap-3">
-          <span className={`text-sm font-bold ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-400'}`}>
-            شهرياً
-          </span>
+        {/* Billing Switcher: Slash Pill */}
+        <div className="mt-10 inline-flex items-center p-1 bg-[#040406] border border-[#1c1d22] rounded-full">
           <button
-            onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-            className="w-14 h-8 bg-blue-600 rounded-full p-1 relative transition-colors"
+            onClick={() => setBillingCycle('monthly')}
+            className={`px-5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              billingCycle === 'monthly'
+                ? 'bg-[#121317] text-[#ffffff] border border-[#2e3038]'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
+            }`}
           >
-            <div
-              className={`w-6 h-6 bg-white rounded-full transition-transform ${
-                billingCycle === 'yearly' ? 'translate-x-0' : '-translate-x-6'
-              }`}
-            />
+            اشتراك شهري
           </button>
-          <div className="flex items-center gap-2">
-            <span className={`text-sm font-bold ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-400'}`}>
-              سنوياً
-            </span>
-            <span className="text-[10px] bg-emerald-100 text-emerald-700 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">
-              وفر 40% 🔥
-            </span>
-          </div>
+          <button
+            onClick={() => setBillingCycle('yearly')}
+            className={`px-5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-colors ${
+              billingCycle === 'yearly'
+                ? 'bg-[#121317] text-[#ffffff] border border-[#2e3038]'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
+            }`}
+          >
+            <span>اشتراك سنوي</span>
+            <span className="text-[10px] text-[#cc9166] font-mono">وفر 40%</span>
+          </button>
         </div>
       </div>
 
       {message && (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-sm font-bold text-center">
+        <div className="max-w-md mx-auto mb-10 p-3.5 bg-[#121317] border border-[#cc9166]/50 rounded-[10px] text-[#e2e3e9] text-xs font-medium text-center">
           {message}
         </div>
       )}
 
-      {/* Pricing Cards */}
+      {/* Pricing Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
         
         {/* FREE PLAN */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm flex flex-col justify-between">
+        <div className="bg-[#040406] rounded-[10px] border border-[#1c1d22] p-8 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-baseline mb-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">الباقة المجانية</h3>
-                <p className="text-xs text-gray-500 mt-1">مثالية للاستخدام الفردي اليومي</p>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#9194a1] block mb-1">
+                  الباقة الأساسية
+                </span>
+                <h3 className="text-xl font-medium text-[#ffffff]">المجانية للأبد</h3>
               </div>
-              <span className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                مجاني للأبد
+              <span className="text-xs font-mono text-[#5e616e] border border-[#1c1d22] px-2.5 py-0.5 rounded-full">
+                0$
               </span>
             </div>
 
-            <div className="my-6">
-              <span className="text-4xl font-black text-gray-900">$0</span>
-              <span className="text-xs text-gray-500 mr-2">بدون أي بطاقة بنكية</span>
+            <div className="my-6 pb-6 border-b border-[#1c1d22]">
+              <span className="text-4xl font-serif text-[#ffffff]">$0</span>
+              <span className="text-xs text-[#5e616e] mr-2 font-mono">/ بدون بطاقة</span>
             </div>
 
-            <ul className="space-y-3 text-sm text-gray-700 mb-8">
+            <ul className="space-y-3.5 text-xs text-[#9194a1] mb-8">
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>دمج ملفات PDF حتى 5 ملفات معاً</span>
+                <Check className="w-3.5 h-3.5 text-[#e2e3e9] shrink-0" />
+                <span>دمج ملفات PDF حتى 5 ملفات دفعة واحدة</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>توقيع ملفات الـ PDF إلكترونياً</span>
+                <Check className="w-3.5 h-3.5 text-[#e2e3e9] shrink-0" />
+                <span>توقيع ملفات PDF إلكترونياً</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>إنشاء سيرة ذاتية مع القالب العصري الأساسي</span>
+                <Check className="w-3.5 h-3.5 text-[#e2e3e9] shrink-0" />
+                <span>صانع السيرة الذاتية (القالب الأساسي)</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>إزالة خلفية الصور بدقة قياسية</span>
+                <Check className="w-3.5 h-3.5 text-[#e2e3e9] shrink-0" />
+                <span>إزالة خلفية الصور بدقة عادية</span>
               </li>
-              <li className="flex items-center gap-2.5 text-gray-400">
-                <span className="w-4 h-4 text-center shrink-0">✕</span>
-                <span>تتضمن إعلانات Google لدعم المنصة</span>
+              <li className="flex items-center gap-2.5 text-[#5e616e]">
+                <span className="w-3.5 h-3.5 text-center shrink-0 font-mono">—</span>
+                <span>تتضمن مساحات إعلانية لدعم المنصة</span>
               </li>
             </ul>
           </div>
 
           <Link
             href="/"
-            className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-sm rounded-xl text-center transition-colors block"
+            className="w-full py-2.5 bg-transparent hover:bg-[#121317] text-[#ffffff] text-xs font-medium rounded-full border border-[#2e3038] hover:border-[#777a88] text-center transition-colors block"
           >
-            البدء مجاناً الآن
+            الاستخدام الحالي
           </Link>
         </div>
 
-        {/* PRO PLAN */}
-        <div className="bg-gradient-to-b from-indigo-900 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative flex flex-col justify-between border-2 border-indigo-500">
-          {/* Badge */}
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-amber-500 text-gray-950 font-black text-xs px-4 py-1 rounded-full shadow-md flex items-center gap-1">
-            <Crown className="w-3.5 h-3.5" />
-            الأكثر طلباً واحترافية
+        {/* PRO PLAN — Slash Gilded/Copper emphasis */}
+        <div className="bg-[#040406] rounded-[10px] border border-[#cc9166]/60 p-8 relative flex flex-col justify-between">
+          <div className="absolute -top-3 left-6 text-[10px] font-mono text-[#000000] bg-[#cc9166] px-3 py-0.5 rounded-full font-bold">
+            PRO / الترقية الاحترافية
           </div>
 
           <div>
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-baseline mb-6">
               <div>
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <span>باقة Pro الاحترافية</span>
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                </h3>
-                <p className="text-xs text-indigo-200 mt-1">للمحترفين وأصحاب المتاجر والباحثين عن وظائف</p>
+                <span className="text-xs font-mono uppercase tracking-wider text-[#cc9166] block mb-1">
+                  الباقة المتقدمة
+                </span>
+                <h3 className="text-xl font-medium text-[#ffffff]">باقة Pro</h3>
               </div>
             </div>
 
-            <div className="my-6">
-              <span className="text-4xl font-black text-white">
+            <div className="my-6 pb-6 border-b border-[#1c1d22]">
+              <span className="text-4xl font-serif text-[#ffffff]">
                 {billingCycle === 'yearly' ? '$3.99' : '$5.99'}
               </span>
-              <span className="text-xs text-indigo-300 mr-2">/ شهرياً (تدفع سنوياً)</span>
+              <span className="text-xs text-[#9194a1] mr-2 font-mono">/ شهرياً</span>
             </div>
 
-            <ul className="space-y-3 text-sm text-indigo-100 mb-8">
+            <ul className="space-y-3.5 text-xs text-[#e2e3e9] mb-8">
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="font-bold">عمليات غير محدودة بدون أي قيود يومية</span>
+                <Check className="w-3.5 h-3.5 text-[#cc9166] shrink-0" />
+                <span className="text-[#ffffff]">عمليات غير محدودة بدون قيود يومية</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>جميع قوالب السيرة الذاتية (الألمانية والأوروبية والخليجية)</span>
+                <Check className="w-3.5 h-3.5 text-[#cc9166] shrink-0" />
+                <span>قوالب السيرة الذاتية الألمانية والأوروبية المعتمدة</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>حفظ وتعديل نسخ متعددة من الـ CV بحسابك في Supabase</span>
+                <Check className="w-3.5 h-3.5 text-[#cc9166] shrink-0" />
+                <span>حفظ وتعديل نسخ متعددة من الـ CV على Supabase</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>تفريغ الصور بدقة Ultra-HD عالية للمتاجر الكبرى</span>
+                <Check className="w-3.5 h-3.5 text-[#cc9166] shrink-0" />
+                <span>تفريغ الصور بدقة Ultra-HD فائقة النقاء</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="text-amber-300 font-bold">تصفح سريع وخالٍ تماماً من أي إعلانات</span>
+                <Check className="w-3.5 h-3.5 text-[#cc9166] shrink-0" />
+                <span className="text-[#cc9166]">تصفح فائق السرعة وخالٍ تماماً من الإعلانات</span>
               </li>
             </ul>
           </div>
@@ -224,10 +223,10 @@ export default function PricingPage() {
           <button
             onClick={handleUpgradeToPro}
             disabled={loading || isPro}
-            className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-sm rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50"
+            className="w-full py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all disabled:opacity-50 active:scale-95 shadow-sm"
           >
             {isPro
-              ? 'أنت مشترك بالفعل في باقة Pro ⭐'
+              ? 'أنت مشترك بالفعل في باقة Pro'
               : loading
               ? 'جاري تفعيل الاشتراك...'
               : 'ترقية الحساب الآن'}
@@ -236,19 +235,19 @@ export default function PricingPage() {
 
       </div>
 
-      {/* Trust & Guarantees */}
-      <div className="mt-16 text-center text-xs text-gray-400 flex items-center justify-center gap-6">
+      {/* Trust footers */}
+      <div className="mt-20 text-center text-xs text-[#5e616e] flex flex-wrap items-center justify-center gap-8 font-mono">
         <span className="flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          دفع آمن ومحمي بالكامل 100%
+          <ShieldCheck className="w-3.5 h-3.5 text-[#777a88]" />
+          أمان ومصادقة مشفرة 100%
         </span>
         <span className="flex items-center gap-1.5">
-          <Zap className="w-4 h-4 text-blue-600" />
-          تفعيل لحظي فور الاشتراك
+          <Zap className="w-3.5 h-3.5 text-[#777a88]" />
+          تفعيل فوري لحظة الترقية
         </span>
         <span className="flex items-center gap-1.5">
-          <HelpCircle className="w-4 h-4 text-purple-600" />
-          إمكانية الإلغاء في أي وقت بنقرة واحدة
+          <HelpCircle className="w-3.5 h-3.5 text-[#777a88]" />
+          إمكانية الإلغاء في أي وقت
         </span>
       </div>
 

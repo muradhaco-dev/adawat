@@ -7,9 +7,7 @@ import {
   Crown, 
   FileText, 
   Trash2, 
-  Download, 
   Plus, 
-  Sparkles,
   Calendar,
   LogOut
 } from 'lucide-react';
@@ -36,7 +34,6 @@ export default function AccountPage() {
       }
       setUser(session.user);
 
-      // Fetch profile
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
@@ -44,7 +41,6 @@ export default function AccountPage() {
         .single();
       if (profileData) setProfile(profileData);
 
-      // Fetch user's saved resumes
       const { data: resumesData } = await supabase
         .from('resumes')
         .select('*')
@@ -60,7 +56,7 @@ export default function AccountPage() {
   };
 
   const handleDeleteResume = async (id: string) => {
-    if (!confirm('هل أنت متأكد من رغبتك بحذف هذه السيرة الذاتية؟')) return;
+    if (!confirm('هل ترغب بتأكيد حذف هذه السيرة الذاتية؟')) return;
     try {
       const { error } = await supabase.from('resumes').delete().eq('id', id);
       if (error) throw error;
@@ -78,7 +74,7 @@ export default function AccountPage() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#cc9166] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -86,32 +82,32 @@ export default function AccountPage() {
   const isPro = profile?.subscription_tier === 'pro';
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
-      {/* Account Info Header */}
-      <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm mb-8">
+      {/* Account Info Header Card */}
+      <div className="bg-[#040406] rounded-[10px] border border-[#1c1d22] p-8 mb-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
-              <User className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-full bg-[#121317] border border-[#2e3038] flex items-center justify-center text-[#e2e3e9]">
+              <User className="w-7 h-7 text-[#9194a1]" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-black text-gray-900">
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-xl font-serif font-medium text-[#ffffff]">
                   {profile?.full_name || user?.email?.split('@')[0]}
                 </h1>
                 {isPro ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-black bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full border border-amber-300">
-                    <Crown className="w-3 h-3 text-amber-600" /> PRO
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono text-[#cc9166] border border-[#cc9166]/50 px-2.5 py-0.5 rounded-full">
+                    <Crown className="w-3 h-3 text-[#cc9166]" /> PRO
                   </span>
                 ) : (
-                  <span className="text-[11px] font-bold bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full">
+                  <span className="text-[10px] font-mono text-[#9194a1] border border-[#1c1d22] px-2.5 py-0.5 rounded-full">
                     حساب مجاني
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 mt-1">{user?.email}</p>
+              <p className="text-xs text-[#5e616e] mt-1 font-mono">{user?.email}</p>
             </div>
           </div>
 
@@ -119,14 +115,14 @@ export default function AccountPage() {
             {!isPro && (
               <Link
                 href="/pricing"
-                className="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-sm transition-all"
+                className="px-4 py-2 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-colors"
               >
-                ترقية لـ Pro ⭐
+                ترقية لـ Pro
               </Link>
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors border border-gray-200"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#9194a1] hover:text-[#ffffff] bg-[#121317] hover:bg-[#1c1d22] rounded-full border border-[#1c1d22] transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               تسجيل الخروج
@@ -137,37 +133,37 @@ export default function AccountPage() {
       </div>
 
       {/* Saved Resumes Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-gray-200">
+      <div className="space-y-6">
+        <div className="flex items-baseline justify-between pb-4 border-b border-[#1c1d22]">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">سيرك الذاتية المحفوظة في Supabase</h2>
-            <p className="text-xs text-gray-500">
-              يمكنك استعراض وتحديث أي سيرة ذاتية قمت بإنشائها سابقاً
-            </p>
+            <span className="text-xs font-mono uppercase tracking-wider text-[#cc9166] block mb-1">
+              سجل السير الذاتية
+            </span>
+            <h2 className="text-xl font-serif text-[#ffffff]">السير الذاتية المحفوظة في Supabase</h2>
           </div>
           <Link
             href="/cv-builder"
-            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-colors"
           >
-            <Plus className="w-4 h-4" />
-            إنشاء CV جديد
+            <Plus className="w-3.5 h-3.5" />
+            إنشاء سيرة جديدة
           </Link>
         </div>
 
         {resumes.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-gray-200">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
-              <FileText className="w-6 h-6" />
+          <div className="text-center py-20 bg-[#040406] rounded-[10px] border border-[#1c1d22]">
+            <div className="w-10 h-10 rounded-full bg-[#121317] border border-[#2e3038] text-[#9194a1] flex items-center justify-center mx-auto mb-3">
+              <FileText className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-gray-800">لا توجد سير ذاتية محفوظة بعد</h3>
-            <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-              توجه إلى صانع السيرة الذاتية، املأ بياناتك واضغط &quot;حفظ في حسابي&quot; لتظهر هنا تلقائياً.
+            <h3 className="text-sm font-medium text-[#ffffff]">لا توجد سير ذاتية محفوظة بعد</h3>
+            <p className="text-xs text-[#5e616e] mt-1 max-w-sm mx-auto">
+              توجه لصانع السيرة الذاتية واملأ بياناتك واضغط &quot;حفظ في حسابي&quot; لمزامنتها هنا فوراً.
             </p>
             <Link
               href="/cv-builder"
-              className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-sm hover:bg-blue-700"
+              className="mt-5 inline-flex items-center gap-2 px-5 py-2 bg-transparent hover:bg-[#121317] text-[#ffffff] text-xs font-medium rounded-full border border-[#2e3038] hover:border-[#777a88] transition-colors"
             >
-              ابدأ إنشاء سيرتك الأولى الآن
+              إنشاء سيرتك الأولى
             </Link>
           </div>
         ) : (
@@ -175,17 +171,17 @@ export default function AccountPage() {
             {resumes.map((resume) => (
               <div
                 key={resume.id}
-                className="bg-white p-5 rounded-2xl border border-gray-200 hover:border-blue-400 transition-colors shadow-sm flex flex-col justify-between"
+                className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] hover:border-[#2e3038] transition-colors flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
-                        <FileText className="w-5 h-5" />
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166]">
+                        <FileText className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-gray-900">{resume.title}</h4>
-                        <span className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+                        <h4 className="text-sm font-medium text-[#ffffff]">{resume.title}</h4>
+                        <span className="text-[10px] font-mono text-[#5e616e] flex items-center gap-1 mt-0.5">
                           <Calendar className="w-3 h-3" />
                           {new Date(resume.created_at).toLocaleDateString('ar-EG')}
                         </span>
@@ -193,27 +189,27 @@ export default function AccountPage() {
                     </div>
                     <button
                       onClick={() => handleDeleteResume(resume.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg"
+                      className="p-1.5 text-[#5e616e] hover:text-[#ffffff] rounded-full"
                       title="حذف"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <p className="text-xs text-gray-600 line-clamp-2 my-2">
+                  <p className="text-xs text-[#9194a1] line-clamp-2 my-2 leading-relaxed">
                     {resume.data?.summary || 'لا يوجد ملخص'}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-gray-100 flex items-center justify-between mt-2">
-                  <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-semibold">
-                    قالب: {resume.template_id}
+                <div className="pt-4 border-t border-[#1c1d22] flex items-center justify-between mt-3 text-xs">
+                  <span className="text-[10px] font-mono text-[#5e616e] border border-[#1c1d22] px-2 py-0.5 rounded-full">
+                    {resume.template_id}
                   </span>
                   <Link
-                    href={`/cv-builder`}
-                    className="text-xs text-blue-600 hover:underline font-bold"
+                    href="/cv-builder"
+                    className="text-xs text-[#cc9166] hover:underline font-mono"
                   >
-                    تعديل في المنشئ ←
+                    فتح في المحرر ←
                   </Link>
                 </div>
               </div>

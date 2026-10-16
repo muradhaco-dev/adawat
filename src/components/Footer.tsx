@@ -1,122 +1,129 @@
 import Link from 'next/link';
-import { Sparkles, ShieldCheck, Zap, Heart, Lock } from 'lucide-react';
+import { ShieldCheck, Zap, Lock } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 border-t border-gray-800 mt-24">
+    <footer className="bg-[#08080a] text-[#9194a1] border-t border-[#1c1d22] mt-32">
       {/* Privacy & Trust Bar */}
-      <div className="border-b border-gray-800 bg-gray-950/50 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-right">
-            <div className="flex items-center justify-center md:justify-start gap-3">
-              <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-                <Lock className="w-5 h-5" />
+      <div className="border-b border-[#1c1d22] py-8">
+        <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
+            
+            <div className="p-5 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex items-start gap-3">
+              <div className="p-2 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166] shrink-0">
+                <Lock className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white">معالجة فورية وآمنة 100%</h4>
-                <p className="text-xs text-gray-400">ملفاتك وصورك تعالج مباشرة داخل متصفحك ولا نخزن بياناتك</p>
+                <h4 className="text-sm font-medium text-[#ffffff]">معالجة محلية وآمنة 100%</h4>
+                <p className="text-xs text-[#9194a1] mt-1 leading-relaxed">
+                  ملفاتك وصورك تُعالج داخل متصفحك مباشرة ولا تُخزن على خوادمنا لحماية خصوصيتك.
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-center md:justify-start gap-3">
-              <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400">
-                <Zap className="w-5 h-5" />
+            <div className="p-5 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex items-start gap-3">
+              <div className="p-2 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166] shrink-0">
+                <Zap className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white">سرعة فائقة بدون انتظار</h4>
-                <p className="text-xs text-gray-400">تحويل وتعديل بضغطة زر وتنزيل مباشر بجودة عالية</p>
+                <h4 className="text-sm font-medium text-[#ffffff]">تنفيذ فوري وسرعة قصوى</h4>
+                <p className="text-xs text-[#9194a1] mt-1 leading-relaxed">
+                  أدوات مصممة لإنهاء مهام الـ PDF وتفريغ الصور وصناعة الـ CV بضغطة زر واحدة.
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-center md:justify-start gap-3">
-              <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400">
-                <ShieldCheck className="w-5 h-5" />
+            <div className="p-5 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex items-start gap-3">
+              <div className="p-2 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166] shrink-0">
+                <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white">متوافق مع المعايير الدولية</h4>
-                <p className="text-xs text-gray-400">نماذج السيرة الذاتية متوافقة مع متطلبات العمل في تركيا وأوروبا والخليج</p>
+                <h4 className="text-sm font-medium text-[#ffffff]">معايير عمل احترافية</h4>
+                <p className="text-xs text-[#9194a1] mt-1 leading-relaxed">
+                  نماذج سيرة ذاتية متوافقة مع أنظمة التوظيف الحديثة في تركيا وألمانيا والخليج.
+                </p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-right">
           
           {/* Brand Col */}
-          <div className="space-y-4 md:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <span className="text-xl font-black text-white">أدواتك</span>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl font-bold font-serif text-[#ffffff]">أدواتك</span>
+              <span className="text-xs text-[#cc9166] font-mono">/ ADAWAT</span>
             </div>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              المنصة العربية المتكاملة للأدوات اليومية المجانية. نوفر أدوات معالجة الـ PDF، إزالة خلفيات الصور، وإنشاء السير الذاتية الاحترافية للباحثين عن عمل في الوطن العربي وحول العالم.
+            <p className="text-xs text-[#9194a1] leading-relaxed">
+              منصة الأدوات اليومية السريعة باللغة العربية. معالجة المستندات، تفريغ الصور للمتاجر، وتوليد السير الذاتية المهنية.
             </p>
           </div>
 
           {/* Tools Links */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-3">الأدوات الأكثر استخداماً</h3>
-            <ul className="space-y-2 text-xs">
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-[#cc9166] block mb-3 font-mono">
+              الأدوات
+            </span>
+            <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/cv-builder" className="hover:text-white transition-colors">
-                  صانع السيرة الذاتية (CV جاهز)
+                <Link href="/cv-builder" className="hover:text-[#ffffff] transition-colors">
+                  صانع السيرة الذاتية (CV)
                 </Link>
               </li>
               <li>
-                <Link href="/pdf-tools" className="hover:text-white transition-colors">
-                  دمج ملفات PDF أونلاين
+                <Link href="/pdf-tools" className="hover:text-[#ffffff] transition-colors">
+                  دمج ملفات PDF
                 </Link>
               </li>
               <li>
-                <Link href="/pdf-tools" className="hover:text-white transition-colors">
-                  توقيع ملفات PDF إلكترونياً
+                <Link href="/pdf-tools?tab=sign" className="hover:text-[#ffffff] transition-colors">
+                  توقيع PDF إلكترونياً
                 </Link>
               </li>
               <li>
-                <Link href="/remove-bg" className="hover:text-white transition-colors">
-                  إزالة خلفية الصور للمتاجر
+                <Link href="/remove-bg" className="hover:text-[#ffffff] transition-colors">
+                  إزالة خلفية الصور
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Popular searches for SEO */}
+          {/* Searches */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-3">عمليات البحث الشائعة</h3>
-            <ul className="space-y-2 text-xs text-gray-400">
-              <li>سيرة ذاتية بالعربي للسوريين في تركيا</li>
-              <li>نماذج CV معتمدة في ألمانيا وأوروبا</li>
-              <li>ضغط وتصغير حجم ملفات PDF</li>
-              <li>قص وتفريغ الصور بدون برنامج فوتوشوب</li>
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-[#cc9166] block mb-3 font-mono">
+              عمليات شائعة
+            </span>
+            <ul className="space-y-2.5 text-xs text-[#5e616e]">
+              <li>CV جاهز للسوريين في تركيا وألمانيا</li>
+              <li>دمج وترتيب صفحات PDF</li>
+              <li>تفريغ صور المنتجات لإنستغرام</li>
+              <li>نماذج سيرة ذاتية أوروبية وخليجية</li>
             </ul>
           </div>
 
-          {/* Account & Support */}
+          {/* Account */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-3">الاشتراكات والحساب</h3>
-            <ul className="space-y-2 text-xs">
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-[#cc9166] block mb-3 font-mono">
+              الاشتراك والحساب
+            </span>
+            <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/pricing" className="text-amber-400 hover:text-amber-300 font-semibold transition-colors">
-                  خطة Pro الاحترافية
+                <Link href="/pricing" className="text-[#cc9166] hover:underline transition-colors">
+                  ترقية الحساب لـ Pro
                 </Link>
               </li>
               <li>
-                <Link href="/auth" className="hover:text-white transition-colors">
+                <Link href="/auth" className="hover:text-[#ffffff] transition-colors">
                   تسجيل الدخول / إنشاء حساب
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
-                  سياسة الخصوصية
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  شروط الاستخدام
+                <Link href="/account" className="hover:text-[#ffffff] transition-colors">
+                  إدارة سيرك الذاتية
                 </Link>
               </li>
             </ul>
@@ -124,11 +131,11 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 mt-8 border-t border-gray-800 text-center text-xs text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} منصة أدواتك - جميع الحقوق محفوظة.</p>
-          <p className="flex items-center gap-1 justify-center">
-            صنع بكل <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> لدعم المستخدمين في العالم العربي والمهجر
+        {/* Bottom */}
+        <div className="pt-8 mt-12 border-t border-[#1c1d22] text-xs text-[#5e616e] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p>© {new Date().getFullYear()} منصة أدواتك — جميع الحقوق محفوظة.</p>
+          <p className="text-[11px] text-[#777a88] font-mono">
+            VAULT SYSTEM / DARK EDITORIAL
           </p>
         </div>
       </div>

@@ -9,10 +9,8 @@ import {
   Trash2, 
   ArrowUp, 
   ArrowDown, 
-  CheckCircle2, 
   ShieldCheck, 
   RotateCcw,
-  Sparkles,
   FileCheck
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
@@ -25,7 +23,6 @@ export default function PDFToolsPage() {
   // MERGE STATE
   const [mergeFiles, setMergeFiles] = useState<File[]>([]);
   const [merging, setMerging] = useState(false);
-  const [mergeSuccess, setMergeSuccess] = useState(false);
 
   // SIGN STATE
   const [signFile, setSignFile] = useState<File | null>(null);
@@ -34,7 +31,6 @@ export default function PDFToolsPage() {
   const [isDrawing, setIsDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Read URL query params on mount for direct tab linking (?tab=sign)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -49,7 +45,6 @@ export default function PDFToolsPage() {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files).filter((f) => f.type === 'application/pdf');
       setMergeFiles((prev) => [...prev, ...filesArray]);
-      setMergeSuccess(false);
     }
   };
 
@@ -95,7 +90,6 @@ export default function PDFToolsPage() {
       link.click();
       URL.revokeObjectURL(url);
 
-      setMergeSuccess(true);
       confetti({
         particleCount: 70,
         spread: 60,
@@ -183,9 +177,7 @@ export default function PDFToolsPage() {
 
       const pages = pdfDoc.getPages();
       const lastPage = pages[pages.length - 1];
-      const { width } = lastPage.getSize();
 
-      // Draw signature at bottom-left/center of last page
       lastPage.drawImage(signatureImage, {
         x: 50,
         y: 60,
@@ -213,57 +205,59 @@ export default function PDFToolsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Top Heading */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-3">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>معالجة فورية ومحلية 100% داخل المتصفح لحماية خصوصيتك</span>
+      <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#cc9166]" />
+          <span>معالجة مشفرة داخل متصفحك مباشرة</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-gray-900">
-          أدوات الـ PDF الذكية والمجانية
+        <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
+          أدوات الـ PDF المتقدمة
         </h1>
-        <p className="text-sm text-gray-500 mt-2 max-w-xl mx-auto">
-          ادمج ملفات PDF متعددة في ملف واحد، أو وقّع مستنداتك وعقودك إلكترونياً وحمّلها فوراً.
+        <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
+          ادمج ملفات PDF متعددة في ملف واحد، أو وقّع مستنداتك وعقودك إلكترونياً وحمّلها فوراً وبأقصى درجات الخصوصية.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-gray-100 p-1.5 rounded-2xl flex items-center gap-1 border border-gray-200">
+      {/* Tabs: Slash Pill Switcher */}
+      <div className="flex justify-center mb-10">
+        <div className="bg-[#040406] p-1 rounded-full flex items-center border border-[#1c1d22]">
           <button
             onClick={() => setActiveTab('merge')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-medium transition-all ${
               activeTab === 'merge'
-                ? 'bg-white text-emerald-700 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            <Layers className="w-4 h-4" />
+            <Layers className="w-3.5 h-3.5" />
             دمج ملفات PDF
           </button>
           <button
             onClick={() => setActiveTab('sign')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-medium transition-all ${
               activeTab === 'sign'
-                ? 'bg-white text-blue-700 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            <PenTool className="w-4 h-4" />
-            توقيع ملف PDF إلكترونياً
+            <PenTool className="w-3.5 h-3.5" />
+            توقيع ملف PDF
           </button>
         </div>
       </div>
 
-      <AdBanner slot="pdf-tools-top" />
+      <div className="max-w-4xl mx-auto">
+        <AdBanner slot="pdf-tools-top" />
+      </div>
 
       {/* TAB 1: MERGE PDF */}
       {activeTab === 'merge' && (
-        <div className="space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6">
           {/* Upload Area */}
-          <div className="relative border-2 border-dashed border-emerald-300 hover:border-emerald-500 rounded-3xl p-8 sm:p-12 text-center bg-emerald-50/30 transition-colors">
+          <div className="relative border border-dashed border-[#2e3038] hover:border-[#cc9166] rounded-[10px] p-10 sm:p-14 text-center bg-[#040406] transition-colors">
             <input
               type="file"
               accept="application/pdf"
@@ -271,30 +265,27 @@ export default function PDFToolsPage() {
               onChange={handleMergeFilesUpload}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
-            <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
-              <Upload className="w-8 h-8" />
+            <div className="w-12 h-12 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166] flex items-center justify-center mx-auto mb-4">
+              <Upload className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">
+            <h3 className="text-base font-medium text-[#ffffff] mb-1">
               اسحب وأفلت ملفات الـ PDF هنا، أو اضغط للاختيار
             </h3>
-            <p className="text-xs text-gray-500 max-w-md mx-auto">
-              يمكنك اختيار ملفين أو أكثر معاً. يمكنك إعادة ترتيبها قبل الضغط على دمج.
+            <p className="text-xs text-[#5e616e] max-w-md mx-auto">
+              يمكنك اختيار ملفين أو أكثر معاً، وترتيب تسلسلها بحرية قبل التصدير.
             </p>
           </div>
 
           {/* Files List */}
           {mergeFiles.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
-                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <div className="bg-[#040406] rounded-[10px] border border-[#1c1d22] p-6">
+              <div className="flex items-center justify-between pb-4 border-b border-[#1c1d22] mb-4">
+                <h3 className="text-xs font-mono uppercase text-[#e2e3e9] flex items-center gap-2">
                   <span>الملفات المحددة ({mergeFiles.length})</span>
-                  <span className="text-xs text-gray-400 font-normal">
-                    (رتب الملفات حسب أولوية الظهور في الملف النهائي)
-                  </span>
                 </h3>
                 <button
                   onClick={() => setMergeFiles([])}
-                  className="text-xs text-red-600 hover:underline font-bold"
+                  className="text-xs text-[#777a88] hover:text-[#ffffff] font-mono"
                 >
                   مسح الكل
                 </button>
@@ -304,17 +295,17 @@ export default function PDFToolsPage() {
                 {mergeFiles.map((file, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/80 hover:bg-white transition-colors"
+                    className="flex items-center justify-between p-3 rounded-[10px] border border-[#1c1d22] bg-[#121317]"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center">
+                      <span className="w-5 h-5 rounded-full bg-[#1c1d22] text-[#cc9166] font-mono text-[11px] flex items-center justify-center">
                         {idx + 1}
                       </span>
                       <div>
-                        <p className="text-sm font-bold text-gray-800 max-w-xs sm:max-w-md truncate">
+                        <p className="text-xs font-medium text-[#ffffff] max-w-xs sm:max-w-md truncate">
                           {file.name}
                         </p>
-                        <p className="text-[11px] text-gray-400">
+                        <p className="text-[10px] text-[#5e616e] font-mono">
                           {(file.size / (1024 * 1024)).toFixed(2)} MB
                         </p>
                       </div>
@@ -324,43 +315,43 @@ export default function PDFToolsPage() {
                       <button
                         onClick={() => moveFile(idx, 'up')}
                         disabled={idx === 0}
-                        className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-20"
+                        className="p-1.5 text-[#5e616e] hover:text-[#ffffff] disabled:opacity-20"
                         title="تحريك لأعلى"
                       >
-                        <ArrowUp className="w-4 h-4" />
+                        <ArrowUp className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => moveFile(idx, 'down')}
                         disabled={idx === mergeFiles.length - 1}
-                        className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-20"
+                        className="p-1.5 text-[#5e616e] hover:text-[#ffffff] disabled:opacity-20"
                         title="تحريك لأسفل"
                       >
-                        <ArrowDown className="w-4 h-4" />
+                        <ArrowDown className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => removeMergeFile(idx)}
-                        className="p-1 text-gray-400 hover:text-red-600 mr-2"
+                        className="p-1.5 text-[#5e616e] hover:text-red-400 mr-2"
                         title="حذف"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Merge Button */}
-              <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-xs text-gray-500">
-                  جاهز للدمج؟ اضغط على الزر ليتم تحميل الملف النهائي فوراً.
+              {/* Merge Button: Slash White Pill */}
+              <div className="mt-6 pt-4 border-t border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span className="text-xs text-[#5e616e] font-mono">
+                  معالجة محلية فورية في المتصفح
                 </span>
                 <button
                   onClick={executeMerge}
                   disabled={merging || mergeFiles.length < 2}
-                  className="w-full sm:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md shadow-emerald-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  <Layers className="w-4 h-4" />
-                  <span>{merging ? 'جاري الدمج والتجهيز...' : 'دمج وتنزيل ملف PDF'}</span>
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>{merging ? 'جاري الدمج...' : 'دمج وتنزيل ملف PDF'}</span>
                 </button>
               </div>
             </div>
@@ -370,35 +361,34 @@ export default function PDFToolsPage() {
 
       {/* TAB 2: SIGN PDF */}
       {activeTab === 'sign' && (
-        <div className="space-y-6">
-          {/* Upload PDF to Sign */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">1</span>
-              اختر ملف PDF المراد توقيعه
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Upload PDF */}
+          <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22]">
+            <h3 className="text-xs font-mono uppercase text-[#cc9166] mb-3 flex items-center gap-2">
+              <span>01 / اختر ملف PDF المراد توقيعه</span>
             </h3>
 
             {signFile ? (
-              <div className="flex items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+              <div className="flex items-center justify-between p-4 bg-[#121317] rounded-[10px] border border-[#1c1d22]">
                 <div className="flex items-center gap-3">
-                  <FileCheck className="w-8 h-8 text-blue-600" />
+                  <FileCheck className="w-6 h-6 text-[#cc9166]" />
                   <div>
-                    <p className="text-sm font-bold text-gray-800">{signFile.name}</p>
-                    <p className="text-xs text-gray-400">{(signFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    <p className="text-xs font-medium text-[#ffffff]">{signFile.name}</p>
+                    <p className="text-[10px] text-[#5e616e] font-mono">{(signFile.size / (1024 * 1024)).toFixed(2)} MB</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSignFile(null)}
-                  className="text-xs text-red-600 hover:underline font-bold"
+                  className="text-xs text-[#777a88] hover:text-[#ffffff] font-mono"
                 >
                   تغيير الملف
                 </button>
               </div>
             ) : (
-              <label className="border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors">
-                <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                <span className="text-sm font-bold text-gray-700">اضغط لرفع ملف الـ PDF</span>
-                <span className="text-xs text-gray-400 mt-1">عقود، استمارات، أو أوراق رسمية</span>
+              <label className="border border-dashed border-[#2e3038] hover:border-[#cc9166] rounded-[10px] p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-[#08080a]">
+                <Upload className="w-6 h-6 text-[#5e616e] mb-2" />
+                <span className="text-xs font-medium text-[#ffffff]">اضغط لرفع ملف الـ PDF</span>
+                <span className="text-[11px] text-[#5e616e] mt-1 font-mono">عقود رسمية، استمارات، وثائق</span>
                 <input
                   type="file"
                   accept="application/pdf"
@@ -410,45 +400,43 @@ export default function PDFToolsPage() {
           </div>
 
           {/* Signature Canvas Box */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">2</span>
-                ارسم توقيعك في الصندوق أدناه
+          <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1c1d22]">
+              <h3 className="text-xs font-mono uppercase text-[#cc9166]">
+                <span>02 / ارسم توقيعك في الصندوق</span>
               </h3>
               
               <div className="flex items-center gap-2">
-                {/* Pen colors */}
                 <div className="flex items-center gap-1.5 mr-2">
                   <button
                     onClick={() => setSignColor('#000000')}
-                    className={`w-5 h-5 rounded-full bg-black border-2 ${signColor === '#000000' ? 'ring-2 ring-blue-500 scale-110' : ''}`}
+                    className={`w-4 h-4 rounded-full bg-black border border-white/40 ${signColor === '#000000' ? 'ring-2 ring-[#cc9166]' : ''}`}
                     title="أسود"
                   />
                   <button
                     onClick={() => setSignColor('#1d4ed8')}
-                    className={`w-5 h-5 rounded-full bg-blue-700 border-2 ${signColor === '#1d4ed8' ? 'ring-2 ring-blue-500 scale-110' : ''}`}
+                    className={`w-4 h-4 rounded-full bg-blue-700 border border-white/40 ${signColor === '#1d4ed8' ? 'ring-2 ring-[#cc9166]' : ''}`}
                     title="أزرق"
                   />
                   <button
                     onClick={() => setSignColor('#b91c1c')}
-                    className={`w-5 h-5 rounded-full bg-red-700 border-2 ${signColor === '#b91c1c' ? 'ring-2 ring-blue-500 scale-110' : ''}`}
+                    className={`w-4 h-4 rounded-full bg-red-700 border border-white/40 ${signColor === '#b91c1c' ? 'ring-2 ring-[#cc9166]' : ''}`}
                     title="أحمر"
                   />
                 </div>
 
                 <button
                   onClick={clearCanvas}
-                  className="flex items-center gap-1 text-xs text-gray-600 hover:text-red-600 font-bold bg-gray-100 hover:bg-red-50 px-2.5 py-1.5 rounded-lg"
+                  className="flex items-center gap-1 text-xs text-[#777a88] hover:text-[#ffffff] font-mono bg-[#121317] hover:bg-[#1c1d22] px-3 py-1 rounded-full border border-[#1c1d22]"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  مسح التوقيع
+                  <RotateCcw className="w-3 h-3" />
+                  مسح
                 </button>
               </div>
             </div>
 
-            {/* Canvas */}
-            <div className="border border-gray-200 rounded-xl bg-slate-50 flex justify-center p-2">
+            {/* Canvas Container */}
+            <div className="border border-[#1c1d22] rounded-[10px] bg-[#121317] flex justify-center p-3">
               <canvas
                 ref={canvasRef}
                 width={500}
@@ -460,11 +448,11 @@ export default function PDFToolsPage() {
                 onTouchStart={startDrawing}
                 onTouchMove={draw}
                 onTouchEnd={stopDrawing}
-                className="bg-white rounded-lg border border-dashed border-gray-300 cursor-crosshair touch-none w-full max-w-[500px]"
+                className="bg-white rounded-[6px] cursor-crosshair touch-none w-full max-w-[500px]"
               />
             </div>
-            <p className="text-[11px] text-gray-400 text-center">
-              يمكنك الرسم بالماوس أو مباشرة بإصبعك على شاشات اللمس والهواتف
+            <p className="text-[11px] text-[#5e616e] text-center font-mono">
+              يدعم الرسم بالماوس أو مباشرة بالإصبع على شاشات اللمس والهواتف
             </p>
 
             {/* Execute Button */}
@@ -472,18 +460,19 @@ export default function PDFToolsPage() {
               <button
                 onClick={executeSignPDF}
                 disabled={!signFile || signing}
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-md shadow-blue-200 transition-all flex items-center gap-2 disabled:opacity-50"
+                className="px-6 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all flex items-center gap-2 disabled:opacity-50"
               >
-                <Download className="w-4 h-4" />
-                <span>{signing ? 'جاري تطبيق التوقيع...' : 'تثبيت التوقيع وتحميل الـ PDF'}</span>
+                <Download className="w-3.5 h-3.5" />
+                <span>{signing ? 'جاري التثبيت...' : 'تثبيت التوقيع وتحميل الـ PDF'}</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Ad slot bottom */}
-      <AdBanner slot="pdf-tools-bottom" />
+      <div className="max-w-4xl mx-auto">
+        <AdBanner slot="pdf-tools-bottom" />
+      </div>
 
     </div>
   );

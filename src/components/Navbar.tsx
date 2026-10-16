@@ -22,12 +22,10 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -40,52 +38,50 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { href: '/', label: 'الرئيسية', icon: Sparkles },
-    { href: '/cv-builder', label: 'صانع السيرة الذاتية', icon: FileText, badge: 'رائج' },
-    { href: '/pdf-tools', label: 'أدوات الـ PDF', icon: Layers },
-    { href: '/remove-bg', label: 'إزالة خلفية الصور', icon: ImageIcon },
-    { href: '/pricing', label: 'الاشتراكات والأسعار', icon: Crown },
+    { href: '/', label: 'الرئيسية' },
+    { href: '/cv-builder', label: 'صانع الـ CV', badge: 'رائج' },
+    { href: '/pdf-tools', label: 'أدوات الـ PDF' },
+    { href: '/remove-bg', label: 'إزالة الخلفية' },
+    { href: '/pricing', label: 'الاشتراكات' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-[#08080a]/90 backdrop-blur-md border-b border-[#1c1d22]">
+      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Logo */}
+          {/* Logo with Slash aesthetic */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-full bg-[#121317] border border-[#2e3038] flex items-center justify-center text-[#cc9166] group-hover:border-[#cc9166] transition-colors">
+              <span className="font-serif text-sm font-bold">أ</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-black bg-gradient-to-l from-indigo-800 to-blue-700 bg-clip-text text-transparent">
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-bold tracking-tight text-[#ffffff] font-serif">
                 أدواتك
               </span>
-              <span className="text-[10px] text-gray-500 font-medium -mt-1">
-                منصة الأدوات الذكية المجانية
+              <span className="text-[11px] text-[#cc9166] font-mono tracking-wider hidden sm:inline">
+                / ADAWAT
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
-              const Icon = link.icon;
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     isActive
-                      ? 'text-blue-600 bg-blue-50/80 shadow-sm'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                      ? 'text-[#ffffff] bg-[#121317]'
+                      : 'text-[#9194a1] hover:text-[#ffffff]'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
                   {link.label}
                   {link.badge && (
-                    <span className="text-[10px] bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                    <span className="text-[10px] text-[#cc9166] border border-[#cc9166]/40 px-1.5 py-0.2 rounded-full font-mono">
                       {link.badge}
                     </span>
                   )}
@@ -94,40 +90,39 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* User & Actions */}
+          {/* Actions: Pill controls */}
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/pricing"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 rounded-full border border-amber-300 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#cc9166] bg-[#040406] hover:bg-[#121317] rounded-full border border-[#cc9166]/50 transition-colors"
             >
-              <Crown className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
-              ترقية لـ Pro
+              <Crown className="w-3.5 h-3.5 text-[#cc9166]" />
+              <span>باقة Pro</span>
             </Link>
 
             {user ? (
               <div className="flex items-center gap-2">
                 <Link
                   href="/account"
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+                  className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-[#e2e3e9] bg-[#121317] hover:bg-[#1c1d22] rounded-full border border-[#2e3038] transition-colors"
                 >
-                  <User className="w-4 h-4 text-blue-600" />
-                  <span className="max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
+                  <User className="w-3.5 h-3.5 text-[#9194a1]" />
+                  <span className="max-w-[110px] truncate">{user.email?.split('@')[0]}</span>
                 </Link>
                 <button
                   onClick={handleLogout}
                   title="تسجيل خروج"
-                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-1.5 text-[#777a88] hover:text-[#ffffff] hover:bg-[#121317] rounded-full transition-colors border border-transparent hover:border-[#2e3038]"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <Link
                 href="/auth"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-95"
+                className="px-5 py-2 text-sm font-medium text-[#000000] bg-[#ffffff] hover:bg-[#e2e3e9] rounded-full transition-all active:scale-95 shadow-sm"
               >
-                <User className="w-4 h-4" />
-                دخول / حساب جديد
+                تسجيل الدخول
               </Link>
             )}
           </div>
@@ -136,38 +131,34 @@ export default function Navbar() {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+              className="p-2 rounded-full text-[#9194a1] hover:text-[#ffffff] border border-[#1c1d22] bg-[#040406]"
               aria-label="القائمة"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Nav dropdown */}
+      {/* Mobile Nav */}
       {isOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top-2">
+        <div className="md:hidden border-t border-[#1c1d22] bg-[#040406] px-4 pt-3 pb-6 space-y-2">
           {navLinks.map((link) => {
-            const Icon = link.icon;
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-base font-semibold ${
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium ${
                   isActive
-                    ? 'text-blue-600 bg-blue-50 font-bold'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'text-[#ffffff] bg-[#121317]'
+                    : 'text-[#9194a1] hover:text-[#ffffff]'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-gray-400" />
-                  <span>{link.label}</span>
-                </div>
+                <span>{link.label}</span>
                 {link.badge && (
-                  <span className="text-[10px] bg-red-500 text-white font-bold px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] text-[#cc9166] border border-[#cc9166]/40 px-2 py-0.5 rounded-full">
                     {link.badge}
                   </span>
                 )}
@@ -175,14 +166,14 @@ export default function Navbar() {
             );
           })}
 
-          <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
+          <div className="pt-3 border-t border-[#1c1d22] flex flex-col gap-2">
             <Link
               href="/pricing"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-2 py-2.5 text-sm font-bold text-amber-900 bg-amber-100 rounded-xl border border-amber-300"
+              className="flex items-center justify-center gap-2 py-2 text-xs font-medium text-[#cc9166] bg-[#08080a] rounded-full border border-[#cc9166]/50"
             >
-              <Crown className="w-4 h-4 text-amber-600" />
-              ترقية لحساب Pro (بدون قيود)
+              <Crown className="w-3.5 h-3.5" />
+              ترقية لحساب Pro
             </Link>
 
             {user ? (
@@ -191,19 +182,18 @@ export default function Navbar() {
                   handleLogout();
                   setIsOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-red-600 bg-red-50 rounded-xl"
+                className="w-full flex items-center justify-center gap-2 py-2 text-xs font-medium text-[#777a88] hover:text-[#ffffff] bg-[#121317] rounded-full border border-[#1c1d22]"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
                 تسجيل الخروج
               </button>
             ) : (
               <Link
                 href="/auth"
                 onClick={() => setIsOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl shadow-md"
+                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-[#000000] bg-[#ffffff] rounded-full"
               >
-                <User className="w-4 h-4" />
-                تسجيل الدخول / إنشاء حساب
+                تسجيل الدخول / حساب جديد
               </Link>
             )}
           </div>

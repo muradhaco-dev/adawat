@@ -4,13 +4,9 @@ import { useState, useRef } from 'react';
 import { 
   Upload, 
   Download, 
-  Sparkles, 
   Sliders, 
-  Image as ImageIcon, 
-  RotateCcw,
   ShoppingBag,
-  Check,
-  Eye
+  Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
@@ -21,13 +17,11 @@ export default function RemoveBgPage() {
   const [processing, setProcessing] = useState(false);
   const [tolerance, setTolerance] = useState(30);
   const [bgType, setBgType] = useState<'transparent' | 'white' | 'color'>('transparent');
-  const [customColor, setCustomColor] = useState('#3b82f6');
   const [viewMode, setViewMode] = useState<'processed' | 'original'>('processed');
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const originalImageRef = useRef<HTMLImageElement | null>(null);
 
-  // Upload handler
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -35,13 +29,12 @@ export default function RemoveBgPage() {
       reader.onload = (event) => {
         const result = event.target?.result as string;
         setImageSrc(result);
-        processBackgroundRemoval(result, tolerance, bgType, customColor);
+        processBackgroundRemoval(result, tolerance, bgType, '#ffffff');
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Algorithm for smart background removal
   const processBackgroundRemoval = (
     src: string,
     tol: number,
@@ -68,7 +61,6 @@ export default function RemoveBgPage() {
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const data = imgData.data;
 
-      // Sample background color from corners (top-left, top-right, bottom-left, bottom-right)
       const sampleIndices = [0, (img.width - 1) * 4, (img.width * (img.height - 1)) * 4];
       let bgR = 0, bgG = 0, bgB = 0;
       sampleIndices.forEach((idx) => {
@@ -80,25 +72,13 @@ export default function RemoveBgPage() {
       bgG = Math.round(bgG / sampleIndices.length);
       bgB = Math.round(bgB / sampleIndices.length);
 
-      // Color distance helper
       const colorDist = (r: number, g: number, b: number) => {
         return Math.sqrt(
           Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2)
         );
       };
 
-      const maxDist = tol * 4.4; // mapped threshold
-
-      // Convert hex to rgb
-      const hexToRgb = (hex: string) => {
-        const num = parseInt(hex.replace('#', ''), 16);
-        return {
-          r: (num >> 16) & 255,
-          g: (num >> 8) & 255,
-          b: num & 255,
-        };
-      };
-      const customRgb = hexToRgb(colorHex);
+      const maxDist = tol * 4.4;
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -108,18 +88,12 @@ export default function RemoveBgPage() {
 
         if (dist < maxDist) {
           if (bgMode === 'transparent') {
-            // Smooth edge alpha feathering
             const alphaFactor = dist / maxDist;
             data[i + 3] = Math.round(alphaFactor * 60);
           } else if (bgMode === 'white') {
             data[i] = 255;
             data[i + 1] = 255;
             data[i + 2] = 255;
-            data[i + 3] = 255;
-          } else {
-            data[i] = customRgb.r;
-            data[i + 1] = customRgb.g;
-            data[i + 2] = customRgb.b;
             data[i + 3] = 255;
           }
         }
@@ -132,13 +106,9 @@ export default function RemoveBgPage() {
     };
   };
 
-  const reprocess = (
-    newTol = tolerance,
-    newBg = bgType,
-    newColor = customColor
-  ) => {
+  const reprocess = (newTol = tolerance, newBg = bgType) => {
     if (imageSrc) {
-      processBackgroundRemoval(imageSrc, newTol, newBg, newColor);
+      processBackgroundRemoval(imageSrc, newTol, newBg, '#ffffff');
     }
   };
 
@@ -146,116 +116,122 @@ export default function RemoveBgPage() {
     if (!processedSrc) return;
     const link = document.createElement('a');
     link.href = processedSrc;
-    link.download = `منتج_بدون_خلفية_${Date.now()}.png`;
+    link.download = `منتج_شفاف_${Date.now()}.png`;
     link.click();
 
     confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-bold mb-3">
-          <ShoppingBag className="w-4 h-4 text-purple-600" />
-          <span>الأداة المفضلة لتجار إنستغرام ومتاجر سلة وزد وشوبيفاي</span>
+      <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
+          <ShoppingBag className="w-3.5 h-3.5 text-[#cc9166]" />
+          <span>تفريغ صور المنتجات والتجارة الإلكترونية</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-gray-900">
-          إزالة وتفريغ خلفية الصور أونلاين
+        <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
+          إزالة خلفية الصور أونلاين
         </h1>
-        <p className="text-sm text-gray-500 mt-2 max-w-xl mx-auto">
-          ارفع صورة منتجك أو صورتك الشخصية وتخلص من الخلفية بنقرة واحدة مع تنزيل فوري بصيغة PNG الشفافة.
+        <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
+          ارفع صورة منتجك أو صورتك الشخصية وتخلص من الخلفية بنقرة واحدة مع تنزيل فوري بصيغة PNG الشفافة فائقة النقاء.
         </p>
       </div>
 
-      <AdBanner slot="remove-bg-top" />
+      <div className="max-w-4xl mx-auto">
+        <AdBanner slot="remove-bg-top" />
+      </div>
 
       {/* Main Upload / Workspace Area */}
       {!imageSrc ? (
-        <div className="relative border-2 border-dashed border-purple-300 hover:border-purple-500 rounded-3xl p-10 sm:p-16 text-center bg-purple-50/30 transition-colors">
+        <div className="max-w-4xl mx-auto relative border border-dashed border-[#2e3038] hover:border-[#cc9166] rounded-[10px] p-12 sm:p-20 text-center bg-[#040406] transition-colors">
           <input
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
-          <div className="w-16 h-16 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-4">
-            <Upload className="w-8 h-8" />
+          <div className="w-12 h-12 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166] flex items-center justify-center mx-auto mb-4">
+            <Upload className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-1">
+          <h3 className="text-base font-medium text-[#ffffff] mb-1">
             اسحب صورة المنتج أو اضغط هنا لرفعها
           </h3>
-          <p className="text-xs text-gray-500 max-w-md mx-auto">
-            يدعم صور JPG, PNG, WEBP. حجم الملف غير محدود ومعالجة سريعة.
+          <p className="text-xs text-[#5e616e] max-w-md mx-auto font-mono">
+            يدعم صور JPG, PNG, WEBP بدقة كاملة
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6">
           
-          {/* Controls Bar */}
-          <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+          {/* Controls Bar: Slash pill style */}
+          <div className="bg-[#040406] p-4 rounded-[10px] border border-[#1c1d22] flex flex-wrap items-center justify-between gap-4">
             
             {/* View switcher */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gray-500">العرض:</span>
-              <button
-                onClick={() => setViewMode('processed')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  viewMode === 'processed'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                المفرغة (النتيجة)
-              </button>
-              <button
-                onClick={() => setViewMode('original')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  viewMode === 'original'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                الصورة الأصلية
-              </button>
+              <span className="text-xs font-mono text-[#5e616e]">العرض:</span>
+              <div className="bg-[#121317] p-1 rounded-full border border-[#1c1d22] flex items-center">
+                <button
+                  onClick={() => setViewMode('processed')}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    viewMode === 'processed'
+                      ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                      : 'text-[#9194a1] hover:text-[#ffffff]'
+                  }`}
+                >
+                  النتيجة
+                </button>
+                <button
+                  onClick={() => setViewMode('original')}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    viewMode === 'original'
+                      ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                      : 'text-[#9194a1] hover:text-[#ffffff]'
+                  }`}
+                >
+                  الأصلية
+                </button>
+              </div>
             </div>
 
-            {/* Background type switcher */}
+            {/* Background type */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gray-500">نوع الخلفية:</span>
-              <button
-                onClick={() => {
-                  setBgType('transparent');
-                  reprocess(tolerance, 'transparent', customColor);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${
-                  bgType === 'transparent'
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
-                    : 'border-gray-200 bg-white text-gray-700'
-                }`}
-              >
-                شفافة (PNG)
-              </button>
-              <button
-                onClick={() => {
-                  setBgType('white');
-                  reprocess(tolerance, 'white', customColor);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${
-                  bgType === 'white'
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
-                    : 'border-gray-200 bg-white text-gray-700'
-                }`}
-              >
-                أبيض نقي (للمتاجر)
-              </button>
+              <span className="text-xs font-mono text-[#5e616e]">الخلفية:</span>
+              <div className="bg-[#121317] p-1 rounded-full border border-[#1c1d22] flex items-center">
+                <button
+                  onClick={() => {
+                    setBgType('transparent');
+                    reprocess(tolerance, 'transparent');
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    bgType === 'transparent'
+                      ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                      : 'text-[#9194a1] hover:text-[#ffffff]'
+                  }`}
+                >
+                  شفافة (PNG)
+                </button>
+                <button
+                  onClick={() => {
+                    setBgType('white');
+                    reprocess(tolerance, 'white');
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    bgType === 'white'
+                      ? 'bg-[#ffffff] text-[#000000] font-semibold'
+                      : 'text-[#9194a1] hover:text-[#ffffff]'
+                  }`}
+                >
+                  أبيض نقي
+                </button>
+              </div>
             </div>
 
             {/* Tolerance slider */}
             <div className="flex items-center gap-3">
-              <Sliders className="w-4 h-4 text-gray-400" />
-              <label className="text-xs font-bold text-gray-600">حساسية التفريغ:</label>
+              <Sliders className="w-3.5 h-3.5 text-[#5e616e]" />
+              <label className="text-xs font-mono text-[#9194a1]">الحساسية:</label>
               <input
                 type="range"
                 min="10"
@@ -264,15 +240,15 @@ export default function RemoveBgPage() {
                 onChange={(e) => {
                   const val = Number(e.target.value);
                   setTolerance(val);
-                  reprocess(val, bgType, customColor);
+                  reprocess(val, bgType);
                 }}
-                className="w-24 accent-purple-600 cursor-pointer"
+                className="w-20 accent-[#cc9166] cursor-pointer"
               />
-              <span className="text-xs text-gray-500 w-6">{tolerance}</span>
+              <span className="text-xs text-[#5e616e] font-mono">{tolerance}</span>
             </div>
 
             {/* New upload button */}
-            <label className="text-xs font-bold text-gray-600 hover:text-purple-600 cursor-pointer bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg border border-gray-200 transition-colors">
+            <label className="text-xs font-mono text-[#9194a1] hover:text-[#ffffff] cursor-pointer bg-[#121317] hover:bg-[#1c1d22] px-3.5 py-1.5 rounded-full border border-[#1c1d22] transition-colors">
               رفع صورة أخرى
               <input
                 type="file"
@@ -284,79 +260,78 @@ export default function RemoveBgPage() {
           </div>
 
           {/* Preview Box */}
-          <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
-            <div className="min-h-[420px] flex items-center justify-center rounded-2xl overflow-hidden relative border border-gray-100">
+          <div className="bg-[#040406] rounded-[10px] border border-[#1c1d22] p-6">
+            <div className="min-h-[420px] flex items-center justify-center rounded-[6px] overflow-hidden relative border border-[#1c1d22]">
               
               {/* Checkerboard Pattern for Transparency */}
               <div
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    'linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)',
+                    'linear-gradient(45deg, #121317 25%, transparent 25%), linear-gradient(-45deg, #121317 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #121317 75%), linear-gradient(-45deg, transparent 75%, #121317 75%)',
                   backgroundSize: '20px 20px',
                   backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#08080a',
                 }}
               />
 
               {processing && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
-                  <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mb-3" />
-                  <p className="text-sm font-bold text-purple-900">جاري إزالة وتفريغ الخلفية بدقة...</p>
+                <div className="absolute inset-0 bg-[#08080a]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-[#cc9166] border-t-transparent rounded-full animate-spin mb-3" />
+                  <p className="text-xs font-mono text-[#e2e3e9]">جاري تفريغ وعزل الخلفية...</p>
                 </div>
               )}
 
-              {/* Current Displayed Image */}
-              <div className="relative z-10 max-h-[500px] flex items-center justify-center p-4">
+              {/* Display Image */}
+              <div className="relative z-10 max-h-[480px] flex items-center justify-center p-4">
                 {viewMode === 'processed' && processedSrc ? (
                   <img
                     src={processedSrc}
                     alt="الصورة بدون خلفية"
-                    className="max-h-[480px] max-w-full object-contain drop-shadow-md rounded-lg"
+                    className="max-h-[460px] max-w-full object-contain rounded-[6px]"
                   />
                 ) : (
                   <img
                     src={imageSrc}
                     alt="الصورة الأصلية"
-                    className="max-h-[480px] max-w-full object-contain rounded-lg"
+                    className="max-h-[460px] max-w-full object-contain rounded-[6px]"
                   />
                 )}
               </div>
             </div>
 
-            {/* Bottom Download Bar */}
-            <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Check className="w-4 h-4 text-emerald-600" />
-                <span>جاهزة للتنزيل بجودة PNG شفافة كاملة الأبعاد</span>
+            {/* Bottom Bar: Slash White Pill */}
+            <div className="mt-6 pt-4 border-t border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2 text-xs text-[#5e616e] font-mono">
+                <Check className="w-3.5 h-3.5 text-[#cc9166]" />
+                <span>جاهز للتحميل بجودة PNG كاملة الأبعاد</span>
               </div>
 
               <button
                 onClick={handleDownload}
                 disabled={!processedSrc || processing}
-                className="w-full sm:w-auto px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm rounded-xl shadow-md shadow-purple-200 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                className="w-full sm:w-auto px-6 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" />
                 <span>تحميل الصورة بدون خلفية (PNG)</span>
               </button>
             </div>
           </div>
 
+          {/* Pro tip */}
+          <div className="p-5 bg-[#040406] rounded-[10px] border border-[#1c1d22] text-xs text-[#9194a1] flex items-start gap-3">
+            <span className="text-[#cc9166] font-mono font-bold shrink-0">TIP /</span>
+            <p className="leading-relaxed text-[#5e616e]">
+              لأصحاب المتاجر: التقط صور المنتجات أمام خلفية موحدة للحصول على تفريغ احترافي وحواف فائقة النعومة مباشرة بدون برامج تصميم.
+            </p>
+          </div>
+
         </div>
       )}
 
-      {/* Pro tip for sellers */}
-      <div className="mt-8 p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-        <div>
-          <h4 className="font-bold mb-1">نصيحة ذهبية لأصحاب المتاجر الإلكترونية وحسابات إنستغرام:</h4>
-          <p className="text-amber-800 leading-relaxed">
-            للحصول على أعلى دقة تفريغ بدون فقدان تفاصيل منتجك، التقط صور المنتجات تحت إضاءة جيدة وأمام خلفية بيضاء أو موحدة اللون. يمكنك أيضاً تجربة خيار &quot;أبيض نقي&quot; ليصبح منتجك جاهزاً مباشرة للنشر على منصات مثل أمازون وسلة وزد بدون أي تعديل إضافي.
-          </p>
-        </div>
+      <div className="max-w-4xl mx-auto">
+        <AdBanner slot="remove-bg-bottom" />
       </div>
-
-      <AdBanner slot="remove-bg-bottom" />
 
     </div>
   );

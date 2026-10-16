@@ -15,23 +15,22 @@ export default function AdBanner({
   const isDemo = !clientId || clientId.includes('demo') || clientId.includes('xxxx');
 
   if (isDemo) {
-    // Show a clean, aesthetic placeholder during development
     return (
       <div
-        className={`w-full my-6 p-4 rounded-xl border border-dashed border-gray-300 bg-gray-50/80 flex flex-col items-center justify-center text-center text-gray-400 select-none ${className}`}
+        className={`w-full my-8 p-4 rounded-[10px] border border-[#1c1d22] bg-[#040406] flex flex-col items-center justify-center text-center text-[#5e616e] select-none ${className}`}
       >
-        <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">
-          مساحة إعلانية (Google AdSense)
+        <span className="text-[10px] uppercase tracking-wider font-mono text-[#cc9166] mb-1">
+          مساحة إعلانية — Google AdSense
         </span>
-        <p className="text-xs text-gray-500">
-          سيظهر إعلان AdSense هنا تلقائياً عند إضافة معرف حسابك في ملف <code>.env.local</code>
+        <p className="text-xs text-[#5e616e]">
+          يظهر إعلان AdSense هنا تلقائياً عند إضافة معرف حسابك في ملف <code>.env.local</code>
         </p>
       </div>
     );
   }
 
   return (
-    <div className={`w-full overflow-hidden my-6 flex justify-center ${className}`}>
+    <div className={`w-full overflow-hidden my-8 flex justify-center ${className}`}>
       <ins
         className="adsbygoogle"
         style={{ display: 'block', minHeight: '90px' }}
