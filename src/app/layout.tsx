@@ -3,6 +3,8 @@ import { Cairo, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { LanguageProvider } from "@/context/LanguageContext";
+import Link from "next/link";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -25,21 +27,23 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "أدواتك | أدوات مجانية بالعربي: صانع السيرة الذاتية، دمج الـ PDF، إزالة الخلفية",
-  description: "أكبر منصة عربية مجانية للأدوات السريعة: أنشئ سيرة ذاتية جاهزة للعمل في تركيا وألمانيا والخليج، ادمج ووقع ملفات PDF، وأزل خلفيات الصور بنقرة واحدة بدون برامج.",
+  title: "أدواتك | ADAWAT — منصة الأدوات الذكية والمجانية",
+  description: "أكبر منصة عربية وعالمية للأدوات السريعة: أنشئ سيرة ذاتية جاهزة، ادمج ووقع ملفات PDF، وأزل خلفيات الصور بنقرة واحدة.",
   keywords: [
-    "صانع السيرة الذاتية بالعربي",
-    "CV جاهز للسوريين في تركيا وألمانيا",
-    "دمج ملفات PDF أونلاين",
-    "توقيع PDF مجانا",
+    "صانع السيرة الذاتية",
+    "CV جاهز",
+    "دمج ملفات PDF",
+    "توقيع PDF",
     "إزالة خلفية الصورة",
-    "تحويل Word إلى PDF",
-    "أدوات مجانية بالعربي"
+    "أدوات مجانية",
+    "Resume Builder",
+    "PDF Tools",
+    "Remove BG"
   ],
-  authors: [{ name: "منصة أدواتك" }],
+  authors: [{ name: "المبرمج محمد حجو HACCO" }],
   openGraph: {
-    title: "أدواتك | أدوات مجانية واحترافية بالعربي",
-    description: "أدوات سريعة ومجانية لتحويل وتعديل المستندات والصور وصناعة السيرة الذاتية الاحترافية.",
+    title: "أدواتك | ADAWAT — الأدوات الذكية السريعة",
+    description: "أدوات متطورة لتحويل وتعديل المستندات والصور وصناعة السيرة الذاتية الاحترافية.",
     locale: "ar_AR",
     type: "website",
   },
@@ -53,23 +57,23 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${cairo.variable} ${inter.variable} ${playfair.variable} dark`}>
       <body className="font-sans min-h-screen flex flex-col bg-[#08080a] text-[#e2e3e9] antialiased">
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <LanguageProvider>
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
 
-        {/* Floating Quick WhatsApp / Contact Pill */}
-        <a
-          href="https://wa.me/905319666195"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="تواصل مع المبرمج محمد حجو عبر واتساب"
-          className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2.5 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#25D366] transition-all shadow-2xl group"
-        >
-          <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
-          <span className="font-sans font-medium">تواصل مع المبرمج (واتساب)</span>
-        </a>
+          {/* Clean Floating Badge linking to Contact page */}
+          <Link
+            href="/contact"
+            title="تواصل مع المبرمج محمد حجو (HACCO)"
+            className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
+            <span className="font-sans text-[11px] font-medium">المبرمج محمد حجو</span>
+          </Link>
+        </LanguageProvider>
       </body>
     </html>
   );
