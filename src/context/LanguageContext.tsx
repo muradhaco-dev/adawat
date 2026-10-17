@@ -72,19 +72,6 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Floating Pill
     'floating.dev': 'المبرمج محمد حجو (HACCO)',
-
-    // Auth & Verification
-    'auth.verify.title': 'تحقق من بريدك الإلكتروني',
-    'auth.verify.desc': 'أرسلنا رسالة تحتوي على رابط لتأكيد وتفعيل حسابك إلى:',
-    'auth.verify.instruction': 'يرجى فتح بريدك والضغط على الرابط لتأكيد الحساب والبدء في استخدام أدواتك.',
-    'auth.verify.spam': 'إذا لم تجد الرسالة في صندوق الوارد، يرجى التحقق من مجلد الرسائل غير المرغوب فيها (Spam / Junk) أو الرسائل الترويجية.',
-    'auth.verify.openGmail': 'فتح بريد Gmail الآن ↗',
-    'auth.verify.resend': 'إعادة إرسال رسالة التأكيد',
-    'auth.verify.resendSuccess': 'تم إرسال رابط تأكيد جديد إلى بريدك بنجاح!',
-    'auth.verify.backToSignin': 'العودة لتسجيل الدخول',
-    'auth.error.unconfirmed': 'لم يتم تفعيل هذا الحساب بعد! يرجى فتح رسائل بريدك والضغط على رابط التفعيل.',
-    'auth.error.disposable': 'عذراً، غير مسموح باستخدام البريد الإلكتروني المؤقت أو الوهمي. يرجى استخدام بريد حقيقي (مثل Gmail أو Outlook).',
-    'auth.error.alreadyRegistered': 'هذا البريد مسجل مسبقاً! يرجى تسجيل الدخول بدلاً من ذلك.',
   },
   en: {
     // Navigation
@@ -145,19 +132,6 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Floating Pill
     'floating.dev': 'Developer: Mohamed Hacco (HACCO)',
-
-    // Auth & Verification
-    'auth.verify.title': 'Verify your email address',
-    'auth.verify.desc': 'We sent a confirmation link to your email:',
-    'auth.verify.instruction': 'Please open your inbox and click the verification link to activate your account and access tools.',
-    'auth.verify.spam': 'If you do not see the email, please check your Spam, Junk, or Promotions folder.',
-    'auth.verify.openGmail': 'Open Gmail ↗',
-    'auth.verify.resend': 'Resend confirmation email',
-    'auth.verify.resendSuccess': 'A new confirmation link was sent to your email!',
-    'auth.verify.backToSignin': 'Back to sign in',
-    'auth.error.unconfirmed': 'This account has not been verified yet! Please check your inbox and click the activation link.',
-    'auth.error.disposable': 'Disposable or temporary email addresses are not permitted. Please use a valid email (e.g. Gmail or Outlook).',
-    'auth.error.alreadyRegistered': 'This email is already registered! Please sign in instead.',
   },
 };
 
