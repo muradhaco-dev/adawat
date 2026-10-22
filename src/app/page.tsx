@@ -91,29 +91,45 @@ export default function HomePage() {
 
   const faqs = lang === 'ar' ? [
     {
-      q: 'هل الأدوات مجانية بالكامل؟',
-      a: 'نعم، جميع الأدوات الأساسية (صانع السيرة الذاتية، دمج وتوقيع الـ PDF، وتفريغ الصور) مجانية بدون رسوم خفية. كما توجد باقة Pro اختيارية للأفراد والمتاجر الراغبين في سعة غير محدودة وتجربة خالية تماماً من الإعلانات.',
+      q: 'ما الذي يشمله المجاني؟ وما الفرق مع Pro؟',
+      a: 'جميع الأدوات الأساسية مجانية بلا حدود: صانع السيرة الذاتية، دمج وتوقيع ملفات PDF، وإزالة خلفية الصور. باقة Pro اختيارية وتوفر حصة رفع أكبر (ملفات كبيرة الحجم)، تجربة خالية من الإعلانات، ودعم متقدم.',
     },
     {
-      q: 'كيف تضمنون أمان المستندات والصور الحساسة؟',
-      a: 'تعتمد المنصة على تقنية المعالجة من طرف العميل (Client-Side)، حيث تتم عمليات دمج وتوقيع وتعديل الملفات مباشرة داخل ذاكرة متصفحك ولا يتم رفع أي ملف إلى خوادم خارجية إطلاقاً.',
+      q: 'هل تُرفع ملفاتي إلى خوادم خارجية؟',
+      a: 'لا. تعتمد المنصة على المعالجة المحلية Client-Side بالكامل: دمج وتوقيع ملفات PDF ومعالجة الصور تتم داخل ذاكرة متصفحك مباشرة دون إرسال أي بيانات لأي خادم خارجي.',
+    },
+    {
+      q: 'هل تستغرق إزالة الخلفية وقتاً طويلاً؟',
+      a: 'يعتمد ذلك على أول استخدام: عند أول فتح للأداة يتم تحميل نموذج الذكاء الاصطناعي المفتوح المصدر (Transformers.js) في الخلفية مما قد يستغرق بضع ثوانٍ. بعد ذلك تعمل الأداة بسرعة ملحوظة في كل مرة.',
     },
     {
       q: 'هل السيرة الذاتية ملائمة لسوق العمل في أوروبا وتركيا والخليج؟',
-      a: 'صممت قوالب السيرة الذاتية وفق المعايير العالمية الحديثة الخالية من التعقيدات الرسومية والتي تتجاوز أنظمة فحص السير الذاتية الآلية (ATS) بنجاح.',
+      a: 'نعم. صُممت القوالب وفق معايير CV الدولية الحديثة المتوافقة مع أنظمة ATS الآلية (Applicant Tracking Systems)، وبتنسيقات قابلة للقراءة في ألمانيا وتركيا ودول الخليج. لا تتضمن صوراً أو ألواناً تعيق المسح الآلي.',
+    },
+    {
+      q: 'هل الأسئلة الشائعة هذه تظهر في نتائج البحث؟',
+      a: 'نعم. نصوص الأسئلة والأجوبة موجودة في الكود HTML بالكامل ولا تعتمد على JavaScript لظهورها، مما يجعلها قابلة للأرشفة الكاملة بواسطة محركات البحث.',
     },
   ] : [
     {
-      q: 'Are all tools completely free to use?',
-      a: 'Yes, all core utilities (Resume builder, PDF merge & sign, Background removal) are free forever. A Pro plan is available for users seeking unlimited quota and an ad-free experience.',
+      q: 'What is free, and what does Pro include?',
+      a: 'All core tools are free with no usage limits: Resume builder, PDF merge & sign, and background removal. The optional Pro plan adds larger file upload quota, an ad-free experience, and priority support.',
     },
     {
-      q: 'How is data privacy guaranteed for sensitive files?',
-      a: 'The platform operates purely client-side. File processing occurs in your browser memory and is never uploaded to remote servers.',
+      q: 'Are my files uploaded to any external server?',
+      a: 'No. The platform is fully client-side: PDF merging, signing, and image processing all happen inside your browser memory. No binary data is ever sent across the internet.',
     },
     {
-      q: 'Are the resumes compliant with ATS standards?',
-      a: 'Yes, our templates adhere to international CV guidelines (EuroPass & modern clean formats) readable by Applicant Tracking Systems.',
+      q: 'Does background removal take a long time?',
+      a: 'On the very first use, the open-source AI model (Transformers.js) needs to download and initialize, which may take a few seconds. Subsequent uses are noticeably faster as the model is cached.',
+    },
+    {
+      q: 'Are resumes compatible with ATS and EuroPass standards?',
+      a: 'Yes. All resume templates follow international ATS-compatible guidelines (clean text layouts, no decorative images or unusual fonts that block automated parsing). They are aligned with EuroPass structure and tailored for European, Turkish, and GCC hiring portals.',
+    },
+    {
+      q: 'Are these FAQ answers visible to search engines?',
+      a: 'Yes. All question and answer text is rendered in static HTML and does not depend on JavaScript to appear, ensuring full crawlability and indexing by search engines.',
     },
   ];
 
@@ -130,7 +146,7 @@ export default function HomePage() {
             <span>{t('hero.eyebrow')}</span>
           </div>
 
-          {/* Display Headline — Serif collision */}
+          {/* Display Headline */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-normal text-[#ffffff] tracking-tight leading-[1.1] max-w-4xl mx-auto">
             {t('hero.title')}
           </h1>
@@ -190,11 +206,6 @@ export default function HomePage() {
 
         </div>
       </section>
-
-      {/* Ad slot */}
-      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
-        <AdBanner slot="home-top-leaderboard" />
-      </div>
 
       {/* Tools Section */}
       <section className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -273,6 +284,11 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* Ad slot — placed AFTER tools section, not before content */}
+      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
+        <AdBanner slot="home-mid-leaderboard" />
+      </div>
+
       {/* Stat proof points — Slash Style */}
       <section className="border-y border-[#1c1d22] bg-[#040406] py-16">
         <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -323,7 +339,7 @@ export default function HomePage() {
             </h3>
             <p className="text-xs text-[#9194a1] leading-relaxed">
               {lang === 'ar'
-                ? 'تقنيات WebAssembly و Web-Canvas تتيح معالجة ملفات PDF والصور داخل متصفحك بدون الحاجة لتحميلها إلى أي سيرفر خارجي.'
+                ? 'تقنيات WebAssembly و Web Canvas تتيح معالجة ملفات PDF والصور داخل متصفحك بدون الحاجة لتحميلها إلى أي سيرفر خارجي.'
                 : 'WebAssembly and Canvas APIs allow complete local file transformation without ever sending binary data across the wire.'}
             </p>
           </div>
@@ -338,7 +354,7 @@ export default function HomePage() {
             <p className="text-xs text-[#9194a1] leading-relaxed">
               {lang === 'ar'
                 ? 'ملفات PDF مطابقة للمواصفات الرسمية وصور PNG شفافة بأعلى دقة تلبي متطلبات الطباعة ومتاجر التجارة الإلكترونية.'
-                : 'ISO-standard PDF output and lossless PNG cutouts tailored for physical print and e-commerce catalogs.'}
+                : 'PDF output and lossless PNG cutouts tailored for physical print and e-commerce catalogs.'}
             </p>
           </div>
 
@@ -347,18 +363,18 @@ export default function HomePage() {
               <ShieldCheck className="w-4 h-4" />
             </div>
             <h3 className="text-base font-medium text-[#ffffff] mb-2">
-              {lang === 'ar' ? 'متوافقة مع سوق العمل' : 'ATS Standards Ready'}
+              {lang === 'ar' ? 'متوافقة مع ATS وEuroPass' : 'ATS & EuroPass Compatible'}
             </h3>
             <p className="text-xs text-[#9194a1] leading-relaxed">
               {lang === 'ar'
-                ? 'قوالب السيرة الذاتية تراعي متطلبات التوظيف لسوق العمل في ألمانيا وتركيا ودول الخليج وتنسيق EuroPass.'
-                : 'Resume templates crafted for modern European and international corporate hiring portals.'}
+                ? 'قوالب السيرة الذاتية تتبع معايير EuroPass وتتجاوز أنظمة الفحص الآلي ATS المستخدمة في بوابات التوظيف الأوروبية والخليجية والتركية.'
+                : 'Resume templates follow EuroPass structure and are validated to pass ATS parsing used by corporate hiring portals across Europe, Turkey, and the GCC.'}
             </p>
           </div>
         </div>
       </section>
 
-      {/* FAQs — Hairline accordions */}
+      {/* FAQs — Static HTML for full SEO crawlability */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="text-center mb-10">
           <span className="text-xs font-mono uppercase tracking-wider text-[#cc9166] block mb-2">
@@ -369,6 +385,10 @@ export default function HomePage() {
           </h2>
         </div>
 
+        {/* 
+          SEO NOTE: Answers are always in the DOM (hidden via max-height/opacity CSS only).
+          This ensures full crawlability by search engines regardless of JS state.
+        */}
         <div className="space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = faqOpen === index;
@@ -376,23 +396,32 @@ export default function HomePage() {
               <div
                 key={index}
                 className="border border-[#1c1d22] rounded-[10px] bg-[#040406] overflow-hidden"
+                itemScope
+                itemType="https://schema.org/Question"
               >
                 <button
                   onClick={() => setFaqOpen(isOpen ? null : index)}
                   className="w-full py-4 px-5 text-start flex items-center justify-between gap-4 font-medium text-sm text-[#ffffff] hover:text-[#cc9166] transition-colors"
+                  aria-expanded={isOpen}
                 >
-                  <span>{faq.q}</span>
+                  <span itemProp="name">{faq.q}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-[#777a88] transition-transform ${
+                    className={`w-4 h-4 text-[#777a88] transition-transform shrink-0 ${
                       isOpen ? 'rotate-180 text-[#cc9166]' : ''
                     }`}
                   />
                 </button>
-                {isOpen && (
-                  <div className="px-5 pb-5 text-xs text-[#9194a1] leading-relaxed border-t border-[#1c1d22] pt-3">
-                    {faq.a}
-                  </div>
-                )}
+                {/* Answer always rendered in DOM for SEO, visually hidden when collapsed */}
+                <div
+                  itemScope
+                  itemType="https://schema.org/Answer"
+                  className={`px-5 text-xs text-[#9194a1] leading-relaxed border-t border-[#1c1d22] transition-all duration-200 ${
+                    isOpen ? 'pb-5 pt-3 max-h-96 opacity-100' : 'max-h-0 overflow-hidden opacity-0 border-t-0'
+                  }`}
+                  aria-hidden={!isOpen}
+                >
+                  <span itemProp="text">{faq.a}</span>
+                </div>
               </div>
             );
           })}

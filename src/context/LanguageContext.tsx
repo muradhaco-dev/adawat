@@ -52,13 +52,13 @@ const translations: Record<Language, Record<string, string>> = {
     // Stats
     'stats.privacy': '100%',
     'stats.privacy.label': 'خصوصية وأمان محلي',
-    'stats.privacy.sub': 'معالجة الملفات في ذاكرة جهازك دون رفعها لخوادم',
+    'stats.privacy.sub': 'معالجة الملفات في ذاكرة متصفحك دون رفعها لأي خادم خارجي',
     'stats.speed': '< 1s',
-    'stats.speed.label': 'سرعة المعالجة',
-    'stats.speed.sub': 'تنفيذ فوري وتحميل مباشر بدون طوابير انتظار',
+    'stats.speed.label': 'دمج PDF والـ CV',
+    'stats.speed.sub': 'دمج الملفات وإنشاء السيرة الذاتية يتمّ في أقل من ثانية — إزالة الخلفية تستغرق ثوانٍ للتحميل الأول',
     'stats.free': '0$',
-    'stats.free.label': 'أدوات مجانية للأبد',
-    'stats.free.sub': 'خدمات أساسية متكاملة لجميع المستخدمين',
+    'stats.free.label': 'الأدوات الأساسية مجانية',
+    'stats.free.sub': 'دمج PDF، التوقيع، وإزالة الخلفية مجانية — Pro يوفر سعة غير محدودة وبلا إعلانات',
 
     // Footer
     'footer.brandDesc': 'منصة الأدوات اليومية السريعة. معالجة المستندات، تفريغ الصور للمتاجر، وتوليد السير الذاتية المهنية.',
@@ -111,14 +111,14 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Stats
     'stats.privacy': '100%',
-    'stats.privacy.label': 'Local Privacy & Security',
-    'stats.privacy.sub': 'In-browser memory processing without third-party servers',
+    'stats.privacy.label': 'In-Browser Privacy',
+    'stats.privacy.sub': 'All file processing happens inside your browser — nothing is uploaded to any server',
     'stats.speed': '< 1s',
-    'stats.speed.label': 'Execution Latency',
-    'stats.speed.sub': 'Instant local execution without queue waiting times',
+    'stats.speed.label': 'PDF Merge & CV Speed',
+    'stats.speed.sub': 'PDF merging and resume generation complete in under a second — BG removal takes a few seconds on first load',
     'stats.free': '$0',
-    'stats.free.label': 'Free Forever Core Suite',
-    'stats.free.sub': 'Essential everyday utilities for all users',
+    'stats.free.label': 'Core Tools Are Free',
+    'stats.free.sub': 'Merge, sign, remove BG — all free. Pro adds unlimited usage and ad-free experience',
 
     // Footer
     'footer.brandDesc': 'Fast everyday digital utilities. Document manipulation, product photo isolation, and professional resume building.',

@@ -281,8 +281,6 @@ export default function CVBuilderPage() {
         </div>
       </div>
 
-      <AdBanner slot="cv-builder-top" />
-
       {/* Template Switcher: Slash Pill */}
       <div className="my-8 p-3 bg-[#040406] rounded-[10px] border border-[#1c1d22] flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs font-mono uppercase text-[#cc9166]">
@@ -775,6 +773,35 @@ export default function CVBuilderPage() {
           </div>
         </div>
 
+      </div>
+
+      {/* ATS & EuroPass Standard Guide */}
+      <div className="mt-12 p-6 rounded-[10px] bg-[#040406] border border-[#1c1d22]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#9194a1]">
+          <div>
+            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">01 / متوافق مع أنظمة ATS</h4>
+            <p className="leading-relaxed">
+              تعتمد القوالب على هيكلية نصية قياسية يسهل قراءتها بواسطة خوارزميات الفحص الآلي بدون عناصر بصرية معقدة تتسبب برفض ملفك.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">02 / معايير EuroPass</h4>
+            <p className="leading-relaxed">
+              تنسيق الأقسام متطابق مع متطلبات التوظيف في دول الاتحاد الأوروبي (ألمانيا وهولندا وغيرها) والشركات الدولية في تركيا والخليج.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">03 / تصدير PDF نقي</h4>
+            <p className="leading-relaxed">
+              توليد ملفات PDF بحجم A4 قياسي مع طباعة واضحة للنصوص ومستويات تباين ملائمة للمسح الضوئي والفرز الأوتوماتيكي.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Ad slot: Placed neatly AFTER the workspace */}
+      <div className="mt-8">
+        <AdBanner slot="cv-builder-bottom" />
       </div>
 
     </div>

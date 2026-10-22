@@ -167,20 +167,20 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 mt-12 border-t border-[#1c1d22] text-xs text-[#5e616e] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>
-            © {new Date().getFullYear()} منصة أدواتك — {t('footer.devCredit')}{' '}
-            <Link
-              href="/contact"
-              className="text-[#ffffff] hover:text-[#cc9166] transition-colors font-medium hover:underline"
-            >
-              محمد حجو (HACCO)
-            </Link>
+            © {new Date().getFullYear()} منصة أدواتك — {t('footer.rights')}
           </p>
           <div className="flex items-center gap-3 text-[11px] text-[#777a88] font-mono">
             <Link href="/contact" className="hover:text-[#ffffff] transition-colors">
               {t('nav.contact')}
             </Link>
             <span>/</span>
-            <span>HACCO DEV</span>
+            <Link href="/pricing" className="hover:text-[#ffffff] transition-colors">
+              {t('nav.pro')}
+            </Link>
+            <span>/</span>
+            <Link href="/auth" className="hover:text-[#ffffff] transition-colors">
+              {t('nav.signin')}
+            </Link>
           </div>
         </div>
       </div>

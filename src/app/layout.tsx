@@ -28,8 +28,11 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "أدواتك | ADAWAT — منصة الأدوات الذكية والمجانية",
-  description: "أكبر منصة عربية وعالمية للأدوات السريعة: أنشئ سيرة ذاتية جاهزة، ادمج ووقع ملفات PDF، وأزل خلفيات الصور بنقرة واحدة.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://adawat.vercel.app'
+  ),
+  title: "أدواتك | ADAWAT — أدوات PDF والسيرة الذاتية وإزالة الخلفية",
+  description: "منصة أدوات مجانية متخصصة: أنشئ سيرة ذاتية متوافقة مع ATS، ادمج ملفات PDF ووقّعها، وأزل خلفية الصور — كل ذلك داخل متصفحك مع خصوصية تامة.",
   keywords: [
     "صانع السيرة الذاتية",
     "CV جاهز",
@@ -39,14 +42,23 @@ export const metadata: Metadata = {
     "أدوات مجانية",
     "Resume Builder",
     "PDF Tools",
-    "Remove BG"
+    "Remove Background",
+    "ATS Resume",
+    "EuroPass CV",
+    "سيرة ذاتية عربية",
   ],
-  authors: [{ name: "المبرمج محمد حجو HACCO" }],
+  authors: [{ name: "Mohamed Hacco — HACCO DEV" }],
   openGraph: {
-    title: "أدواتك | ADAWAT — الأدوات الذكية السريعة",
-    description: "أدوات متطورة لتحويل وتعديل المستندات والصور وصناعة السيرة الذاتية الاحترافية.",
+    title: "أدواتك | ADAWAT — أدوات PDF والسيرة الذاتية وإزالة الخلفية",
+    description: "أدوات مجانية متخصصة: دمج PDF، توقيع المستندات، إزالة خلفية الصور، وصانع السيرة الذاتية المتوافق مع ATS وEuroPass.",
     locale: "ar_AR",
     type: "website",
+    siteName: "أدواتك — ADAWAT",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "أدواتك | ADAWAT — أدوات PDF والسيرة الذاتية وإزالة الخلفية",
+    description: "أدوات مجانية متخصصة: دمج PDF، إزالة خلفية الصور، وصانع السيرة الذاتية المتوافق مع ATS.",
   },
 };
 
@@ -67,14 +79,14 @@ export default function RootLayout({
             </main>
             <Footer />
 
-            {/* Clean Floating Badge linking to Contact page */}
+            {/* Developer Contact Badge — single instance */}
             <Link
               href="/contact"
-              title="تواصل مع المبرمج محمد حجو (HACCO)"
+              title="تواصل مع المطوّر محمد حجو (HACCO)"
               className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
             >
               <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
-              <span className="font-sans text-[11px] font-medium">المبرمج محمد حجو</span>
+              <span className="font-sans text-[11px] font-medium">تواصل معنا</span>
             </Link>
           </div>
         </LanguageProvider>
