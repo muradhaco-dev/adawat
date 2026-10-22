@@ -147,7 +147,7 @@ export default function HomePage() {
               href="/tools"
               className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors"
             >
-              ✨ {lang === 'ar' ? 'عرض كافة الأدوات الـ 5' : 'View all 5 tools'}
+              ✨ {lang === 'ar' ? 'عرض كافة الأدوات الـ 6' : 'View all 6 tools'}
             </Link>
             <Link
               href="/pdf-tools"
@@ -160,6 +160,12 @@ export default function HomePage() {
               className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors"
             >
               🖼️ {lang === 'ar' ? 'تفريغ الصور' : 'Remove BG'}
+            </Link>
+            <Link
+              href="/qr-code"
+              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors"
+            >
+              📱 {lang === 'ar' ? 'صانع الـ QR' : 'Smart QR'}
             </Link>
           </div>
 

@@ -106,6 +106,11 @@ export default function Footer() {
                   {t('nav.bg')}
                 </Link>
               </li>
+              <li>
+                <Link href="/qr-code" className="hover:text-[#ffffff] transition-colors">
+                  {t('nav.qr')}
+                </Link>
+              </li>
             </ul>
           </div>
 

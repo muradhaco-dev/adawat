@@ -42,6 +42,7 @@ export default function Navbar() {
     { href: '/cv-builder', label: t('nav.cv'), badge: lang === 'ar' ? 'رائج' : 'Hot' },
     { href: '/pdf-tools', label: t('nav.pdf') },
     { href: '/remove-bg', label: t('nav.bg') },
+    { href: '/qr-code', label: t('nav.qr') },
     { href: '/pricing', label: t('nav.pricing') },
     { href: '/contact', label: t('nav.contact') },
   ];

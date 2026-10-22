@@ -12,7 +12,8 @@ import {
   ShieldCheck, 
   FileCheck,
   Sparkles,
-  Sliders
+  Sliders,
+  QrCode
 } from 'lucide-react';
 import AdBanner from '@/components/AdBanner';
 import { useLanguage } from '@/context/LanguageContext';
@@ -66,10 +67,22 @@ export default function ToolsCatalogPage() {
       category: lang === 'ar' ? 'التجارة والتصميم' : 'E-Commerce',
       categoryKey: 'design',
       icon: ImageIcon,
-      badge: lang === 'ar' ? 'للمتاجر' : 'Stores',
+      badge: lang === 'ar' ? 'ذكاء اصطناعي' : 'AI Engine',
       href: '/remove-bg',
-      tags: ['Background', 'PNG', 'تفريغ الصور', 'عزل خلفية', 'منتجات', 'متجر'],
+      tags: ['Background', 'PNG', 'تفريغ الصور', 'عزل خلفية', 'منتجات', 'متجر', 'AI'],
       actionText: lang === 'ar' ? 'تفريغ الصورة' : 'Remove Background',
+    },
+    {
+      id: 'qr-code',
+      title: t('tools.qr.title'),
+      description: t('tools.qr.desc'),
+      category: lang === 'ar' ? 'التسويق والمتاجر' : 'Marketing & QR',
+      categoryKey: 'qr',
+      icon: QrCode,
+      badge: lang === 'ar' ? 'جديد' : 'New',
+      href: '/qr-code',
+      tags: ['QR', 'كود QR', 'باركود', 'روابط', 'صور', 'واتساب', 'لوجو', 'Barcode'],
+      actionText: lang === 'ar' ? 'صنع كود QR' : 'Create QR Code',
     },
     {
       id: 'doc-convert',
@@ -89,7 +102,8 @@ export default function ToolsCatalogPage() {
     { key: 'all', label: lang === 'ar' ? 'كافة الأدوات' : 'All Tools' },
     { key: 'documents', label: lang === 'ar' ? 'المستندات والـ PDF' : 'PDF & Documents' },
     { key: 'careers', label: lang === 'ar' ? 'التوظيف والسيرة الذاتية' : 'Careers & CV' },
-    { key: 'design', label: lang === 'ar' ? 'التجارة وتفريغ الصور' : 'E-Commerce & Images' },
+    { key: 'design', label: lang === 'ar' ? 'تفريغ الصور' : 'Background Removal' },
+    { key: 'qr', label: lang === 'ar' ? 'أكواد QR والتسويق' : 'QR & Marketing' },
     { key: 'converter', label: lang === 'ar' ? 'التحويل والمساعدات' : 'Converters' },
   ];
 
