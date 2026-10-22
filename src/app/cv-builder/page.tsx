@@ -112,8 +112,46 @@ export default function CVBuilderPage() {
     setAiProgress(20);
     setAiStep('جاري استخراج وتحليل بياناتك ومؤهلاتك...');
 
-    await new Promise((r) => setTimeout(r, 600));
-    setAiProgress(50);
+    // Try Google AI Studio (Gemini) endpoint if configured
+    try {
+      setAiProgress(40);
+      setAiStep('جاري استدعاء محرك الذكاء الاصطناعي (Google AI Studio)...');
+
+      const res = await fetch('/api/ai/cv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt.trim(), language: aiLang }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          const d = json.data;
+          setCvData({
+            fullName: d.fullName || 'محمد خالد الأحمد',
+            jobTitle: d.jobTitle || 'أخصائي محترف',
+            email: d.email || 'user@example.com',
+            phone: d.phone || '+90 534 000 0000',
+            location: d.location || 'إسطنبول، تركيا',
+            summary: d.summary || '',
+            skills: Array.isArray(d.skills) ? d.skills : [],
+            experiences: Array.isArray(d.experiences) ? d.experiences : [],
+            education: Array.isArray(d.education) ? d.education : [],
+            languages: Array.isArray(d.languages) ? d.languages : [],
+          });
+          setAiProgress(100);
+          setAiStep('تمت صياغة السيرة الذاتية بنجاح عبر الذكاء الاصطناعي!');
+          await new Promise((r) => setTimeout(r, 400));
+          setAiLoading(false);
+          confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('API endpoint offline, utilizing smart local engine:', e);
+    }
+
+    setAiProgress(60);
     setAiStep('جاري بناء الهيكل المهني وصياغة الملخص بمعايير ATS...');
 
     await new Promise((r) => setTimeout(r, 650));
