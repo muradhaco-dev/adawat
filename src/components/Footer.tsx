@@ -131,6 +131,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/privacy" className="hover:text-[#ffffff] transition-colors">
+                  {t('footer.privacy')}
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="hover:text-[#ffffff] transition-colors">
                   {t('nav.contact')}
                 </Link>
@@ -170,6 +175,10 @@ export default function Footer() {
             © {new Date().getFullYear()} منصة أدواتك — {t('footer.rights')}
           </p>
           <div className="flex items-center gap-3 text-[11px] text-[#777a88] font-mono">
+            <Link href="/privacy" className="hover:text-[#ffffff] transition-colors">
+              {t('footer.privacy')}
+            </Link>
+            <span>/</span>
             <Link href="/contact" className="hover:text-[#ffffff] transition-colors">
               {t('nav.contact')}
             </Link>

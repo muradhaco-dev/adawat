@@ -16,6 +16,7 @@ const translations: Record<Language, Record<string, string>> = {
   ar: {
     // Navigation
     'nav.home': 'الرئيسية',
+    'nav.tools': 'الأدوات',
     'nav.cv': 'صانع الـ CV',
     'nav.pdf': 'أدوات الـ PDF',
     'nav.bg': 'إزالة الخلفية',
@@ -34,6 +35,8 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.searchPlaceholder': 'ابحث عن أداة (مثال: دمج PDF، سيرة ذاتية، إزالة خلفية...)',
     'hero.quickBrowse': 'تصفح سريع:',
     'hero.instantSearch': 'بحث فوري',
+    'hero.exploreTools': 'تصفح جميع الأدوات',
+    'hero.cvAction': 'بدء صانع السيرة الذاتية',
 
     // Tools
     'tools.eyebrow': 'مكتبة الأدوات',
@@ -69,6 +72,7 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.devDesc': 'تطوير وبرمجة وتصميم المنصة',
     'footer.rights': 'جميع الحقوق محفوظة.',
     'footer.devCredit': 'تطوير وبرمجة:',
+    'footer.privacy': 'سياسة الخصوصية',
 
     // Floating Pill
     'floating.dev': 'المبرمج محمد حجو (HACCO)',
@@ -76,6 +80,7 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navigation
     'nav.home': 'Home',
+    'nav.tools': 'Tools',
     'nav.cv': 'CV Builder',
     'nav.pdf': 'PDF Tools',
     'nav.bg': 'Remove BG',
@@ -94,6 +99,8 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.searchPlaceholder': 'Search tools (e.g. Merge PDF, Resume, Background removal...)',
     'hero.quickBrowse': 'Quick access:',
     'hero.instantSearch': 'Instant search',
+    'hero.exploreTools': 'Explore All Tools',
+    'hero.cvAction': 'Build ATS Resume',
 
     // Tools
     'tools.eyebrow': 'UTILITY SUITE',
@@ -129,6 +136,7 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.devDesc': 'Platform engineering & architecture',
     'footer.rights': 'All rights reserved.',
     'footer.devCredit': 'Developed by:',
+    'footer.privacy': 'Privacy Policy',
 
     // Floating Pill
     'floating.dev': 'Developer: Mohamed Hacco (HACCO)',

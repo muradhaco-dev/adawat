@@ -38,6 +38,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: t('nav.home') },
+    { href: '/tools', label: t('nav.tools') },
     { href: '/cv-builder', label: t('nav.cv'), badge: lang === 'ar' ? 'رائج' : 'Hot' },
     { href: '/pdf-tools', label: t('nav.pdf') },
     { href: '/remove-bg', label: t('nav.bg') },

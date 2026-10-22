@@ -6,130 +6,96 @@ import {
   FileText, 
   Layers, 
   Image as ImageIcon, 
-  PenTool, 
-  Search, 
   ArrowLeft, 
   Lock, 
   Zap, 
   ShieldCheck, 
-  FileCheck, 
-  ChevronDown 
+  ChevronDown,
+  Sparkles,
+  ArrowUpRight,
+  CheckCircle2
 } from 'lucide-react';
 import AdBanner from '@/components/AdBanner';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function HomePage() {
-  const [searchTerm, setSearchTerm] = useState('');
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const { t, lang } = useLanguage();
 
-  const tools = [
+  const corePillars = [
     {
-      id: 'cv-builder',
-      title: t('tools.cv.title'),
-      description: t('tools.cv.desc'),
-      category: lang === 'ar' ? 'التوظيف والمهن' : 'Careers',
-      icon: FileText,
+      title: lang === 'ar' ? 'صانع السيرة الذاتية ATS' : 'ATS Resume Builder',
+      desc: lang === 'ar'
+        ? 'قوالب سيرة ذاتية احترافية متوافقة مع أنظمة الفحص الآلي للشركات في أوروبا والخليج مع تصدير مباشر لملف PDF.'
+        : 'ATS-compliant resume generator structured for European, Turkish, and GCC hiring portals with instant export.',
       badge: lang === 'ar' ? 'الأكثر طلباً' : 'Popular',
+      icon: FileText,
       href: '/cv-builder',
-      tags: ['سيرة ذاتية', 'CV', 'Resume', 'Jobs'],
-      actionText: lang === 'ar' ? 'بدء إنشاء السيرة' : 'Build Resume',
+      actionText: lang === 'ar' ? 'إنشاء سيرة ذاتية' : 'Build Resume',
     },
     {
-      id: 'pdf-merge',
-      title: t('tools.pdf.title'),
-      description: t('tools.pdf.desc'),
-      category: lang === 'ar' ? 'المستندات' : 'Documents',
-      icon: Layers,
+      title: lang === 'ar' ? 'أدوات الـ PDF المتكاملة' : 'Integrated PDF Suite',
+      desc: lang === 'ar'
+        ? 'ادمج عدة مستندات PDF في ملف واحد، وقّع العقود بيدك، أو حوّل الصور إلى PDF داخل متصفحك مباشرة وبخصوصية مطلقة.'
+        : 'Merge multiple PDF files, sign contracts electronically, and convert photos to PDF locally in your browser.',
       badge: lang === 'ar' ? 'معالجة محلية' : 'Local Engine',
+      icon: Layers,
       href: '/pdf-tools',
-      tags: ['PDF', 'Merge', 'دمج PDF'],
-      actionText: lang === 'ar' ? 'دمج الملفات الآن' : 'Merge Files',
+      actionText: lang === 'ar' ? 'أدوات الـ PDF' : 'PDF Tools',
     },
     {
-      id: 'remove-bg',
-      title: t('tools.bg.title'),
-      description: t('tools.bg.desc'),
-      category: lang === 'ar' ? 'التجارة والتصميم' : 'E-Commerce',
+      title: lang === 'ar' ? 'تفريغ وعزل خلفية الصور' : 'Background Remover',
+      desc: lang === 'ar'
+        ? 'احصل على صور منتجات احترافية بخلفية شفافة PNG أو بيضاء نقية جاهزة لمتاجرك وإعلاناتك بنقرة واحدة.'
+        : 'Extract high-resolution product cutouts on transparent PNG or crisp white backdrops in a single click.',
+      badge: lang === 'ar' ? 'للمتاجر والتصميم' : 'E-Commerce',
       icon: ImageIcon,
-      badge: lang === 'ar' ? 'للمتاجر' : 'Stores',
       href: '/remove-bg',
-      tags: ['Background', 'PNG', 'تفريغ الصور'],
-      actionText: lang === 'ar' ? 'تفريغ الصورة' : 'Remove Background',
-    },
-    {
-      id: 'pdf-sign',
-      title: t('tools.sign.title'),
-      description: t('tools.sign.desc'),
-      category: lang === 'ar' ? 'المستندات' : 'Documents',
-      icon: PenTool,
-      badge: lang === 'ar' ? 'توقيع سريع' : 'Instant Sign',
-      href: '/pdf-tools?tab=sign',
-      tags: ['Sign', 'توقيع'],
-      actionText: lang === 'ar' ? 'توقيع المستند' : 'Sign PDF',
-    },
-    {
-      id: 'doc-convert',
-      title: t('tools.convert.title'),
-      description: t('tools.convert.desc'),
-      category: lang === 'ar' ? 'التحويل' : 'Converter',
-      icon: FileCheck,
-      badge: lang === 'ar' ? 'أدوات مساعدة' : 'Utility',
-      href: '/pdf-tools',
-      tags: ['Convert', 'تحويل'],
-      actionText: lang === 'ar' ? 'استخدام المحول' : 'Convert Files',
+      actionText: lang === 'ar' ? 'تفريغ الصور' : 'Remove Background',
     },
   ];
 
-  const filteredTools = tools.filter(
-    (t) =>
-      t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
   const faqs = lang === 'ar' ? [
     {
-      q: 'ما الذي يشمله المجاني؟ وما الفرق مع Pro؟',
-      a: 'جميع الأدوات الأساسية مجانية بلا حدود: صانع السيرة الذاتية، دمج وتوقيع ملفات PDF، وإزالة خلفية الصور. باقة Pro اختيارية وتوفر حصة رفع أكبر (ملفات كبيرة الحجم)، تجربة خالية من الإعلانات، ودعم متقدم.',
+      q: 'ما الذي تشمله الأدوات المجانية؟ وما الفرق مع باقة Pro؟',
+      a: 'جميع الأدوات الأساسية مجانية بالكامل بلا قيود: صانع السيرة الذاتية، دمج وتوقيع ملفات PDF، تحويل الصور، وإزالة خلفيات الصور. باقة Pro خيار إضافي يوفر رفع ملفات بأحجام أكبر، تجربة خالية من الإعلانات، وقوالب سيرة ذاتية حصرية.',
     },
     {
-      q: 'هل تُرفع ملفاتي إلى خوادم خارجية؟',
-      a: 'لا. تعتمد المنصة على المعالجة المحلية Client-Side بالكامل: دمج وتوقيع ملفات PDF ومعالجة الصور تتم داخل ذاكرة متصفحك مباشرة دون إرسال أي بيانات لأي خادم خارجي.',
+      q: 'هل تُرفع ملفاتي أو صوري إلى أي خوادم خارجية؟',
+      a: 'لا نهائياً. تعتمد المنصة على المعالجة من طرف العميل (Client-Side) بنسبة 100%؛ فملفات PDF والصور يتم معالجتها داخل الذاكرة المؤقتة لمتصفحك فقط ولا يتم نقل أي بايت عبر الإنترنت إلى أي سيرفر.',
     },
     {
       q: 'هل تستغرق إزالة الخلفية وقتاً طويلاً؟',
-      a: 'يعتمد ذلك على أول استخدام: عند أول فتح للأداة يتم تحميل نموذج الذكاء الاصطناعي المفتوح المصدر (Transformers.js) في الخلفية مما قد يستغرق بضع ثوانٍ. بعد ذلك تعمل الأداة بسرعة ملحوظة في كل مرة.',
+      a: 'في أول استخدام فقط قد يستغرق تجهيز النموذج المكتبي بضع ثوانٍ، وبعدها تتم عمليات المعالجة والعزل بسرعة ملحوظة داخل جهازك.',
     },
     {
-      q: 'هل السيرة الذاتية ملائمة لسوق العمل في أوروبا وتركيا والخليج؟',
-      a: 'نعم. صُممت القوالب وفق معايير CV الدولية الحديثة المتوافقة مع أنظمة ATS الآلية (Applicant Tracking Systems)، وبتنسيقات قابلة للقراءة في ألمانيا وتركيا ودول الخليج. لا تتضمن صوراً أو ألواناً تعيق المسح الآلي.',
+      q: 'هل قوالب السيرة الذاتية ملائمة لسوق العمل في أوروبا وتركيا والخليج؟',
+      a: 'نعم، تم تصميم قوالب الـ CV وفق المعايير الدولية الحديثة المتوافقة مع أنظمة ATS الآلية وقواعد EuroPass، وهي خالية من التعقيدات الرسومية التي تعيق قراءة أنظمة التوظيف.',
     },
     {
-      q: 'هل الأسئلة الشائعة هذه تظهر في نتائج البحث؟',
-      a: 'نعم. نصوص الأسئلة والأجوبة موجودة في الكود HTML بالكامل ولا تعتمد على JavaScript لظهورها، مما يجعلها قابلة للأرشفة الكاملة بواسطة محركات البحث.',
+      q: 'كيف يمكنني استعراض جميع الأدوات في صفحة واحدة؟',
+      a: 'يمكنك ببساطة الضغط على زر "تصفح جميع الأدوات" في الأعلى أو من شريط التنقل للوصول إلى مكتبة الأدوات الشاملة والبحث عن أي أداة تريدها.',
     },
   ] : [
     {
-      q: 'What is free, and what does Pro include?',
-      a: 'All core tools are free with no usage limits: Resume builder, PDF merge & sign, and background removal. The optional Pro plan adds larger file upload quota, an ad-free experience, and priority support.',
+      q: 'What is included in the free tier vs the Pro plan?',
+      a: 'All core utilities are 100% free with no hidden charges: resume generation, PDF merging, signing, image conversion, and background cutouts. The Pro plan offers larger file allowances, an ad-free experience, and exclusive template styles.',
     },
     {
-      q: 'Are my files uploaded to any external server?',
-      a: 'No. The platform is fully client-side: PDF merging, signing, and image processing all happen inside your browser memory. No binary data is ever sent across the internet.',
+      q: 'Are my files or images uploaded to any cloud server?',
+      a: 'Never. The platform operates 100% client-side: all binary transformations happen directly in your browser memory via WebAssembly and Canvas APIs. No file ever touches our servers.',
     },
     {
-      q: 'Does background removal take a long time?',
-      a: 'On the very first use, the open-source AI model (Transformers.js) needs to download and initialize, which may take a few seconds. Subsequent uses are noticeably faster as the model is cached.',
+      q: 'How fast is the background cutout feature?',
+      a: 'On first launch, the local model takes a few seconds to load into your browser cache. Subsequent cutouts operate quickly with instant downloads.',
     },
     {
-      q: 'Are resumes compatible with ATS and EuroPass standards?',
-      a: 'Yes. All resume templates follow international ATS-compatible guidelines (clean text layouts, no decorative images or unusual fonts that block automated parsing). They are aligned with EuroPass structure and tailored for European, Turkish, and GCC hiring portals.',
+      q: 'Are resume templates compliant with ATS and EuroPass standards?',
+      a: 'Yes. Templates follow clean semantic typography without decorative graphics that break automated applicant tracking systems across Europe, Turkey, and the GCC.',
     },
     {
-      q: 'Are these FAQ answers visible to search engines?',
-      a: 'Yes. All question and answer text is rendered in static HTML and does not depend on JavaScript to appear, ensuring full crawlability and indexing by search engines.',
+      q: 'Where can I find and search all tools?',
+      a: 'Click on the "Explore All Tools" button in the hero or the "Tools" link in the navigation to access the dedicated tools catalog with instant filtering.',
     },
   ];
 
@@ -155,139 +121,136 @@ export default function HomePage() {
             {t('hero.description')}
           </p>
 
-          {/* Search Bar */}
-          <div className="mt-10 max-w-xl mx-auto">
-            <div className="relative flex items-center rounded-full bg-[#040406] border border-[#2e3038] focus-within:border-[#ffffff] transition-colors p-1.5">
-              <Search className="w-4 h-4 text-[#777a88] mr-3 ml-3 shrink-0" />
-              <input
-                type="text"
-                placeholder={t('hero.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full py-2.5 text-sm text-[#ffffff] placeholder-[#5e616e] bg-transparent outline-none font-sans"
-              />
-              {searchTerm ? (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="text-xs text-[#9194a1] hover:text-[#ffffff] px-3 py-1 font-mono"
-                >
-                  {lang === 'ar' ? 'مسح' : 'Clear'}
-                </button>
-              ) : (
-                <span className="text-[11px] text-[#5e616e] font-mono px-3 hidden sm:inline">
-                  {t('hero.instantSearch')}
-                </span>
-              )}
-            </div>
+          {/* High-Converting CTA Buttons */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/tools"
+              className="px-8 py-3.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-sm font-semibold rounded-full transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-white/5"
+            >
+              <span>{t('hero.exploreTools')}</span>
+              <ArrowLeft className={`w-4 h-4 ${lang === 'en' ? 'rotate-180' : ''}`} />
+            </Link>
+
+            <Link
+              href="/cv-builder"
+              className="px-6 py-3.5 bg-[#040406] hover:bg-[#121317] text-[#ffffff] text-sm font-medium rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-colors flex items-center gap-2"
+            >
+              <span>{t('hero.cvAction')}</span>
+              <ArrowUpRight className="w-4 h-4 text-[#cc9166]" />
+            </Link>
           </div>
 
-          {/* Quick Pill Filter Tags */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs">
+          {/* Quick Pill Highlights */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-xs">
             <span className="text-[#5e616e] font-mono text-[11px] ml-1">{t('hero.quickBrowse')}</span>
-            <button
-              onClick={() => setSearchTerm(lang === 'ar' ? 'سيرة ذاتية' : 'Resume')}
-              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors font-sans"
+            <Link
+              href="/tools"
+              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors"
             >
-              {lang === 'ar' ? 'صانع الـ CV' : 'CV Builder'}
-            </button>
-            <button
-              onClick={() => setSearchTerm(lang === 'ar' ? 'دمج' : 'PDF')}
-              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors font-sans"
+              ✨ {lang === 'ar' ? 'عرض كافة الأدوات الـ 5' : 'View all 5 tools'}
+            </Link>
+            <Link
+              href="/pdf-tools"
+              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors"
             >
-              {lang === 'ar' ? 'دمج الـ PDF' : 'Merge PDF'}
-            </button>
-            <button
-              onClick={() => setSearchTerm(lang === 'ar' ? 'تفريغ' : 'Background')}
-              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors font-sans"
+              📑 {lang === 'ar' ? 'دمج وتوقيع PDF' : 'PDF Merge & Sign'}
+            </Link>
+            <Link
+              href="/remove-bg"
+              className="px-3 py-1 bg-[#040406] hover:bg-[#121317] text-[#9194a1] hover:text-[#ffffff] rounded-full border border-[#1c1d22] transition-colors"
             >
-              {lang === 'ar' ? 'تفريغ الصور' : 'Remove BG'}
-            </button>
+              🖼️ {lang === 'ar' ? 'تفريغ الصور' : 'Remove BG'}
+            </Link>
           </div>
 
         </div>
       </section>
 
-      {/* Tools Section */}
-      <section className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-10 pb-4 border-b border-[#1c1d22]">
+      {/* Featured Core Pillars Section */}
+      <section className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-12 pb-4 border-b border-[#1c1d22]">
           <div>
             <span className="text-xs font-mono uppercase tracking-wider text-[#cc9166] block mb-1">
-              {t('tools.eyebrow')}
+              {lang === 'ar' ? 'الخدمات الأساسية' : 'Core Services'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif text-[#ffffff]">
-              {t('tools.title')}
+              {lang === 'ar' ? 'أدوات يومية مصممة للسرعة والإنتاجية' : 'Daily utilities built for speed'}
             </h2>
           </div>
-          <span className="text-xs font-mono text-[#5e616e] mt-2 sm:mt-0">
-            {filteredTools.length} / {tools.length}
-          </span>
+          
+          <Link
+            href="/tools"
+            className="text-xs font-mono text-[#cc9166] hover:underline mt-2 sm:mt-0 flex items-center gap-1.5"
+          >
+            <span>{lang === 'ar' ? 'فتح صفحة الأدوات بالكامل ←' : 'Open full tools catalog →'}</span>
+          </Link>
         </div>
 
-        {filteredTools.length === 0 ? (
-          <div className="text-center py-20 bg-[#040406] rounded-[10px] border border-[#1c1d22]">
-            <p className="text-sm text-[#9194a1]">
-              {lang === 'ar' ? 'لم نعثر على أداة مطابقة لبحثك' : 'No tools matched your query'}
-            </p>
-            <button
-              onClick={() => setSearchTerm('')}
-              className="mt-3 text-xs text-[#cc9166] hover:underline font-mono"
-            >
-              {lang === 'ar' ? 'عرض كافة الأدوات' : 'View all tools'}
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTools.map((tool) => {
-              const Icon = tool.icon;
-              return (
-                <div
-                  key={tool.id}
-                  className="group bg-[#040406] rounded-[10px] border border-[#1c1d22] hover:border-[#2e3038] p-6 flex flex-col justify-between transition-colors"
-                >
-                  <div>
-                    {/* Header: Category & Badge */}
-                    <div className="flex items-center justify-between gap-3 mb-5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-[#121317] border border-[#1c1d22] flex items-center justify-center text-[#e2e3e9]">
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="text-[11px] font-mono uppercase tracking-wider text-[#cc9166]">
-                          {tool.category}
-                        </span>
-                      </div>
-                      <span className="text-[10px] text-[#9194a1] border border-[#2e3038] px-2 py-0.5 rounded-full font-mono">
-                        {tool.badge}
-                      </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {corePillars.map((pillar, idx) => {
+            const Icon = pillar.icon;
+            return (
+              <div
+                key={idx}
+                className="group bg-[#040406] rounded-[10px] border border-[#1c1d22] hover:border-[#2e3038] p-7 flex flex-col justify-between transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-[#121317] border border-[#1c1d22] flex items-center justify-center text-[#cc9166] group-hover:border-[#cc9166] transition-colors">
+                      <Icon className="w-5 h-5" />
                     </div>
-
-                    {/* Title & Description */}
-                    <h3 className="text-lg font-medium text-[#ffffff] mb-2 leading-snug">
-                      {tool.title}
-                    </h3>
-                    <p className="text-xs text-[#9194a1] leading-relaxed mb-6">
-                      {tool.description}
-                    </p>
+                    <span className="text-[10px] text-[#9194a1] border border-[#2e3038] px-2.5 py-0.5 rounded-full font-mono">
+                      {pillar.badge}
+                    </span>
                   </div>
 
-                  {/* Action Link: Pill Shape */}
-                  <Link
-                    href={tool.href}
-                    className="w-full flex items-center justify-between py-2.5 px-4 bg-[#121317] hover:bg-[#ffffff] text-[#e2e3e9] hover:text-[#000000] text-xs font-medium rounded-full border border-[#1c1d22] hover:border-[#ffffff] transition-all group-hover:border-[#2e3038]"
-                  >
-                    <span>{tool.actionText}</span>
-                    <ArrowLeft className={`w-3.5 h-3.5 ${lang === 'en' ? 'rotate-180' : ''}`} />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                  <h3 className="text-xl font-medium text-[#ffffff] mb-3 leading-snug group-hover:text-[#cc9166] transition-colors">
+                    {pillar.title}
+                  </h3>
 
-      {/* Ad slot — placed AFTER tools section, not before content */}
-      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
-        <AdBanner slot="home-mid-leaderboard" />
-      </div>
+                  <p className="text-xs text-[#9194a1] leading-relaxed mb-8">
+                    {pillar.desc}
+                  </p>
+                </div>
+
+                <Link
+                  href={pillar.href}
+                  className="w-full flex items-center justify-between py-2.5 px-4 bg-[#121317] hover:bg-[#ffffff] text-[#e2e3e9] hover:text-[#000000] text-xs font-medium rounded-full border border-[#1c1d22] hover:border-[#ffffff] transition-all"
+                >
+                  <span>{pillar.actionText}</span>
+                  <ArrowLeft className={`w-3.5 h-3.5 ${lang === 'en' ? 'rotate-180' : ''}`} />
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Big Banner CTA to Tools Page */}
+        <div className="mt-12 p-8 sm:p-10 rounded-[10px] bg-[#040406] border border-[#cc9166]/40 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-start">
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-[#cc9166] mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? 'مكتبة الأدوات الكاملة' : 'Complete Toolset'}</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-serif text-[#ffffff]">
+              {lang === 'ar' ? 'هل تبحث عن أداة محددة؟' : 'Looking for a specific utility?'}
+            </h3>
+            <p className="text-xs text-[#9194a1] mt-1">
+              {lang === 'ar'
+                ? 'استعرض جميع الأدوات بما في ذلك تحويل الصور إلى PDF وتوقيع العقود مع بحث فوري وتصنيف سريع.'
+                : 'Browse all tools including Image-to-PDF, electronic signing, and background cutout with instant filters.'}
+            </p>
+          </div>
+
+          <Link
+            href="/tools"
+            className="px-6 py-3 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-semibold rounded-full transition-all flex items-center gap-2 shrink-0 active:scale-95 shadow-md"
+          >
+            <span>{lang === 'ar' ? 'الانتقال إلى صفحة الأدوات' : 'Explore Tools Catalog'}</span>
+            <ArrowLeft className={`w-3.5 h-3.5 ${lang === 'en' ? 'rotate-180' : ''}`} />
+          </Link>
+        </div>
+      </section>
 
       {/* Stat proof points — Slash Style */}
       <section className="border-y border-[#1c1d22] bg-[#040406] py-16">
@@ -385,10 +348,6 @@ export default function HomePage() {
           </h2>
         </div>
 
-        {/* 
-          SEO NOTE: Answers are always in the DOM (hidden via max-height/opacity CSS only).
-          This ensures full crawlability by search engines regardless of JS state.
-        */}
         <div className="space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = faqOpen === index;
@@ -411,7 +370,6 @@ export default function HomePage() {
                     }`}
                   />
                 </button>
-                {/* Answer always rendered in DOM for SEO, visually hidden when collapsed */}
                 <div
                   itemScope
                   itemType="https://schema.org/Answer"
@@ -427,6 +385,11 @@ export default function HomePage() {
           })}
         </div>
       </section>
+
+      {/* Ad slot: Cleanly placed at bottom */}
+      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <AdBanner slot="home-bottom-leaderboard" />
+      </div>
 
     </div>
   );
