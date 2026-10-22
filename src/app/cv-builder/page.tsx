@@ -16,6 +16,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import AdBanner from '@/components/AdBanner';
 import { supabase } from '@/lib/supabase/client';
+import AuthGuard from '@/components/AuthGuard';
 
 export default function CVBuilderPage() {
   const resumeRef = useRef<HTMLDivElement>(null);
@@ -234,7 +235,8 @@ export default function CVBuilderPage() {
   };
 
   return (
-    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <AuthGuard toolName="صانع السيرة الذاتية المهنية (CV)">
+      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-6 pb-8 border-b border-[#1c1d22]">
@@ -799,11 +801,12 @@ export default function CVBuilderPage() {
         </div>
       </div>
 
-      {/* Ad slot: Placed neatly AFTER the workspace */}
-      <div className="mt-8">
-        <AdBanner slot="cv-builder-bottom" />
-      </div>
+        {/* Ad slot: Placed neatly AFTER the workspace */}
+        <div className="mt-8">
+          <AdBanner slot="cv-builder-bottom" />
+        </div>
 
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

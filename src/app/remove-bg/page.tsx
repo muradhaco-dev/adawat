@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
+import AuthGuard from '@/components/AuthGuard';
 
 export default function RemoveBgPage() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -286,7 +287,8 @@ export default function RemoveBgPage() {
   };
 
   return (
-    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <AuthGuard toolName="إزالة وتفريغ خلفية الصور">
+      <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
@@ -607,5 +609,6 @@ export default function RemoveBgPage() {
       </div>
 
     </div>
+    </AuthGuard>
   );
 }

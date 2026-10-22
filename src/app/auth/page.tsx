@@ -23,15 +23,25 @@ export default function AuthPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const getRedirectUrl = () => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const r = params.get('redirect');
+      if (r && r.startsWith('/')) return r;
+    }
+    return '/tools';
+  };
+
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
       setErrorMsg(null);
       const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const target = getRedirectUrl();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${origin}/auth/callback`,
+          redirectTo: `${origin}/auth/callback?redirect=${encodeURIComponent(target)}`,
         },
       });
       if (error) throw error;
@@ -54,6 +64,7 @@ export default function AuthPage() {
 
     try {
       setLoading(true);
+      const target = getRedirectUrl();
 
       if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({
@@ -70,7 +81,7 @@ export default function AuthPage() {
 
         setSuccessMsg('تم إنشاء الحساب بنجاح! تم تسجيل دخولك.');
         setTimeout(() => {
-          router.push('/');
+          router.push(target);
         }, 1200);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -82,7 +93,7 @@ export default function AuthPage() {
 
         setSuccessMsg('تم تسجيل الدخول بنجاح!');
         setTimeout(() => {
-          router.push('/');
+          router.push(target);
         }, 1000);
       }
     } catch (err: any) {

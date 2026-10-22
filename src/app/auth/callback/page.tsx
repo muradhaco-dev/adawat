@@ -8,13 +8,24 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const getTarget = () => {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const r = params.get('redirect');
+        if (r && r.startsWith('/')) return r;
+      }
+      return '/tools';
+    };
+
+    const target = getTarget();
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        router.push('/');
+        router.push(target);
       } else {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
           if (session) {
-            router.push('/');
+            router.push(target);
           }
         });
         return () => subscription.unsubscribe();
@@ -22,7 +33,7 @@ export default function AuthCallbackPage() {
     });
 
     const timeout = setTimeout(() => {
-      router.push('/');
+      router.push(target);
     }, 3000);
 
     return () => clearTimeout(timeout);

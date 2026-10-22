@@ -13,7 +13,8 @@ import {
   FileCheck,
   Sparkles,
   Sliders,
-  QrCode
+  QrCode,
+  Lock
 } from 'lucide-react';
 import AdBanner from '@/components/AdBanner';
 import { useLanguage } from '@/context/LanguageContext';
@@ -137,6 +138,11 @@ export default function ToolsCatalogPage() {
             ? 'مجموعة متكاملة من الأدوات السريعة المصممة لتسهيل عملك اليومي: دمج وتوقيع المستندات، تفريغ الصور، وبناء السير الذاتية بدون تعقيد وبأعلى خصوصية.'
             : 'A refined suite of browser-native digital utilities engineered for zero-latency document workflows, background extractions, and career documents.'}
         </p>
+
+        <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#121317] border border-[#2e3038] text-[11px] font-mono text-[#cc9166]">
+          <Lock className="w-3 h-3 text-[#cc9166]" />
+          <span>{lang === 'ar' ? 'يتطلب استخدام أي أداة تسجيل الدخول لحفظ ملفاتك ونتائجك' : 'Sign in is required to use tools and save your progress'}</span>
+        </div>
 
         {/* Search Bar */}
         <div className="mt-8 max-w-xl mx-auto">
