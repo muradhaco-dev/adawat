@@ -258,10 +258,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
       case 'cv_template': {
         const templateId = params?.templateId;
-        if (templateId === 'executive' || templateId === 'minimal') {
+        if (templateId === 'ats' || templateId === 'europass' || templateId === 'executive' || templateId === 'minimal') {
           return {
             allowed: false,
-            reason: `قوالب السيرة الذاتية المتقدمة (ATS و EuroPass) مخصصة لمشتركي باقة Pro فقط.`,
+            reason: `قوالب السيرة الذاتية المتقدمة (ATS Classic و EuroPass) مخصصة لمشتركي باقة Pro فقط.`,
           };
         }
         return { allowed: true };
