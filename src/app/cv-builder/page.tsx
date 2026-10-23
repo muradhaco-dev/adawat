@@ -26,8 +26,11 @@ import jsPDF from 'jspdf';
 import AdBanner from '@/components/AdBanner';
 import { supabase } from '@/lib/supabase/client';
 import AuthGuard from '@/components/AuthGuard';
+import { useSubscription } from '@/context/SubscriptionContext';
+import { Crown, Lock } from 'lucide-react';
 
 export default function CVBuilderPage() {
+  const { isPro, openPaywall } = useSubscription();
   const resumeRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState<'modern' | 'executive' | 'minimal'>('modern');
   const [downloading, setDownloading] = useState(false);
@@ -584,6 +587,24 @@ export default function CVBuilderPage() {
         return;
       }
 
+      // Check limit for Free users: only 1 saved resume
+      if (!isPro) {
+        const { count } = await supabase
+          .from('resumes')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', session.user.id);
+
+        if (count && count >= 1) {
+          openPaywall({
+            title: 'الحد الأقصى لحفظ السير الذاتية',
+            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وحفظ وتعديل نسخ متعددة.',
+            featureName: 'حفظ نسخ متعددة من السيرة الذاتية',
+          });
+          setSaving(false);
+          return;
+        }
+      }
+
       const { error } = await supabase.from('resumes').insert({
         user_id: session.user.id,
         title: `سيرة ذاتية - ${cvData.jobTitle || 'بدون عنوان'}`,
@@ -674,27 +695,51 @@ export default function CVBuilderPage() {
                 : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            العصري (Modern Indigo)
+            العصري (الأساسي مجاني)
           </button>
           <button
-            onClick={() => setTemplate('executive')}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            onClick={() => {
+              if (!isPro) {
+                openPaywall({
+                  title: 'قالب EuroPass التنفيذي للمحترفين',
+                  message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود لكافة القوالب وإزالة العلامة المائية.',
+                  featureName: 'قالب EuroPass المعتمد',
+                });
+                return;
+              }
+              setTemplate('executive');
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
               template === 'executive'
                 ? 'bg-[#ffffff] text-[#000000] font-semibold'
                 : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            التنفيذي الأوروبي (Executive Dark)
+            {!isPro && <Crown className="w-3 h-3 text-[#cc9166]" />}
+            <span>التنفيذي الأوروبي (EuroPass)</span>
+            {!isPro && <span className="text-[9px] font-mono bg-[#cc9166]/20 text-[#cc9166] px-1.5 py-0.2 rounded-full">PRO</span>}
           </button>
           <button
-            onClick={() => setTemplate('minimal')}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            onClick={() => {
+              if (!isPro) {
+                openPaywall({
+                  title: 'قالب ATS النظيف للمحترفين',
+                  message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود لكافة القوالب وإزالة العلامة المائية.',
+                  featureName: 'قالب ATS النظيف',
+                });
+                return;
+              }
+              setTemplate('minimal');
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
               template === 'minimal'
                 ? 'bg-[#ffffff] text-[#000000] font-semibold'
                 : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            البسيط النظيف (Minimalist)
+            {!isPro && <Crown className="w-3 h-3 text-[#cc9166]" />}
+            <span>البسيط المتوافق مع ATS</span>
+            {!isPro && <span className="text-[9px] font-mono bg-[#cc9166]/20 text-[#cc9166] px-1.5 py-0.2 rounded-full">PRO</span>}
           </button>
         </div>
       </div>
@@ -1305,6 +1350,15 @@ export default function CVBuilderPage() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Free Tier Watermark (Removed completely for Pro) */}
+              {!isPro && (
+                <div className="mt-8 pt-4 border-t border-gray-200 text-center text-[10px] text-gray-400 font-mono flex items-center justify-center gap-1.5 select-none">
+                  <span>تم الإنشاء بواسطة منصة أدوات</span>
+                  <span>•</span>
+                  <span>adawat.com</span>
                 </div>
               )}
 

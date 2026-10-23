@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
     // Prepare outbound FormData to remove.bg API
     const outboundFormData = new FormData();
     outboundFormData.append('image_file', imageFile);
-    outboundFormData.append('size', 'auto');
+    const requestedSize = (formData.get('size') as string) || 'auto';
+    outboundFormData.append('size', requestedSize);
 
     // Send request to remove.bg
     const removeBgRes = await fetch(REMOVE_BG_ENDPOINT, {

@@ -23,9 +23,12 @@ import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
 import AuthGuard from '@/components/AuthGuard';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSubscription } from '@/context/SubscriptionContext';
+import { Crown } from 'lucide-react';
 
 export default function QRCodeGeneratorPage() {
   const { lang } = useLanguage();
+  const { isPro, openPaywall } = useSubscription();
 
   // Mode: url | image | text | whatsapp | wifi
   const [mode, setMode] = useState<'url' | 'image' | 'text' | 'whatsapp' | 'wifi'>('url');
@@ -157,6 +160,15 @@ export default function QRCodeGeneratorPage() {
   ]);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isPro) {
+      openPaywall({
+        title: 'دمج الشعار داخل كود الـ QR ميزة للمحترفين',
+        message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وإمكانية دمج شعار شركتك أو صورتك في قلب الكود.',
+        featureName: 'دمج الشعار (Logo) داخل كود الـ QR',
+      });
+      return;
+    }
+
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -345,14 +357,26 @@ export default function QRCodeGeneratorPage() {
                 <div className="flex items-center gap-2 pb-3 border-b border-[#1c1d22]">
                   <button
                     type="button"
-                    onClick={() => setImageModeType('logo')}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    onClick={() => {
+                      if (!isPro) {
+                        openPaywall({
+                          title: 'دمج الشعار داخل كود الـ QR ميزة للمحترفين',
+                          message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وإمكانية دمج شعار شركتك أو صورتك في قلب الكود.',
+                          featureName: 'دمج الشعار (Logo) داخل كود الـ QR',
+                        });
+                        return;
+                      }
+                      setImageModeType('logo');
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
                       imageModeType === 'logo'
                         ? 'bg-[#121317] text-[#cc9166] border border-[#cc9166]/40'
                         : 'text-[#9194a1] hover:text-[#ffffff]'
                     }`}
                   >
-                    {lang === 'ar' ? '✨ دمج صورة / شعار في قلب الـ QR' : 'Branded Center Logo QR'}
+                    {!isPro && <Crown className="w-3 h-3 text-[#cc9166]" />}
+                    <span>{lang === 'ar' ? 'دمج صورة / شعار في قلب الـ QR' : 'Branded Center Logo QR'}</span>
+                    {!isPro && <span className="text-[9px] font-mono bg-[#cc9166]/20 text-[#cc9166] px-1.5 py-0.2 rounded-full">PRO</span>}
                   </button>
                   <button
                     type="button"
@@ -520,10 +544,18 @@ export default function QRCodeGeneratorPage() {
 
           {/* Styling & Customization Section */}
           <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-5">
-            <h3 className="text-xs font-mono uppercase text-[#cc9166] flex items-center gap-2">
-              <Palette className="w-3.5 h-3.5" />
-              <span>{lang === 'ar' ? 'تخصيص الألوان والأبعاد' : 'Styling & Export Settings'}</span>
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-mono uppercase text-[#cc9166] flex items-center gap-2">
+                <Palette className="w-3.5 h-3.5" />
+                <span>{lang === 'ar' ? 'تخصيص الألوان والأبعاد' : 'Styling & Export Settings'}</span>
+              </h3>
+              {!isPro && (
+                <span className="text-[10px] font-mono text-[#cc9166] bg-[#cc9166]/10 px-2 py-0.5 rounded-full border border-[#cc9166]/30 flex items-center gap-1">
+                  <Crown className="w-3 h-3" />
+                  الألوان الحرة لمشتركي Pro
+                </span>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
@@ -538,33 +570,73 @@ export default function QRCodeGeneratorPage() {
                       type="button"
                       onClick={() => setFgColor('#000000')}
                       className={`w-6 h-6 rounded-full bg-black border border-white/30 ${fgColor === '#000000' ? 'ring-2 ring-[#cc9166]' : ''}`}
-                      title="أسود"
+                      title="أسود (قياسي مجاني)"
                     />
                     <button
                       type="button"
-                      onClick={() => setFgColor('#cc9166')}
+                      onClick={() => {
+                        if (!isPro) {
+                          openPaywall({
+                            title: 'تخصيص ألوان الـ QR ميزة للمحترفين',
+                            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وتخصيص كافة الألوان والخلفيات بما يلائم علامتك التجارية.',
+                            featureName: 'تخصيص ألوان كود الـ QR',
+                          });
+                          return;
+                        }
+                        setFgColor('#cc9166');
+                      }}
                       className={`w-6 h-6 rounded-full bg-[#cc9166] border border-white/30 ${fgColor === '#cc9166' ? 'ring-2 ring-white' : ''}`}
-                      title="نحاسي مذهب"
+                      title="نحاسي مذهب (Pro)"
                     />
                     <button
                       type="button"
-                      onClick={() => setFgColor('#1d4ed8')}
+                      onClick={() => {
+                        if (!isPro) {
+                          openPaywall({
+                            title: 'تخصيص ألوان الـ QR ميزة للمحترفين',
+                            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وتخصيص كافة الألوان والخلفيات.',
+                            featureName: 'تخصيص ألوان كود الـ QR',
+                          });
+                          return;
+                        }
+                        setFgColor('#1d4ed8');
+                      }}
                       className={`w-6 h-6 rounded-full bg-blue-700 border border-white/30 ${fgColor === '#1d4ed8' ? 'ring-2 ring-[#cc9166]' : ''}`}
-                      title="أزرق"
+                      title="أزرق (Pro)"
                     />
                     <button
                       type="button"
-                      onClick={() => setFgColor('#059669')}
+                      onClick={() => {
+                        if (!isPro) {
+                          openPaywall({
+                            title: 'تخصيص ألوان الـ QR ميزة للمحترفين',
+                            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وتخصيص كافة الألوان والخلفيات.',
+                            featureName: 'تخصيص ألوان كود الـ QR',
+                          });
+                          return;
+                        }
+                        setFgColor('#059669');
+                      }}
                       className={`w-6 h-6 rounded-full bg-emerald-600 border border-white/30 ${fgColor === '#059669' ? 'ring-2 ring-[#cc9166]' : ''}`}
-                      title="أخضر"
+                      title="أخضر (Pro)"
                     />
                   </div>
                   <input
                     type="color"
                     value={fgColor}
-                    onChange={(e) => setFgColor(e.target.value)}
+                    onChange={(e) => {
+                      if (!isPro) {
+                        openPaywall({
+                          title: 'تخصيص ألوان الـ QR ميزة للمحترفين',
+                          message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وتخصيص كافة الألوان والخلفيات.',
+                          featureName: 'تخصيص ألوان كود الـ QR',
+                        });
+                        return;
+                      }
+                      setFgColor(e.target.value);
+                    }}
                     className="w-7 h-7 rounded-full bg-transparent border-0 cursor-pointer"
-                    title="لون مخصص"
+                    title="لون مخصص (Pro)"
                   />
                   <span className="text-[10px] font-mono text-[#5e616e]">{fgColor}</span>
                 </div>
@@ -585,18 +657,29 @@ export default function QRCodeGeneratorPage() {
                         : 'bg-[#121317] text-[#9194a1] border-[#1c1d22]'
                     }`}
                   >
-                    أبيض
+                    أبيض (قياسي مجاني)
                   </button>
                   <button
                     type="button"
-                    onClick={() => setBgColor('transparent')}
-                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    onClick={() => {
+                      if (!isPro) {
+                        openPaywall({
+                          title: 'الخلفية الشفافة ميزة للمحترفين',
+                          message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط لتوليد كود QR بخلفية شفافة عالية الدقة.',
+                          featureName: 'خلفية شفافة للـ QR',
+                        });
+                        return;
+                      }
+                      setBgColor('transparent');
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors flex items-center gap-1 ${
                       bgColor === 'transparent'
                         ? 'bg-[#121317] text-[#cc9166] border-[#cc9166]'
                         : 'bg-[#121317] text-[#9194a1] border-[#1c1d22]'
                     }`}
                   >
-                    شفاف
+                    <span>شفاف</span>
+                    {!isPro && <span className="text-[9px] font-mono bg-[#cc9166]/20 text-[#cc9166] px-1 rounded">PRO</span>}
                   </button>
                 </div>
               </div>

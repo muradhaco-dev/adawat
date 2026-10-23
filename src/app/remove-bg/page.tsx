@@ -20,8 +20,11 @@ import {
 import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
 import AuthGuard from '@/components/AuthGuard';
+import { useSubscription } from '@/context/SubscriptionContext';
+import { Crown } from 'lucide-react';
 
 export default function RemoveBgPage() {
+  const { isPro, checkCanUse, openPaywall, recordUsage, dailyUsage } = useSubscription();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [processedSrc, setProcessedSrc] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -125,15 +128,29 @@ export default function RemoveBgPage() {
 
   // High-Precision AI Removal powered by official remove.bg API
   const runAiBackgroundRemoval = async (source: Blob | File) => {
+    // Check daily limit for Free users (Max 2 images per day)
+    if (!isPro) {
+      const check = checkCanUse('bg_remove');
+      if (!check.allowed) {
+        openPaywall({
+          title: 'استنفاد الحد اليومي لتفريغ الصور',
+          message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وبدقة Ultra-HD فائقة النقاء.',
+          featureName: 'تفريغ صور غير محدود بدقة Ultra-HD',
+        });
+        return;
+      }
+    }
+
     try {
       setErrorMessage(null);
       setProcessing(true);
       setProgressPercent(15);
-      setProgressMsg('جاري تحضير ورفع الصورة إلى محرك remove.bg...');
+      setProgressMsg(isPro ? 'جاري رفع الصورة لمعالجة HD فائقة الدقة...' : 'جاري رفع الصورة إلى محرك remove.bg...');
 
       const formData = new FormData();
       formData.append('image_file', source);
-      formData.append('size', 'auto');
+      // Free users get standard preview/SD, Pro users get full auto HD
+      formData.append('size', isPro ? 'auto' : 'preview');
 
       setProgressPercent(45);
       setProgressMsg('يقوم الذكاء الاصطناعي في remove.bg بتفريغ وعزل الأطراف...');
@@ -167,13 +184,18 @@ export default function RemoveBgPage() {
 
       const blobResult = await response.blob();
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         const cutoutDataUrl = reader.result as string;
         rawCutoutDataUrlRef.current = cutoutDataUrl;
         applyBackgroundStyle(cutoutDataUrl, bgType, customColor);
         setProcessing(false);
         setProgressPercent(100);
         setProgressMsg('اكتملت إزالة الخلفية بنجاح!');
+
+        // Record daily usage for Free tier
+        if (!isPro) {
+          await recordUsage('bg_remove');
+        }
       };
       reader.readAsDataURL(blobResult);
 
@@ -301,12 +323,22 @@ export default function RemoveBgPage() {
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[#cc9166]" />
               <span className="text-xs font-mono text-[#ffffff]">المحرك النشط:</span>
-              <span className="text-xs font-mono text-[#cc9166]">remove.bg Cloud API (Auto Quality)</span>
+              <span className="text-xs font-mono text-[#cc9166]">
+                {isPro ? 'remove.bg Cloud API (Ultra-HD Pro)' : 'remove.bg Cloud API (SD Standard)'}
+              </span>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-[#9194a1]">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>مفتاح API متصل وموثّق</span>
+            <div className="flex items-center gap-3 text-xs font-mono">
+              {isPro ? (
+                <span className="flex items-center gap-1.5 text-[#cc9166] bg-[#cc9166]/10 px-3 py-1 rounded-full border border-[#cc9166]/30">
+                  <Crown className="w-3.5 h-3.5" />
+                  <span>باقة Pro: استخدام غير محدود فائق الدقة</span>
+                </span>
+              ) : (
+                <span className="text-[#9194a1] bg-[#121317] px-3 py-1 rounded-full border border-[#1c1d22]">
+                  المجاني: متبقي لك اليوم ({Math.max(0, 2 - (dailyUsage.bgCount || 0))} من 2)
+                </span>
+              )}
             </div>
           </div>
 

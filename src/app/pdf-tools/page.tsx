@@ -18,8 +18,11 @@ import { PDFDocument } from 'pdf-lib';
 import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
 import AuthGuard from '@/components/AuthGuard';
+import { useSubscription } from '@/context/SubscriptionContext';
+import { Crown, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function PDFToolsPage() {
+  const { isPro, checkCanUse, openPaywall, recordUsage, dailyUsage } = useSubscription();
   const [activeTab, setActiveTab] = useState<'merge' | 'sign' | 'convert'>('merge');
 
   // MERGE STATE
@@ -53,6 +56,37 @@ export default function PDFToolsPage() {
   const handleMergeFilesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files).filter((f) => f.type === 'application/pdf');
+      
+      const newTotalCount = mergeFiles.length + filesArray.length;
+      const newTotalSize = [...mergeFiles, ...filesArray].reduce((acc, file) => acc + file.size, 0);
+
+      // Check limits for Free users (Max 5 files, 15MB total)
+      if (!isPro) {
+        if (newTotalCount > 5) {
+          openPaywall({
+            title: 'تجاوز حد دمج الملفات (5 ملفات)',
+            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود ودمج أي عدد من الملفات بحجم يصل إلى 100 ميجابايت.',
+            featureName: 'دمج ملفات PDF غير محدود',
+          });
+          return;
+        }
+
+        if (newTotalSize > 15 * 1024 * 1024) {
+          openPaywall({
+            title: 'تجاوز الحجم الإجمالي المسموح (15 ميجابايت)',
+            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وسعة تصل إلى 100 ميجابايت.',
+            featureName: 'سعة ملفات حتى 100 ميجابايت',
+          });
+          return;
+        }
+      } else {
+        // Pro users: up to 100 MB
+        if (newTotalSize > 100 * 1024 * 1024) {
+          alert('تجاوز الحجم الإجمالي المسموح به في باقة Pro (100 ميجابايت). يرجى تقليل حجم الملفات.');
+          return;
+        }
+      }
+
       setMergeFiles((prev) => [...prev, ...filesArray]);
     }
   };
@@ -172,6 +206,20 @@ export default function PDFToolsPage() {
       alert('يرجى رفع ملف PDF أولاً');
       return;
     }
+
+    // Daily limit check for Free users (Max 2 signed documents per day)
+    if (!isPro) {
+      const check = checkCanUse('sign_pdf');
+      if (!check.allowed) {
+        openPaywall({
+          title: 'استنفاد الحد اليومي لتوقيع المستندات',
+          message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وتوقيع أي عدد من المستندات يومياً.',
+          featureName: 'توقيع مستندات إلكتروني غير محدود',
+        });
+        return;
+      }
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -204,6 +252,11 @@ export default function PDFToolsPage() {
       link.click();
       URL.revokeObjectURL(url);
 
+      // Record daily usage for free user
+      if (!isPro) {
+        await recordUsage('sign_pdf');
+      }
+
       confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
     } catch (err) {
       console.error(err);
@@ -217,6 +270,20 @@ export default function PDFToolsPage() {
   const handleConvertImagesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files).filter((f) => f.type.startsWith('image/'));
+      
+      // Limit check for Free users (Max 10 images per PDF)
+      if (!isPro) {
+        const totalCount = convertFiles.length + filesArray.length;
+        if (totalCount > 10) {
+          openPaywall({
+            title: 'تجاوز حد تجميع الصور (10 صور)',
+            message: 'لقد وصلت للحد الأقصى أو أن هذه الميزة للمحترفين. قم بالترقية إلى باقة Pro مقابل $3.99 فقط للتمتع بوصول غير محدود وتجميع أي عدد من الصور بدقة عالية.',
+            featureName: 'تحويل صور غير محدود إلى PDF',
+          });
+          return;
+        }
+      }
+
       const newItems = filesArray.map((file) => ({
         file,
         preview: URL.createObjectURL(file),

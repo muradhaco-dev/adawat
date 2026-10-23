@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { SubscriptionProvider } from "@/context/SubscriptionContext";
+import PaywallModal from "@/components/PaywallModal";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Chatbot from "@/components/Chatbot";
 import Link from "next/link";
@@ -72,27 +74,32 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" className={`${cairo.variable} ${inter.variable} ${playfair.variable} dark`}>
       <body className="font-sans min-h-screen flex flex-col bg-[#08080a] text-[#e2e3e9] antialiased">
         <LanguageProvider>
-          <AnimatedBackground />
-          <div className="relative z-10 flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
+          <SubscriptionProvider>
+            <AnimatedBackground />
+            <div className="relative z-10 flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
 
-            {/* Developer Contact Badge — single instance */}
-            <Link
-              href="/contact"
-              title="تواصل مع المطوّر محمد حجو (HACCO)"
-              className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
-              <span className="font-sans text-[11px] font-medium">تواصل معنا</span>
-            </Link>
+              {/* Global Pro Paywall Modal */}
+              <PaywallModal />
 
-            {/* Interactive n8n AI Chatbot Widget */}
-            <Chatbot />
-          </div>
+              {/* Developer Contact Badge — single instance */}
+              <Link
+                href="/contact"
+                title="تواصل مع المطوّر محمد حجو (HACCO)"
+                className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
+                <span className="font-sans text-[11px] font-medium">تواصل معنا</span>
+              </Link>
+
+              {/* Interactive n8n AI Chatbot Widget */}
+              <Chatbot />
+            </div>
+          </SubscriptionProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +32,7 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { lang, toggleLanguage, t } = useLanguage();
+  const { isPro } = useSubscription();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -273,10 +275,14 @@ export default function Navbar() {
             {/* Pro Button */}
             <Link
               href="/pricing"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#cc9166] bg-[#040406] hover:bg-[#121317] rounded-full border border-[#cc9166]/50 transition-colors"
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-full border transition-colors ${
+                isPro
+                  ? 'text-emerald-400 bg-emerald-950/30 border-emerald-500/40'
+                  : 'text-[#cc9166] bg-[#040406] hover:bg-[#121317] border-[#cc9166]/50'
+              }`}
             >
-              <Crown className="w-3 h-3 text-[#cc9166]" />
-              <span>{t('nav.pro')}</span>
+              <Crown className="w-3 h-3" />
+              <span>{isPro ? (lang === 'ar' ? 'Pro مُفعّل' : 'Pro Active') : (lang === 'ar' ? 'باقة Pro ($3.99)' : 'Pro $3.99')}</span>
             </Link>
 
             {/* User Session */}
