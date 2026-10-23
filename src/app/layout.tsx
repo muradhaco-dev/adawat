@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import Chatbot from "@/components/Chatbot";
 import Link from "next/link";
 
 const cairo = Cairo({
@@ -88,6 +89,9 @@ export default function RootLayout({
               <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
               <span className="font-sans text-[11px] font-medium">تواصل معنا</span>
             </Link>
+
+            {/* Interactive n8n AI Chatbot Widget */}
+            <Chatbot />
           </div>
         </LanguageProvider>
       </body>
