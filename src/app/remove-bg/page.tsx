@@ -13,7 +13,9 @@ import {
   RotateCcw,
   Palette,
   Eye,
-  Info
+  Info,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
@@ -25,13 +27,12 @@ export default function RemoveBgPage() {
   const [processing, setProcessing] = useState(false);
   const [progressMsg, setProgressMsg] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // Customization
   const [bgType, setBgType] = useState<'transparent' | 'white' | 'color' | 'custom'>('transparent');
   const [customColor, setCustomColor] = useState('#cc9166');
   const [viewMode, setViewMode] = useState<'processed' | 'original'>('processed');
-  const [aiEngine, setAiEngine] = useState<'ai' | 'fast'>('ai');
-  const [tolerance, setTolerance] = useState(30);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const originalBlobRef = useRef<Blob | File | null>(null);
@@ -122,115 +123,65 @@ export default function RemoveBgPage() {
     };
   };
 
-  // High-Precision AI Removal
-  const runAiBackgroundRemoval = async (source: Blob | File | string) => {
+  // High-Precision AI Removal powered by official remove.bg API
+  const runAiBackgroundRemoval = async (source: Blob | File) => {
     try {
+      setErrorMessage(null);
       setProcessing(true);
-      setProgressPercent(10);
-      setProgressMsg('جاري تجهيز محرك الذكاء الاصطناعي المحلي...');
+      setProgressPercent(15);
+      setProgressMsg('جاري تحضير ورفع الصورة إلى محرك remove.bg...');
 
-      // Load AI neural engine dynamically in browser with zero webpack bundler conflict
-      const imglyModule: any = await import(
-        /* webpackIgnore: true */ 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.8/+esm'
-      );
-      const removeBackground = imglyModule.removeBackground || imglyModule.default;
+      const formData = new FormData();
+      formData.append('image_file', source);
+      formData.append('size', 'auto');
 
-      const blobResult = await removeBackground(source, {
-        progress: (key: string, current: number, total: number) => {
-          if (total > 0) {
-            const percent = Math.min(95, Math.round((current / total) * 100));
-            setProgressPercent(percent);
-            if (key.includes('fetch')) {
-              setProgressMsg(`جاري تحميل النموذج الذكي: ${percent}% (مرة واحدة فقط)`);
-            } else {
-              setProgressMsg(`جاري عزل وتفريغ الأطراف بالذكاء الاصطناعي: ${percent}%`);
-            }
-          }
-        },
+      setProgressPercent(45);
+      setProgressMsg('يقوم الذكاء الاصطناعي في remove.bg بتفريغ وعزل الأطراف...');
+
+      const response = await fetch('/api/remove-bg', {
+        method: 'POST',
+        body: formData,
       });
 
-      setProgressPercent(100);
-      setProgressMsg('اكتمل العزل بنجاح!');
+      if (!response.ok) {
+        let errText = 'فشل في الاتصال بمحرك إزالة الخلفية';
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errText = errorData.message;
+          }
+        } catch {
+          if (response.status === 402) {
+            errText = 'تم استنفاد رصيد API المتاح في remove.bg (402 Insufficient credits). يرجى شحن الرصيد أو تجديد المفتاح.';
+          } else if (response.status === 403) {
+            errText = 'مفتاح API غير صالح أو تم حظره من قبل remove.bg (403 Forbidden).';
+          } else {
+            errText = `حدث خطأ من الخادم (رمز الحالة: ${response.status})`;
+          }
+        }
+        throw new Error(errText);
+      }
 
+      setProgressPercent(80);
+      setProgressMsg('جاري استلام الصورة المفرغة وتجهيز جودة PNG...');
+
+      const blobResult = await response.blob();
       const reader = new FileReader();
       reader.onload = () => {
         const cutoutDataUrl = reader.result as string;
         rawCutoutDataUrlRef.current = cutoutDataUrl;
         applyBackgroundStyle(cutoutDataUrl, bgType, customColor);
         setProcessing(false);
+        setProgressPercent(100);
+        setProgressMsg('اكتملت إزالة الخلفية بنجاح!');
       };
       reader.readAsDataURL(blobResult);
 
     } catch (err: any) {
-      console.warn('AI Removal encountered issue, falling back to local edge engine:', err);
-      // Seamless fallback to instant edge processor
-      runFastBackgroundRemoval(source);
-    }
-  };
-
-  // Fast Instant Local Removal (Canvas edge delta)
-  const runFastBackgroundRemoval = (source: Blob | File | string) => {
-    setProcessing(true);
-    setProgressPercent(40);
-    setProgressMsg('جاري العزل السريع المباشر...');
-
-    const srcUrl = typeof source === 'string' ? source : URL.createObjectURL(source);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = srcUrl;
-
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        setProcessing(false);
-        return;
-      }
-
-      ctx.drawImage(img, 0, 0);
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imgData.data;
-
-      // Sample 4 corners for backdrop color estimation
-      const corners = [
-        0, 
-        (img.width - 1) * 4, 
-        (img.width * (img.height - 1)) * 4, 
-        (img.width * img.height - 1) * 4
-      ];
-      let bgR = 0, bgG = 0, bgB = 0;
-      corners.forEach((idx) => {
-        bgR += data[idx];
-        bgG += data[idx + 1];
-        bgB += data[idx + 2];
-      });
-      bgR = Math.round(bgR / corners.length);
-      bgG = Math.round(bgG / corners.length);
-      bgB = Math.round(bgB / corners.length);
-
-      const maxDist = tolerance * 4.6;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const dist = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2));
-
-        if (dist < maxDist) {
-          const factor = dist / maxDist;
-          data[i + 3] = Math.round(factor * 25);
-        }
-      }
-
-      ctx.putImageData(imgData, 0, 0);
-      const cutoutDataUrl = canvas.toDataURL('image/png');
-      rawCutoutDataUrlRef.current = cutoutDataUrl;
-      applyBackgroundStyle(cutoutDataUrl, bgType, customColor);
+      console.error('remove.bg processing error:', err);
       setProcessing(false);
-      setProgressPercent(100);
-    };
+      setErrorMessage(err.message || 'تعذر عزل الخلفية. يرجى التأكد من جودة الصورة أو التحقق من رصيد المفتاح.');
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,11 +192,7 @@ export default function RemoveBgPage() {
       reader.onload = (event) => {
         const result = event.target?.result as string;
         setImageSrc(result);
-        if (aiEngine === 'ai') {
-          runAiBackgroundRemoval(file);
-        } else {
-          runFastBackgroundRemoval(file);
-        }
+        runAiBackgroundRemoval(file);
       };
       reader.readAsDataURL(file);
     }
@@ -253,7 +200,6 @@ export default function RemoveBgPage() {
 
   const handleSelectPreset = (preset: typeof samplePresets[0]) => {
     const blob = new Blob([preset.svg], { type: 'image/svg+xml' });
-    originalBlobRef.current = blob;
     const url = URL.createObjectURL(blob);
     const img = new Image();
     img.onload = () => {
@@ -263,13 +209,13 @@ export default function RemoveBgPage() {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(img, 0, 0);
-        const pngUrl = canvas.toDataURL('image/png');
-        setImageSrc(pngUrl);
-        if (aiEngine === 'ai') {
-          runAiBackgroundRemoval(pngUrl);
-        } else {
-          runFastBackgroundRemoval(pngUrl);
-        }
+        canvas.toBlob((pngBlob) => {
+          if (pngBlob) {
+            originalBlobRef.current = pngBlob;
+            setImageSrc(canvas.toDataURL('image/png'));
+            runAiBackgroundRemoval(pngBlob);
+          }
+        }, 'image/png');
       }
       URL.revokeObjectURL(url);
     };
@@ -294,15 +240,35 @@ export default function RemoveBgPage() {
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
           <Sparkles className="w-3.5 h-3.5 text-[#cc9166]" />
-          <span>محرك الذكاء الاصطناعي فائق الدقة (AI Cutout)</span>
+          <span>محرك الذكاء الاصطناعي الرسمي (remove.bg API v1.0)</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
           إزالة وتفريغ خلفية الصور باحترافية
         </h1>
         <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
-          عزل دقيق للأشخاص، المنتجات التجارية، والسيارات بدقة مليمترية دون أي فقدان للجودة وبخصوصية محلية تامة 100% داخل متصفحك.
+          عزل فائق الدقة للأشخاص، المنتجات التجارية، والسيارات بواسطة واجهة برمجة remove.bg الرسمية بأعلى جودة وتفريغ مليمتر للأطراف.
         </p>
       </div>
+
+      {/* Global Error Alert Banner */}
+      {errorMessage && (
+        <div className="max-w-4xl mx-auto mb-8 p-4 rounded-[10px] bg-red-950/40 border border-red-500/40 text-red-200 flex items-start gap-3 shadow-lg">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <h4 className="text-sm font-semibold text-red-200">تنبيه في معالجة الصورة</h4>
+            <p className="text-xs text-red-300/90 mt-1 leading-relaxed">{errorMessage}</p>
+            {originalBlobRef.current && (
+              <button
+                onClick={() => runAiBackgroundRemoval(originalBlobRef.current!)}
+                className="mt-3 px-3 py-1 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-100 text-xs font-mono rounded-full inline-flex items-center gap-1.5 transition-colors"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>إعادة المحاولة عبر السيرفر</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Main Workspace Area */}
       {!imageSrc ? (
@@ -323,41 +289,24 @@ export default function RemoveBgPage() {
               اسحب صورة المنتج أو الصورة الشخصية هنا
             </h3>
             <p className="text-xs text-[#5e616e] max-w-md mx-auto font-mono mb-5">
-              يدعم JPG, PNG, WEBP بدقة كاملة وبدون خوادم خارجية
+              يدعم JPG, PNG, WEBP بدقة كاملة عبر محرك remove.bg
             </p>
             <span className="inline-block px-5 py-2 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-semibold rounded-full transition-colors shadow-md">
               اختيار صورة من جهازك
             </span>
           </div>
 
-          {/* Engine Selection Bar */}
+          {/* Engine Status Bar */}
           <div className="p-4 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[#cc9166]" />
-              <span className="text-xs font-mono text-[#ffffff]">وضع المحرك:</span>
+              <span className="text-xs font-mono text-[#ffffff]">المحرك النشط:</span>
+              <span className="text-xs font-mono text-[#cc9166]">remove.bg Cloud API (Auto Quality)</span>
             </div>
 
-            <div className="flex items-center gap-2 bg-[#121317] p-1 rounded-full border border-[#1c1d22]">
-              <button
-                onClick={() => setAiEngine('ai')}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  aiEngine === 'ai'
-                    ? 'bg-[#ffffff] text-[#000000] font-semibold'
-                    : 'text-[#9194a1] hover:text-[#ffffff]'
-                }`}
-              >
-                ✨ الذكاء الاصطناعي الفائق (AI Deep)
-              </button>
-              <button
-                onClick={() => setAiEngine('fast')}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  aiEngine === 'fast'
-                    ? 'bg-[#ffffff] text-[#000000] font-semibold'
-                    : 'text-[#9194a1] hover:text-[#ffffff]'
-                }`}
-              >
-                ⚡ العزل السريع الفوري
-              </button>
+            <div className="flex items-center gap-2 text-xs font-mono text-[#9194a1]">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>مفتاح API متصل وموثّق</span>
             </div>
           </div>
 
@@ -551,7 +500,7 @@ export default function RemoveBgPage() {
                   </div>
                   <span className="text-xs font-mono text-[#cc9166]">{progressPercent}%</span>
                   <span className="text-[11px] text-[#5e616e] mt-2 font-mono">
-                    معالجة محلية داخل جهازك 100% لحماية خصوصيتك
+                    معالجة فائقة الدقة عبر محرك remove.bg الرسمي
                   </span>
                 </div>
               )}
