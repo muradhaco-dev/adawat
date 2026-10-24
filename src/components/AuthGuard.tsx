@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Lock, Mail, ShieldCheck, Sparkles, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,52 +13,9 @@ interface AuthGuardProps {
 }
 
 export default function AuthGuard({ children, toolName }: AuthGuardProps) {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useSubscription();
   const pathname = usePathname();
   const { lang } = useLanguage();
-
-  useEffect(() => {
-    let mounted = true;
-
-    // Safety timeout: If Supabase auth check takes more than 1200ms, force loading = false immediately
-    const safetyTimer = setTimeout(() => {
-      if (mounted) {
-        setLoading(false);
-      }
-    }, 1200);
-
-    supabase.auth.getSession()
-      .then(({ data: { session } }) => {
-        if (mounted) {
-          clearTimeout(safetyTimer);
-          setUser(session?.user ?? null);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.warn('Auth session check notice in AuthGuard:', err);
-        if (mounted) {
-          clearTimeout(safetyTimer);
-          setUser(null);
-          setLoading(false);
-        }
-      });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (mounted) {
-        clearTimeout(safetyTimer);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      mounted = false;
-      clearTimeout(safetyTimer);
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const handleGoogleSignIn = async () => {
     try {

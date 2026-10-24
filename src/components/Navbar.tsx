@@ -28,27 +28,10 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [toolsDropdown, setToolsDropdown] = useState(false);
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { lang, toggleLanguage, t } = useLanguage();
-  const { isPro } = useSubscription();
-
-  useEffect(() => {
-    supabase.auth.getSession()
-      .then(({ data: { session } }) => {
-        setUser(session?.user ?? null);
-      })
-      .catch(() => {
-        setUser(null);
-      });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { isPro, user } = useSubscription();
 
   // Close dropdown on outside click
   useEffect(() => {

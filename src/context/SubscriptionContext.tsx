@@ -79,9 +79,15 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     profile.subscription_status === 'active'
   );
 
-  const fetchProfile = useCallback(async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string, email?: string) => {
+    // If no userId, stop immediately without making queries
+    if (!userId) {
+      setProfile(null);
+      return null;
+    }
+
     try {
-      // 3.5s timeout for profile query so it never stalls the app
+      // 2.5s timeout for profile query so it never stalls the app
       const profilePromise = supabase
         .from('profiles')
         .select('*')
@@ -89,18 +95,19 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         .single();
 
       const timeoutPromise = new Promise<{ data: null; error: any }>((_, reject) =>
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 3500)
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 2500)
       );
 
       const { data, error } = (await Promise.race([profilePromise, timeoutPromise])) as any;
 
       if (data) {
         setProfile(data as Profile);
+        return data as Profile;
       } else if (error && (error.code === 'PGRST116' || error.message?.includes('timeout'))) {
-        // Record doesn't exist yet, insert default free profile or default state
+        // Record doesn't exist yet, insert default free profile
         const defaultProfile: Profile = {
           id: userId,
-          email: user?.email || '',
+          email: email || '',
           subscription_tier: 'free',
           subscription_status: 'active',
           daily_operations_count: 0,
@@ -109,37 +116,43 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         };
         setProfile(defaultProfile);
         supabase.from('profiles').insert(defaultProfile).then().catch(() => {});
+        return defaultProfile;
       } else {
-        setProfile({
+        const fallback: Profile = {
           id: userId,
-          email: user?.email || '',
+          email: email || '',
           subscription_tier: 'free',
           subscription_status: 'active',
           daily_operations_count: 0,
           last_operation_date: new Date().toISOString().split('T')[0],
           created_at: new Date().toISOString(),
-        });
+        };
+        setProfile(fallback);
+        return fallback;
       }
     } catch (err) {
-      console.warn('Notice in subscription profile fetch, defaulting to Free tier:', err);
-      setProfile({
+      console.warn('Subscription fetch notice, defaulting to Free tier:', err);
+      const fallback: Profile = {
         id: userId,
-        email: user?.email || '',
+        email: email || '',
         subscription_tier: 'free',
         subscription_status: 'active',
         daily_operations_count: 0,
         last_operation_date: new Date().toISOString().split('T')[0],
         created_at: new Date().toISOString(),
-      });
+      };
+      setProfile(fallback);
+      return fallback;
     }
-  }, [user]);
+  }, []);
 
   const refreshSubscription = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+      const sUser = session?.user ?? null;
+      setUser(sUser);
+      if (sUser) {
+        await fetchProfile(sUser.id, sUser.email);
       } else {
         setProfile(null);
       }
@@ -155,30 +168,33 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     let mounted = true;
 
-    // Safety timeout: Never leave context loading for more than 1500ms under any network conditions
+    // Safety timeout: Never leave context loading for more than 1000ms
     const safetyTimer = setTimeout(() => {
       if (mounted) {
         setLoading(false);
       }
-    }, 1500);
+    }, 1000);
 
     supabase.auth.getSession()
       .then(async ({ data: { session } }) => {
         if (!mounted) return;
         clearTimeout(safetyTimer);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          try {
-            await fetchProfile(session.user.id);
-          } catch {
-            // ignore
-          } finally {
-            if (mounted) setLoading(false);
-          }
-        } else {
-          // GUEST: immediately end loading state
+        const sUser = session?.user ?? null;
+        setUser(sUser);
+
+        // GUEST: Stop immediately! Do not query database for subscription profiles
+        if (!sUser) {
           setProfile(null);
           setLoading(false);
+          return;
+        }
+
+        try {
+          await fetchProfile(sUser.id, sUser.email);
+        } catch {
+          // ignore
+        } finally {
+          if (mounted) setLoading(false);
         }
       })
       .catch((err) => {
@@ -194,19 +210,22 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
       clearTimeout(safetyTimer);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        try {
-          await fetchProfile(session.user.id);
-        } catch {
-          // ignore
-        } finally {
-          if (mounted) setLoading(false);
-        }
-      } else {
-        // GUEST: immediately end loading state
+      const sUser = session?.user ?? null;
+      setUser(sUser);
+
+      // GUEST: Stop immediately!
+      if (!sUser) {
         setProfile(null);
         setLoading(false);
+        return;
+      }
+
+      try {
+        await fetchProfile(sUser.id, sUser.email);
+      } catch {
+        // ignore
+      } finally {
+        if (mounted) setLoading(false);
       }
     });
 
@@ -217,26 +236,37 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     };
   }, [fetchProfile]);
 
-  // Load and sync daily usage from storage
+  // Load and sync daily usage from storage strictly keyed by userId
+  const currentUserId = user?.id ?? null;
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
-    const key = user ? `adawat_usage_${user.id}_${today}` : `adawat_usage_guest_${today}`;
+    const key = currentUserId ? `adawat_usage_${currentUserId}_${today}` : `adawat_usage_guest_${today}`;
     try {
       const stored = localStorage.getItem(key);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.date === today) {
-          setDailyUsage(parsed);
+          setDailyUsage((prev) => {
+            if (prev.date === parsed.date && prev.signCount === parsed.signCount && prev.bgCount === parsed.bgCount) {
+              return prev;
+            }
+            return parsed;
+          });
           return;
         }
       }
       const initial = { date: today, signCount: 0, bgCount: 0 };
-      setDailyUsage(initial);
+      setDailyUsage((prev) => {
+        if (prev.date === initial.date && prev.signCount === 0 && prev.bgCount === 0) {
+          return prev;
+        }
+        return initial;
+      });
       localStorage.setItem(key, JSON.stringify(initial));
     } catch {
       // ignore
     }
-  }, [user]);
+  }, [currentUserId]);
 
   const openPaywall = (options: PaywallOptions = {}) => {
     setPaywallModal({
