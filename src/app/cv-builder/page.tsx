@@ -20,7 +20,8 @@ import {
   Sliders,
   CheckCircle2,
   AlertCircle,
-  Crown
+  Crown,
+  Loader2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
@@ -158,58 +159,127 @@ export default function CVBuilderPage() {
     },
   ];
 
-  // Helper: Extract Raw Text from PDF using pdf.js
+  // Concurrency Guard to prevent infinite loops or multiple simultaneous runs
+  const isProcessingRef = useRef(false);
+
+  // Helper: Extract Raw Text from PDF completely asynchronously without blocking the UI thread
   const extractTextFromPdf = async (file: File): Promise<string> => {
+    // 1. Safe singleton loading of pdf.js script
     if (!(window as any).pdfjsLib) {
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
+        const existing = document.getElementById('pdfjs-cdn-script');
+        if (existing) {
+          if ((window as any).pdfjsLib) {
+            resolve();
+            return;
+          }
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', () => reject(new Error('فشل تحميل محرك قراءة الـ PDF')));
+          return;
+        }
         const script = document.createElement('script');
+        script.id = 'pdfjs-cdn-script';
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        script.async = true;
+        const timer = setTimeout(() => reject(new Error('استغرق تحميل محرك الـ PDF وقتاً طويلاً')), 12000);
         script.onload = () => {
-          (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-          resolve(true);
+          clearTimeout(timer);
+          resolve();
         };
-        script.onerror = reject;
+        script.onerror = () => {
+          clearTimeout(timer);
+          reject(new Error('تعذر تحميل مكتبة قراءة المستندات'));
+        };
         document.head.appendChild(script);
       });
     }
 
     const pdfjsLib = (window as any).pdfjsLib;
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let fullText = '';
+    if (!pdfjsLib) {
+      throw new Error('محرك الـ PDF غير متاح حالياً');
+    }
 
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum);
-      const textContent = await page.getTextContent();
-      const pageStrings = textContent.items.map((item: any) => item.str).join(' ');
-      fullText += pageStrings + '\n\n';
+    try {
+      if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    } catch (e) {
+      console.warn('Worker configuration notice:', e);
+    }
+
+    // Yield to let browser update UI
+    await new Promise((r) => setTimeout(r, 20));
+    const arrayBuffer = await file.arrayBuffer();
+
+    // Yield again before document decoding
+    await new Promise((r) => setTimeout(r, 20));
+
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+      cMapPacked: true,
+      stopAtErrors: false,
+    });
+
+    const pdf = await loadingTask.promise;
+    let fullText = '';
+    // Safeguard against infinite loops: limit pages to max 10
+    const totalPages = Math.min(Math.max(pdf.numPages || 1, 1), 10);
+
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      // Vital: Yield 25ms to the event loop on every page to prevent main thread freeze
+      await new Promise((r) => setTimeout(r, 25));
+      try {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const pageStrings = (textContent.items || [])
+          .map((item: any) => (item && item.str ? item.str : ''))
+          .join(' ');
+        fullText += pageStrings + '\n\n';
+      } catch (pageErr) {
+        console.warn(`Skipping unreadable page ${pageNum}:`, pageErr);
+      }
     }
 
     return fullText.trim();
   };
 
-  // AI Generator Core: Calls Google Gemini or local parser fallback
+  // AI Generator Core: Calls Google Gemini or local parser fallback asynchronously
   const runAiCvGeneration = async (inputContent?: string) => {
-    const textToProcess = inputContent || aiPrompt.trim();
+    if (isProcessingRef.current) return;
+    const textToProcess = (inputContent || aiPrompt).trim();
     if (!textToProcess) {
       alert('يرجى إدخال نبذة عن نفسك أو رفع ملف سيرة ذاتية PDF للبدء');
       return;
     }
 
+    isProcessingRef.current = true;
     setAiLoading(true);
     setAiProgress(20);
     setAiStep('جاري قراءة وتحليل نصوص وخبرات السيرة الذاتية...');
 
+    // Small yield so React immediately renders the loading state
+    await new Promise((r) => setTimeout(r, 50));
+
+    let geminiSuccess = false;
+
     try {
-      setAiProgress(45);
-      setAiStep('يقوم Google Gemini بإعادة الصياغة الاحترافية وهيكلة الـ JSON...');
+      setAiProgress(50);
+      setAiStep('يقوم الذكاء الاصطناعي بإعادة الصياغة وهيكلة البيانات الاحترافية...');
+      await new Promise((r) => setTimeout(r, 30));
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 35000);
 
       const res = await fetch('/api/ai/cv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: textToProcess, language: aiLang }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (res.ok) {
         const json = await res.json();
@@ -228,75 +298,108 @@ export default function CVBuilderPage() {
             languages: Array.isArray(d.languages) ? d.languages : [],
           });
 
+          geminiSuccess = true;
           setAiProgress(100);
           setAiStep('اكتملت المعالجة بنجاح وتم حقن البيانات داخل القالب المختار!');
-          await new Promise((r) => setTimeout(r, 400));
-          setAiLoading(false);
+          await new Promise((r) => setTimeout(r, 300));
           confetti({ particleCount: 85, spread: 65, origin: { y: 0.6 } });
-          return;
         }
       }
-    } catch (e) {
-      console.warn('Gemini API call failed, using smart local parser fallback:', e);
+    } catch (e: any) {
+      console.warn('AI API call notice, switching to instant smart local parser:', e?.message || e);
     }
 
-    // Smart Local Fallback Parser if Gemini key is unset or offline
-    setAiProgress(70);
-    setAiStep('جاري بناء الهيكل الاحترافي واستخراج الأقسام محلياً...');
-    await new Promise((r) => setTimeout(r, 600));
+    // Smart Local Fallback Parser if Gemini fails or is offline
+    if (!geminiSuccess) {
+      try {
+        setAiProgress(80);
+        setAiStep('جاري بناء الهيكل الاحترافي واستخراج الأقسام محلياً...');
+        await new Promise((r) => setTimeout(r, 120));
 
-    // Name extraction
-    let extractedName = 'محمد خالد الأحمد';
-    const nameMatch = textToProcess.match(/(?:اسمي|الاسم|Name:)\s+([^\s,،\.\n]+(?:\s+[^\s,،\.\n]+){1,3})/i);
-    if (nameMatch) extractedName = nameMatch[1].trim();
+        // Name extraction
+        let extractedName = 'محمد خالد الأحمد';
+        const nameMatch = textToProcess.match(/(?:اسمي|الاسم|Name:)\s+([^\s,،\.\n]+(?:\s+[^\s,،\.\n]+){1,3})/i);
+        if (nameMatch) extractedName = nameMatch[1].trim();
 
-    // Email extraction
-    const emailMatch = textToProcess.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    const email = emailMatch ? emailMatch[0] : (extractedName.toLowerCase().replace(/\s+/g, '.') + '@example.com');
+        // Email extraction
+        const emailMatch = textToProcess.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        const email = emailMatch ? emailMatch[0] : (extractedName.toLowerCase().replace(/\s+/g, '.') + '@example.com');
 
-    // Phone extraction
-    const phoneMatch = textToProcess.match(/(?:\+?\d{1,4}[\s-]?)?\(?\d{2,4}\)?[\s-]?\d{3,4}[\s-]?\d{3,4}/);
-    const phone = phoneMatch ? phoneMatch[0] : '+90 534 123 4567';
+        // Phone extraction
+        const phoneMatch = textToProcess.match(/(?:\+?\d{1,4}[\s-]?)?\(?\d{2,4}\)?[\s-]?\d{3,4}[\s-]?\d{3,4}/);
+        const phone = phoneMatch ? phoneMatch[0] : '+90 534 123 4567';
 
-    // Update CV data with parsed fallback
-    setCvData((prev) => ({
-      ...prev,
-      fullName: extractedName,
-      email,
-      phone,
-      summary: textToProcess.length > 50 ? textToProcess.slice(0, 320) + '...' : prev.summary,
-    }));
+        // Update CV data with parsed fallback
+        setCvData((prev) => ({
+          ...prev,
+          fullName: extractedName,
+          email,
+          phone,
+          summary: textToProcess.length > 50 ? textToProcess.slice(0, 320) + '...' : prev.summary,
+        }));
 
-    setAiProgress(100);
-    setAiStep('تم استخراج البيانات وملء القالب بنجاح!');
+        setAiProgress(100);
+        setAiStep('تم استخراج البيانات وملء القالب بنجاح!');
+        await new Promise((r) => setTimeout(r, 200));
+        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+      } catch (fallbackErr) {
+        console.error('Fallback error:', fallbackErr);
+      }
+    }
+
+    isProcessingRef.current = false;
     setAiLoading(false);
-    confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
   };
 
-  // Handle PDF File Upload & Extraction
+  // Handle PDF File Upload & Extraction (Fully Asynchronous & Loop-Free)
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0]) return;
-    const file = e.target.files[0];
+    if (isProcessingRef.current) return;
+    const files = e.target.files;
+    if (!files || !files[0]) return;
+    const file = files[0];
+
+    // Reset input value immediately to break any potential browser re-trigger loops
+    e.target.value = '';
+
+    isProcessingRef.current = true;
+    setAiLoading(true);
+    setAiProgress(10);
+    setAiStep(`جاري فحص ملف ${file.name}...`);
+
+    // Give browser a frame to show loading UI and spinner
+    await new Promise((r) => setTimeout(r, 50));
 
     try {
-      setAiLoading(true);
-      setAiProgress(15);
-      setAiStep(`جاري فحص واستخراج النصوص من ${file.name} عبر pdf.js...`);
+      setAiProgress(30);
+      setAiStep(`جاري استخراج النصوص من ملف ${file.name} في الخلفية...`);
 
       const rawText = await extractTextFromPdf(file);
+
+      if (!rawText || rawText.length < 15) {
+        alert('لم يتم العثور على نصوص قابلة للقراءة داخل ملف الـ PDF. يرجى التأكد أن الملف يحتوي على نصوص وليس مجرد صورة ممسوحة ضوئياً.');
+        isProcessingRef.current = false;
+        setAiLoading(false);
+        return;
+      }
+
       setExtractedPdfInfo({
         filename: file.name,
         charCount: rawText.length,
       });
 
-      setAiProgress(35);
-      setAiStep(`تم استخراج ${rawText.length} حرفاً، جاري الإرسال لمحرك Google Gemini...`);
+      setAiProgress(45);
+      setAiStep(`تم استخراج ${rawText.length} حرفاً، جاري الإرسال لمحرك الذكاء الاصطناعي...`);
+      await new Promise((r) => setTimeout(r, 30));
 
-      // Trigger Gemini JSON generation
-      await runAiCvGeneration(`إليك نص سيرة ذاتية تم استخراجه من ملف PDF. أعد صياغته باحترافية عالية وهيكل البيانات في الـ JSON المطلوب:\n\n${rawText}`);
+      // Hand off to runAiCvGeneration
+      isProcessingRef.current = false;
+      await runAiCvGeneration(
+        `إليك نص سيرة ذاتية تم استخراجه من ملف PDF. أعد صياغته باحترافية عالية وهيكل البيانات في الـ JSON المطلوب:\n\n${rawText}`
+      );
     } catch (err: any) {
       console.error('PDF extraction failed:', err);
-      alert('تعذر استخراج النصوص من ملف الـ PDF. تأكد أن الملف نصي وليس مجرد صور ممسوحة ضوئياً.');
+      alert('حدث خطأ أثناء قراءة ملف الـ PDF. تأكد من سلامة الملف وحاول مرة أخرى.');
+      isProcessingRef.current = false;
       setAiLoading(false);
     }
   };
@@ -773,34 +876,66 @@ export default function CVBuilderPage() {
                       disabled={aiLoading || !aiPrompt.trim()}
                       className="w-full py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-semibold rounded-full transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 shadow-md"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#cc9166]" />
-                      <span>{aiLoading ? 'جاري الصياغة والهيكلة...' : 'صياغة وهيكلة السيرة الذاتية الآن'}</span>
+                      {aiLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 text-[#cc9166] animate-spin" />
+                          <span>جاري المعالجة والصياغة الذكية...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5 text-[#cc9166]" />
+                          <span>صياغة وهيكلة السيرة الذاتية الآن</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </>
               ) : (
                 /* PDF File Parsing Mode */
                 <div className="space-y-3">
-                  <div className="relative border border-dashed border-[#2e3038] hover:border-[#cc9166] rounded-[10px] p-6 text-center bg-[#08080a] transition-colors cursor-pointer group">
-                    <input
-                      type="file"
-                      accept="application/pdf"
-                      onChange={handlePdfUpload}
-                      disabled={aiLoading}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-10 h-10 rounded-full bg-[#121317] border border-[#2e3038] group-hover:border-[#cc9166] text-[#cc9166] flex items-center justify-center mx-auto mb-2 transition-colors">
-                      <FileUp className="w-5 h-5" />
+                  {aiLoading ? (
+                    <div className="p-8 text-center bg-[#08080a] border border-[#cc9166]/40 rounded-[10px] flex flex-col items-center justify-center space-y-3">
+                      <div className="w-12 h-12 rounded-full bg-[#121317] border border-[#cc9166] flex items-center justify-center text-[#cc9166]">
+                        <Loader2 className="w-6 h-6 animate-spin text-[#cc9166]" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-medium text-[#ffffff]">
+                          جاري معالجة السيرة الذاتية بالذكاء الاصطناعي...
+                        </h4>
+                        <p className="text-xs text-[#9194a1] font-mono">
+                          {aiStep || 'تتم المعالجة غير المتزامنة في الخلفية'}
+                        </p>
+                      </div>
+                      <div className="w-full max-w-xs bg-[#121317] h-1.5 rounded-full overflow-hidden border border-[#2e3038] mt-1">
+                        <div
+                          className="bg-[#cc9166] h-full transition-all duration-300 rounded-full"
+                          style={{ width: `${aiProgress}%` }}
+                        />
+                      </div>
+                      <span className="text-[11px] font-mono text-[#cc9166]">{aiProgress}%</span>
                     </div>
-                    <h4 className="text-xs font-medium text-[#ffffff]">
-                      اسحب ملف السيرة الذاتية (PDF) القديم هنا أو اضغط للاختيار
-                    </h4>
-                    <p className="text-[11px] text-[#5e616e] mt-1 font-mono">
-                      يتم استخراج النصوص تلقائياً عبر pdf.js وإعادة صياغتها بالـ AI
-                    </p>
-                  </div>
+                  ) : (
+                    <div className="relative border border-dashed border-[#2e3038] hover:border-[#cc9166] rounded-[10px] p-6 text-center bg-[#08080a] transition-colors cursor-pointer group">
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={handlePdfUpload}
+                        disabled={aiLoading}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="w-10 h-10 rounded-full bg-[#121317] border border-[#2e3038] group-hover:border-[#cc9166] text-[#cc9166] flex items-center justify-center mx-auto mb-2 transition-colors">
+                        <FileUp className="w-5 h-5" />
+                      </div>
+                      <h4 className="text-xs font-medium text-[#ffffff]">
+                        اسحب ملف السيرة الذاتية (PDF) القديم هنا أو اضغط للاختيار
+                      </h4>
+                      <p className="text-[11px] text-[#5e616e] mt-1 font-mono">
+                        معالجة غير متزامنة في الخلفية عبر الذكاء الاصطناعي وبدون أي تجميد
+                      </p>
+                    </div>
+                  )}
 
-                  {extractedPdfInfo && (
+                  {extractedPdfInfo && !aiLoading && (
                     <div className="p-3 bg-[#121317] rounded-[10px] border border-[#1c1d22] flex items-center justify-between text-xs text-[#9194a1]">
                       <span className="flex items-center gap-1.5 text-[#ffffff]">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -815,7 +950,7 @@ export default function CVBuilderPage() {
               )}
 
               {/* Progress Bar during AI processing */}
-              {aiLoading && (
+              {aiLoading && aiTab === 'prompt' && (
                 <div className="mt-4 pt-3 border-t border-[#1c1d22]">
                   <div className="flex items-center justify-between text-xs font-mono text-[#cc9166] mb-1.5">
                     <span>{aiStep}</span>
