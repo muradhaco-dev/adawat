@@ -313,8 +313,28 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Actions: User Email / Login, Language, Menu */}
+          <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+            {/* User Session for Mobile: Show User Email when signed in, Login button when signed out */}
+            {user ? (
+              <Link
+                href="/account"
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#e2e3e9] bg-[#121317] hover:bg-[#1c1d22] rounded-full border border-[#2e3038] transition-colors max-w-[125px] sm:max-w-[160px]"
+                title={user.email}
+              >
+                <User className="w-3.5 h-3.5 text-[#cc9166] shrink-0" />
+                <span className="truncate text-[11px] font-sans">{user.email?.split('@')[0]}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/auth"
+                className="px-3 py-1 text-xs font-medium text-[#000000] bg-[#ffffff] hover:bg-[#e2e3e9] rounded-full transition-all shrink-0 shadow-sm"
+              >
+                {t('nav.signin')}
+              </Link>
+            )}
+
+            {/* Language Switcher */}
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-1 px-2.5 py-1 text-xs font-mono text-[#9194a1] hover:text-[#ffffff] bg-[#040406] rounded-full border border-[#1c1d22]"
@@ -322,6 +342,8 @@ export default function Navbar() {
               <Globe className="w-3 h-3 text-[#cc9166]" />
               <span>{lang === 'ar' ? 'EN' : 'عربي'}</span>
             </button>
+
+            {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-1.5 rounded-full text-[#9194a1] hover:text-[#ffffff] border border-[#1c1d22] bg-[#040406]"
@@ -423,21 +445,48 @@ export default function Navbar() {
             </Link>
 
             {user ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2 text-xs font-medium text-[#777a88] hover:text-[#ffffff] bg-[#121317] rounded-full border border-[#1c1d22]"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>{t('nav.signout')}</span>
-              </button>
+              <div className="flex flex-col gap-2 w-full">
+                {/* User Email Card */}
+                <Link
+                  href="/account"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-[#121317] border border-[#2e3038] text-xs font-medium text-[#ffffff]"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-7 h-7 rounded-full bg-[#08080a] border border-[#cc9166] flex items-center justify-center text-[#cc9166] shrink-0">
+                      <User className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="flex flex-col min-w-0 text-start">
+                      <span className="text-[10px] text-[#777a88] font-mono leading-tight">
+                        {lang === 'ar' ? 'الحساب المسجل' : 'Signed in as'}
+                      </span>
+                      <span className="truncate text-xs text-[#e2e3e9] font-sans max-w-[200px]">
+                        {user.email}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-mono text-[#cc9166] shrink-0">
+                    {lang === 'ar' ? 'إدارة ←' : 'Manage →'}
+                  </span>
+                </Link>
+
+                {/* Logout Button */}
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2 text-xs font-medium text-[#777a88] hover:text-[#ffffff] bg-[#040406] hover:bg-[#121317] rounded-full border border-[#1c1d22] transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-red-400/80" />
+                  <span>{t('nav.signout')}</span>
+                </button>
+              </div>
             ) : (
               <Link
                 href="/auth"
                 onClick={() => setIsOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-[#000000] bg-[#ffffff] rounded-full"
+                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-[#000000] bg-[#ffffff] rounded-full shadow-sm"
               >
                 {t('nav.signin')}
               </Link>
