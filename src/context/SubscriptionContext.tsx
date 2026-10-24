@@ -81,17 +81,24 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const fetchProfile = useCallback(async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // 3.5s timeout for profile query so it never stalls the app
+      const profilePromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
+      const timeoutPromise = new Promise<{ data: null; error: any }>((_, reject) =>
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 3500)
+      );
+
+      const { data, error } = (await Promise.race([profilePromise, timeoutPromise])) as any;
+
       if (data) {
         setProfile(data as Profile);
-      } else if (error && error.code === 'PGRST116') {
-        // Record doesn't exist yet, insert default free profile
-        const newProfile: Partial<Profile> = {
+      } else if (error && (error.code === 'PGRST116' || error.message?.includes('timeout'))) {
+        // Record doesn't exist yet, insert default free profile or default state
+        const defaultProfile: Profile = {
           id: userId,
           email: user?.email || '',
           subscription_tier: 'free',
@@ -100,53 +107,112 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
           last_operation_date: new Date().toISOString().split('T')[0],
           created_at: new Date().toISOString(),
         };
-        const { data: created } = await supabase.from('profiles').insert(newProfile).select().single();
-        if (created) setProfile(created as Profile);
+        setProfile(defaultProfile);
+        supabase.from('profiles').insert(defaultProfile).then().catch(() => {});
+      } else {
+        setProfile({
+          id: userId,
+          email: user?.email || '',
+          subscription_tier: 'free',
+          subscription_status: 'active',
+          daily_operations_count: 0,
+          last_operation_date: new Date().toISOString().split('T')[0],
+          created_at: new Date().toISOString(),
+        });
       }
     } catch (err) {
-      console.warn('Error fetching subscription profile:', err);
+      console.warn('Notice in subscription profile fetch, defaulting to Free tier:', err);
+      setProfile({
+        id: userId,
+        email: user?.email || '',
+        subscription_tier: 'free',
+        subscription_status: 'active',
+        daily_operations_count: 0,
+        last_operation_date: new Date().toISOString().split('T')[0],
+        created_at: new Date().toISOString(),
+      });
     }
   }, [user]);
 
   const refreshSubscription = useCallback(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setUser(session?.user ?? null);
-    if (session?.user) {
-      await fetchProfile(session.user.id);
-    } else {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+    } catch (err) {
+      console.warn('Subscription refresh notice:', err);
+      setUser(null);
       setProfile(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [fetchProfile]);
 
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Safety timeout: Never leave context loading for more than 1500ms under any network conditions
+    const safetyTimer = setTimeout(() => {
       if (mounted) {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchProfile(session.user.id).finally(() => setLoading(false));
-        } else {
-          setLoading(false);
-        }
+        setLoading(false);
       }
-    });
+    }, 1500);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (mounted) {
+    supabase.auth.getSession()
+      .then(async ({ data: { session } }) => {
+        if (!mounted) return;
+        clearTimeout(safetyTimer);
         setUser(session?.user ?? null);
         if (session?.user) {
-          fetchProfile(session.user.id).finally(() => setLoading(false));
+          try {
+            await fetchProfile(session.user.id);
+          } catch {
+            // ignore
+          } finally {
+            if (mounted) setLoading(false);
+          }
         } else {
+          // GUEST: immediately end loading state
           setProfile(null);
           setLoading(false);
         }
+      })
+      .catch((err) => {
+        console.warn('Session init notice:', err);
+        if (mounted) {
+          clearTimeout(safetyTimer);
+          setUser(null);
+          setProfile(null);
+          setLoading(false);
+        }
+      });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+      clearTimeout(safetyTimer);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        try {
+          await fetchProfile(session.user.id);
+        } catch {
+          // ignore
+        } finally {
+          if (mounted) setLoading(false);
+        }
+      } else {
+        // GUEST: immediately end loading state
+        setProfile(null);
+        setLoading(false);
       }
     });
 
     return () => {
       mounted = false;
+      clearTimeout(safetyTimer);
       subscription.unsubscribe();
     };
   }, [fetchProfile]);

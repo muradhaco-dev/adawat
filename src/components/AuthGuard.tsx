@@ -21,15 +21,33 @@ export default function AuthGuard({ children, toolName }: AuthGuardProps) {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Safety timeout: If Supabase auth check takes more than 1200ms, force loading = false immediately
+    const safetyTimer = setTimeout(() => {
       if (mounted) {
-        setUser(session?.user ?? null);
         setLoading(false);
       }
-    });
+    }, 1200);
+
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (mounted) {
+          clearTimeout(safetyTimer);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.warn('Auth session check notice in AuthGuard:', err);
+        if (mounted) {
+          clearTimeout(safetyTimer);
+          setUser(null);
+          setLoading(false);
+        }
+      });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
+        clearTimeout(safetyTimer);
         setUser(session?.user ?? null);
         setLoading(false);
       }
@@ -37,6 +55,7 @@ export default function AuthGuard({ children, toolName }: AuthGuardProps) {
 
     return () => {
       mounted = false;
+      clearTimeout(safetyTimer);
       subscription.unsubscribe();
     };
   }, []);
