@@ -122,15 +122,15 @@ export default function ToolsCatalogPage() {
   });
 
   return (
-    <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="w-full max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 relative">
       
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto mb-14">
+      <div className="text-center w-full max-w-3xl mx-auto mb-10 sm:mb-14">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
           <Sparkles className="w-3.5 h-3.5 text-[#cc9166]" />
           <span>{lang === 'ar' ? 'مكتبة الأدوات الشاملة' : 'SPECIALIZED UTILITY SUITE'}</span>
         </div>
-        <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
           {lang === 'ar' ? 'جميع الأدوات المتاحة' : 'All Digital Tools'}
         </h1>
         <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
@@ -145,8 +145,8 @@ export default function ToolsCatalogPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="mt-8 max-w-xl mx-auto">
-          <div className="relative flex items-center rounded-full bg-[#040406] border border-[#2e3038] focus-within:border-[#ffffff] transition-colors p-1.5 shadow-sm">
+        <div className="mt-8 w-full max-w-xl mx-auto">
+          <div className="relative flex items-center w-full rounded-full bg-[#040406] border border-[#2e3038] focus-within:border-[#ffffff] transition-colors p-1.5 shadow-sm">
             <Search className="w-4 h-4 text-[#777a88] mr-3 ml-3 shrink-0" />
             <input
               type="text"
@@ -158,12 +158,12 @@ export default function ToolsCatalogPage() {
             {searchTerm ? (
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-xs text-[#9194a1] hover:text-[#ffffff] px-3 py-1 font-mono"
+                className="text-xs text-[#9194a1] hover:text-[#ffffff] px-3 py-1 font-mono shrink-0"
               >
                 {lang === 'ar' ? 'مسح' : 'Clear'}
               </button>
             ) : (
-              <span className="text-[11px] text-[#5e616e] font-mono px-3 hidden sm:inline">
+              <span className="text-[11px] text-[#5e616e] font-mono px-3 hidden sm:inline shrink-0">
                 {t('hero.instantSearch')}
               </span>
             )}
@@ -171,7 +171,7 @@ export default function ToolsCatalogPage() {
         </div>
 
         {/* Category Pill Switcher */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-2 w-full">
           {categories.map((cat) => (
             <button
               key={cat.key}
@@ -188,9 +188,9 @@ export default function ToolsCatalogPage() {
         </div>
       </div>
 
-      {/* Tools Grid */}
-      <section className="mb-20">
-        <div className="flex items-center justify-between mb-8 pb-3 border-b border-[#1c1d22]">
+      {/* Tools Section & Layout */}
+      <section className="w-full mb-16 sm:mb-20 relative">
+        <div className="flex items-center justify-between mb-6 sm:mb-8 pb-3 border-b border-[#1c1d22] w-full">
           <span className="text-xs font-mono uppercase text-[#cc9166]">
             {lang === 'ar' ? 'الأدوات المتوفرة' : 'Available Utilities'}
           </span>
@@ -200,7 +200,7 @@ export default function ToolsCatalogPage() {
         </div>
 
         {filteredTools.length === 0 ? (
-          <div className="text-center py-20 bg-[#040406] rounded-[10px] border border-[#1c1d22]">
+          <div className="w-full text-center py-16 sm:py-20 bg-[#040406] rounded-[10px] border border-[#1c1d22]">
             <p className="text-sm text-[#9194a1]">
               {lang === 'ar' ? 'لم يتم العثور على أداة مطابقة لبحثك' : 'No tools matched your criteria'}
             </p>
@@ -215,32 +215,32 @@ export default function ToolsCatalogPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="w-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 relative">
             {filteredTools.map((tool) => {
               const Icon = tool.icon;
               return (
                 <div
                   key={tool.id}
-                  className="group bg-[#040406] rounded-[10px] border border-[#1c1d22] hover:border-[#2e3038] p-6 flex flex-col justify-between transition-colors"
+                  className="group w-full relative bg-[#040406] rounded-[10px] border border-[#1c1d22] hover:border-[#2e3038] p-5 sm:p-6 flex flex-col justify-between transition-colors min-w-0"
                 >
                   <div>
                     {/* Header: Category & Badge */}
-                    <div className="flex items-center justify-between gap-3 mb-5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-[#121317] border border-[#1c1d22] flex items-center justify-center text-[#e2e3e9]">
+                    <div className="flex items-center justify-between gap-3 mb-4 sm:mb-5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#121317] border border-[#1c1d22] flex items-center justify-center text-[#e2e3e9] shrink-0">
                           <Icon className="w-4 h-4" />
                         </div>
-                        <span className="text-[11px] font-mono uppercase tracking-wider text-[#cc9166]">
+                        <span className="text-[11px] font-mono uppercase tracking-wider text-[#cc9166] truncate">
                           {tool.category}
                         </span>
                       </div>
-                      <span className="text-[10px] text-[#9194a1] border border-[#2e3038] px-2 py-0.5 rounded-full font-mono">
+                      <span className="text-[10px] text-[#9194a1] border border-[#2e3038] px-2 py-0.5 rounded-full font-mono shrink-0">
                         {tool.badge}
                       </span>
                     </div>
 
                     {/* Title & Description */}
-                    <h3 className="text-lg font-medium text-[#ffffff] mb-2 leading-snug group-hover:text-[#cc9166] transition-colors">
+                    <h3 className="text-base sm:text-lg font-medium text-[#ffffff] mb-2 leading-snug group-hover:text-[#cc9166] transition-colors">
                       {tool.title}
                     </h3>
                     <p className="text-xs text-[#9194a1] leading-relaxed mb-6">
@@ -251,10 +251,10 @@ export default function ToolsCatalogPage() {
                   {/* Action Link: Pill Shape */}
                   <Link
                     href={tool.href}
-                    className="w-full flex items-center justify-between py-2.5 px-4 bg-[#121317] hover:bg-[#ffffff] text-[#e2e3e9] hover:text-[#000000] text-xs font-medium rounded-full border border-[#1c1d22] hover:border-[#ffffff] transition-all group-hover:border-[#2e3038]"
+                    className="w-full relative flex items-center justify-between py-2.5 px-4 bg-[#121317] hover:bg-[#ffffff] text-[#e2e3e9] hover:text-[#000000] text-xs font-medium rounded-full border border-[#1c1d22] hover:border-[#ffffff] transition-all group-hover:border-[#2e3038] shrink-0"
                   >
                     <span>{tool.actionText}</span>
-                    <ArrowLeft className={`w-3.5 h-3.5 ${lang === 'en' ? 'rotate-180' : ''}`} />
+                    <ArrowLeft className={`w-3.5 h-3.5 shrink-0 ${lang === 'en' ? 'rotate-180' : ''}`} />
                   </Link>
                 </div>
               );
@@ -264,7 +264,7 @@ export default function ToolsCatalogPage() {
       </section>
 
       {/* Local Privacy Trust Strip */}
-      <div className="p-6 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4 mb-12">
+      <div className="w-full p-5 sm:p-6 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4 mb-12 relative">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#121317] border border-[#2e3038] text-[#cc9166] flex items-center justify-center shrink-0">
             <ShieldCheck className="w-5 h-5" />
@@ -290,7 +290,7 @@ export default function ToolsCatalogPage() {
       </div>
 
       {/* Ad slot: Bottom */}
-      <div className="mt-8">
+      <div className="w-full mt-8 relative">
         <AdBanner slot="tools-catalog-bottom" />
       </div>
 

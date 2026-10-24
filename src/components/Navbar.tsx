@@ -348,7 +348,7 @@ export default function Navbar() {
           </Link>
 
           {/* Mobile Tools Collapsible */}
-          <div className="border border-[#1c1d22] rounded-lg overflow-hidden bg-[#08080a]">
+          <div className="w-full border border-[#1c1d22] rounded-lg overflow-hidden bg-[#08080a] relative">
             <button
               onClick={() => setMobileToolsOpen(!mobileToolsOpen)}
               className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-medium text-[#ffffff]"
@@ -363,17 +363,17 @@ export default function Navbar() {
             </button>
 
             {mobileToolsOpen && (
-              <div className="px-2 pb-3 space-y-1 border-t border-[#1c1d22] pt-2">
+              <div className="w-full px-2 pb-3 flex flex-col space-y-1 border-t border-[#1c1d22] pt-2 relative">
                 {toolsList.map((tool) => (
                   <Link
                     key={tool.href}
                     href={tool.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-md text-xs text-[#9194a1] hover:text-[#ffffff] hover:bg-[#121317]"
+                    className="w-full relative flex items-center justify-between px-3 py-2 rounded-md text-xs text-[#9194a1] hover:text-[#ffffff] hover:bg-[#121317]"
                   >
-                    <span>{tool.title}</span>
+                    <span className="truncate">{tool.title}</span>
                     {tool.badge && (
-                      <span className="text-[9px] text-[#cc9166] font-mono px-1 rounded border border-[#cc9166]/30">
+                      <span className="text-[9px] text-[#cc9166] font-mono px-1 rounded border border-[#cc9166]/30 shrink-0 mr-2">
                         {tool.badge}
                       </span>
                     )}
@@ -382,7 +382,7 @@ export default function Navbar() {
                 <Link
                   href="/tools"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-between px-3 py-2 text-xs font-mono text-[#cc9166] hover:underline pt-2 border-t border-[#1c1d22]"
+                  className="w-full relative flex items-center justify-between px-3 py-2 text-xs font-mono text-[#cc9166] hover:underline pt-2 border-t border-[#1c1d22]"
                 >
                   <span>{lang === 'ar' ? 'عرض كافة الأدوات ←' : 'All tools →'}</span>
                 </Link>
