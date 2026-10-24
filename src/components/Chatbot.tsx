@@ -189,7 +189,7 @@ export default function Chatbot() {
       {/* Chat Window */}
       {isOpen && (
         <div 
-          className="mb-3 w-[90vw] sm:w-[380px] h-[520px] max-h-[80vh] bg-[#040406] border border-[#2e3038] rounded-[16px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="mb-3 w-[90vw] sm:w-[380px] h-[520px] max-h-[80vh] bg-[#040406] border border-[#2e3038] rounded-[16px] shadow-2xl flex flex-col overflow-hidden"
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
           {/* Header */}
@@ -266,15 +266,15 @@ export default function Chatbot() {
 
             {/* Typing Indicator (Loading State) */}
             {isLoading && (
-              <div className="flex flex-col items-start animate-in fade-in duration-150">
+              <div className="flex flex-col items-start">
                 <div className="bg-[#121317] border border-[#1c1d22] rounded-[14px] rounded-bl-xs px-4 py-2.5 flex items-center gap-2">
                   <span className="text-xs text-[#cc9166] font-mono">
                     {lang === 'ar' ? 'جاري الكتابة...' : 'Typing...'}
                   </span>
                   <div className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#cc9166] animate-bounce [animation-delay:-0.3s]" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#cc9166] animate-bounce [animation-delay:-0.15s]" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#cc9166] animate-bounce" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#cc9166]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#cc9166]/70" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#cc9166]/40" />
                   </div>
                 </div>
               </div>
@@ -311,12 +311,9 @@ export default function Chatbot() {
       {/* Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative group p-3.5 rounded-full bg-[#040406] hover:bg-[#121317] text-[#cc9166] border border-[#2e3038] hover:border-[#cc9166] shadow-xl hover:shadow-2xl transition-all active:scale-95 flex items-center justify-center"
+        className="relative group p-3.5 rounded-full bg-[#040406] hover:bg-[#121317] text-[#cc9166] border border-[#2e3038] hover:border-[#cc9166] shadow-xl hover:shadow-2xl transition-colors active:scale-95 flex items-center justify-center"
         aria-label="مساعد الدردشة"
       >
-        {/* Pulsing Accent Glow */}
-        <span className="absolute inset-0 rounded-full bg-[#cc9166]/20 animate-ping opacity-75 pointer-events-none" />
-
         {isOpen ? (
           <X className="w-5 h-5 relative z-10 text-[#ffffff]" />
         ) : (

@@ -119,7 +119,7 @@ export default function Navbar() {
     pathname.startsWith('/qr-code');
 
   return (
-    <header className="sticky top-0 z-50 bg-[#08080a]/90 backdrop-blur-md border-b border-[#1c1d22]">
+    <header className="sticky top-0 z-50 bg-[#08080a] border-b border-[#1c1d22]">
       <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
@@ -175,7 +175,7 @@ export default function Navbar() {
 
               {/* Dropdown Menu */}
               {toolsDropdown && (
-                <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-[#040406] border border-[#1c1d22] rounded-[12px] p-2.5 shadow-2xl shadow-black/80 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-[#040406] border border-[#1c1d22] rounded-[12px] p-2.5 shadow-2xl shadow-black/80 z-50">
                   <div className="px-3 py-2 border-b border-[#1c1d22] mb-1 flex items-center justify-between">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-[#cc9166]">
                       {lang === 'ar' ? 'منظومة الأدوات السريعة' : 'DIGITAL SUITE'}

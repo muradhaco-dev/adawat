@@ -519,7 +519,7 @@ export default function RemoveBgPage() {
 
               {/* Progress Indicator */}
               {processing && (
-                <div className="absolute inset-0 bg-[#08080a]/90 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
+                <div className="absolute inset-0 bg-[#08080a]/95 z-30 flex flex-col items-center justify-center p-6 text-center">
                   <div className="w-12 h-12 border-2 border-[#cc9166] border-t-transparent rounded-full animate-spin mb-4" />
                   <p className="text-sm font-medium text-[#ffffff] mb-2">{progressMsg}</p>
                   

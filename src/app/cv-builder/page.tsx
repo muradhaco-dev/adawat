@@ -674,7 +674,7 @@ export default function CVBuilderPage() {
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-full bg-[#121317] border border-[#cc9166]/50 text-[#cc9166] flex items-center justify-center shrink-0">
-                    <Sparkles className="w-4 h-4 animate-pulse" />
+                    <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-[#ffffff] flex items-center gap-2">
@@ -1146,7 +1146,7 @@ export default function CVBuilderPage() {
             <div className="flex items-center justify-between pb-3 text-xs text-[#5e616e] font-mono border-b border-[#1c1d22] mb-4">
               <span>استوديو المعاينة — قياس A4 الدولي (210×297 مم)</span>
               <span className="text-[#cc9166] flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
                 تحديث فوري
               </span>
             </div>

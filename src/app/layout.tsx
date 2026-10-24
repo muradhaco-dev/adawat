@@ -90,9 +90,9 @@ export default function RootLayout({
               <Link
                 href="/contact"
                 title="تواصل مع المطوّر محمد حجو (HACCO)"
-                className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406]/95 backdrop-blur-md hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-all shadow-xl group"
+                className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-2 bg-[#040406] hover:bg-[#121317] text-[#e2e3e9] hover:text-[#ffffff] text-xs rounded-full border border-[#2e3038] hover:border-[#cc9166] transition-colors shadow-lg group"
               >
-                <span className="w-2 h-2 rounded-full bg-[#cc9166] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#cc9166]" />
                 <span className="font-sans text-[11px] font-medium">تواصل معنا</span>
               </Link>
 

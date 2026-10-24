@@ -22,7 +22,7 @@ export default function PaywallModal() {
   const { options } = paywallModal;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#000000]/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#000000]/85">
       {/* Backdrop click to close */}
       <div 
         className="absolute inset-0" 

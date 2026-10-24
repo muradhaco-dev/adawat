@@ -39,12 +39,18 @@
   --surface-floating: #1c1d22;
 }
 
+html {
+  scroll-behavior: auto !important; /* Immediate, smooth responsiveness without scroll jank */
+}
+
 body {
   color: #e2e3e9;
   background-color: #08080a;
   font-family: var(--font-cairo), var(--font-inter), system-ui, sans-serif;
   letter-spacing: -0.01em;
   overflow-x: hidden;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
@@ -77,51 +83,12 @@ body {
   background: #2e3038;
 }
 
-/* Ambient Animated Glow Keyframes (Warm, comfortable, modern) */
-@keyframes float-ambient-1 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.55;
+/* Global Performance: Eliminate heavy non-essential animations across desktop and mobile */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  50% {
-    transform: translate3d(60px, -40px, 0) scale(1.15);
-    opacity: 0.85;
-  }
-}
-
-@keyframes float-ambient-2 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1.1);
-    opacity: 0.45;
-  }
-  50% {
-    transform: translate3d(-70px, 50px, 0) scale(0.95);
-    opacity: 0.75;
-  }
-}
-
-@keyframes float-ambient-3 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.40;
-  }
-  50% {
-    transform: translate3d(50px, 60px, 0) scale(1.18);
-    opacity: 0.70;
-  }
-}
-
-.animate-ambient-1 {
-  animation: float-ambient-1 16s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-.animate-ambient-2 {
-  animation: float-ambient-2 22s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-.animate-ambient-3 {
-  animation: float-ambient-3 18s ease-in-out infinite;
-  will-change: transform, opacity;
 }
