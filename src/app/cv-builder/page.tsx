@@ -159,20 +159,180 @@ export default function CVBuilderPage() {
     },
   ];
 
-  // Empty / Safe PDF Upload Handler (Disabled temporarily for absolute stability)
-  const handlePdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e?.target) e.target.value = '';
-    alert('ميزة رفع ملف PDF قيد التحديث المؤقت لضمان أقصى سرعة واستقرار.');
+  // PDF Upload Handler: Asynchronous and safe, extracts text without blocking UI
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+      alert(lang === 'ar' ? 'يرجى اختيار ملف PDF صالح' : 'Please select a valid PDF file');
+      if (e.target) e.target.value = '';
+      return;
+    }
+
+    try {
+      setAiLoading(true);
+      setAiStep(lang === 'ar' ? 'جاري قراءة محتوى ملف الـ PDF بأمان...' : 'Reading PDF file content...');
+      setAiProgress(25);
+
+      const arrayBuffer = await file.arrayBuffer();
+      const decoder = new TextDecoder('utf-8', { fatal: false });
+      const rawText = decoder.decode(arrayBuffer);
+
+      // Extract text content from PDF streams
+      const textMatches = rawText.match(/[\u0600-\u06FF\w\s.,@+-]{4,}/g);
+      let extractedContent = '';
+      if (textMatches && textMatches.length > 0) {
+        extractedContent = textMatches
+          .map((m) => m.trim())
+          .filter((m) => m.length > 2)
+          .join(' ')
+          .slice(0, 4000);
+      }
+
+      if (!extractedContent || extractedContent.length < 20) {
+        extractedContent = `سيرة ذاتية مستوردة من ملف: ${file.name}\nالحجم: ${(file.size / 1024).toFixed(1)} KB`;
+      }
+
+      setExtractedPdfInfo({
+        filename: file.name,
+        charCount: extractedContent.length,
+      });
+
+      setAiProgress(45);
+      setAiStep(lang === 'ar' ? 'جاري إرسال النص المستخرج إلى Google Gemini...' : 'Sending extracted text to Gemini...');
+
+      // Safe asynchronous generation via Gemini API
+      await runAiCvGeneration(extractedContent);
+
+    } catch (err: any) {
+      console.error('PDF extraction error:', err);
+      alert((lang === 'ar' ? 'حدث خطأ أثناء قراءة ملف الـ PDF: ' : 'Error reading PDF file: ') + (err.message || ''));
+      setAiLoading(false);
+      setAiProgress(0);
+      setAiStep('');
+    } finally {
+      if (e.target) e.target.value = '';
+    }
   };
 
-  // Empty / Safe AI Generation Handler (Disabled temporarily for absolute stability)
-  const runAiCvGeneration = (_inputContent?: string) => {
-    alert('ميزة المساعد الذكي قيد التحديث المؤقت لضمان استقرار وسرعة الموقع.');
+  // Safe AI Generation Handler: Triggered strictly by onClick / onSubmit (Never in useEffect)
+  const runAiCvGeneration = async (inputContent?: string) => {
+    const promptToUse = (inputContent || aiPrompt).trim();
+    if (!promptToUse) {
+      alert(lang === 'ar' ? 'يرجى كتابة نبذة أو معلومات عن نفسك أولاً' : 'Please provide some information about yourself first');
+      return;
+    }
+
+    try {
+      setAiLoading(true);
+      setAiStep(lang === 'ar' ? 'جاري الاتصال بـ Google Gemini وهيكلة البيانات...' : 'Connecting to Google Gemini...');
+      setAiProgress(60);
+
+      const response = await fetch('/api/ai/cv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: promptToUse,
+          language: aiLang,
+        }),
+      });
+
+      setAiProgress(85);
+
+      if (!response.ok) {
+        throw new Error(lang === 'ar' ? 'فشل الاتصال بخدمة الذكاء الاصطناعي' : 'Failed to connect to AI service');
+      }
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const d = result.data;
+        // Single state update: Inject dynamically into all templates (Modern, ATS, EuroPass)
+        setCvData({
+          fullName: d.fullName || cvData.fullName,
+          jobTitle: d.jobTitle || cvData.jobTitle,
+          email: d.email || cvData.email,
+          phone: d.phone || cvData.phone,
+          location: d.location || cvData.location,
+          summary: d.summary || cvData.summary,
+          skills: Array.isArray(d.skills) && d.skills.length > 0 ? d.skills : cvData.skills,
+          experiences: Array.isArray(d.experiences) && d.experiences.length > 0
+            ? d.experiences.map((exp: any, idx: number) => ({
+                id: String(exp.id || idx + 1),
+                title: exp.title || '',
+                company: exp.company || '',
+                period: exp.period || '',
+                details: exp.details || '',
+              }))
+            : cvData.experiences,
+          education: Array.isArray(d.education) && d.education.length > 0
+            ? d.education.map((edu: any, idx: number) => ({
+                id: String(edu.id || idx + 1),
+                degree: edu.degree || '',
+                institution: edu.institution || '',
+                year: edu.year || '',
+              }))
+            : cvData.education,
+          languages: Array.isArray(d.languages) && d.languages.length > 0
+            ? d.languages.map((l: any) => ({
+                name: l.name || '',
+                level: l.level || (aiLang === 'ar' ? 'متقدم' : 'Advanced'),
+              }))
+            : cvData.languages,
+        });
+
+        confetti({
+          particleCount: 70,
+          spread: 60,
+          origin: { y: 0.6 },
+        });
+      } else {
+        throw new Error(result.error || result.message || (lang === 'ar' ? 'تعذر استخراج بيانات السيرة الذاتية' : 'Could not parse resume data'));
+      }
+
+      setAiProgress(100);
+    } catch (err: any) {
+      console.error('Error in runAiCvGeneration:', err);
+      alert((lang === 'ar' ? 'حدث خطأ أثناء معالجة السيرة بالذكاء الاصطناعي: ' : 'Error processing with AI: ') + (err.message || ''));
+    } finally {
+      // Guaranteed loading state termination
+      setAiLoading(false);
+      setAiProgress(0);
+      setAiStep('');
+    }
   };
 
-  // Enhance / Polish Summary Handler
-  const handlePolishSummary = () => {
-    alert('ميزة تحسين الملخص بالذكاء الاصطناعي قيد التحديث المؤقت.');
+  // Safe Enhance / Polish Summary Handler
+  const handlePolishSummary = async () => {
+    if (!cvData.summary.trim()) {
+      alert(lang === 'ar' ? 'يرجى كتابة ملخص مهني أولاً لتحسينه' : 'Please write a summary first to polish');
+      return;
+    }
+
+    try {
+      setAiPolishing(true);
+      const polishPrompt = `قم بتحسين وإعادة صياغة هذا الملخص المهني بأسلوب تسويقي قوي متوافق مع ATS باللغة ${aiLang === 'ar' ? 'العربية' : 'الإنجليزية'}:\n${cvData.summary}`;
+
+      const response = await fetch('/api/ai/cv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: polishPrompt, language: aiLang }),
+      });
+
+      if (!response.ok) throw new Error('Failed to polish summary');
+      const result = await response.json();
+      if (result.success && result.data?.summary) {
+        setCvData((prev) => ({ ...prev, summary: result.data.summary }));
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(lang === 'ar' ? 'تعذر تحسين الملخص حالياً' : 'Could not polish summary');
+    } finally {
+      setAiPolishing(false);
+    }
   };
 
   // Experience handlers
@@ -279,9 +439,16 @@ export default function CVBuilderPage() {
     setCvData({ ...cvData, languages: updated });
   };
 
-  // Empty function as requested for stability
+  // Print to PDF Handler
   const handleDownloadPDF = () => {
-    alert('ميزة تصدير الـ PDF قيد التحديث المؤقت لضمان أقصى سرعة واستقرار. يمكنك الضغط على (Ctrl + P) لطباعة السيرة الذاتية وحفظها كملف PDF حالياً.');
+    try {
+      setDownloading(true);
+      window.print();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTimeout(() => setDownloading(false), 800);
+    }
   };
 
   // Save to Supabase
