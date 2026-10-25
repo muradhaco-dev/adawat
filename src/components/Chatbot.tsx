@@ -20,7 +20,7 @@ interface Message {
   time: string;
 }
 
-const DEFAULT_WEBHOOK_URL = 'http://localhost:5678/webhook-test/e978a7f2-bcc6-478d-8e8d-370526d0ed8b';
+const DEFAULT_WEBHOOK_URL = 'http://localhost:5678/webhook/e978a7f2-bcc6-478d-8e8d-370526d0ed8b';
 
 export default function Chatbot() {
   const { lang } = useLanguage();
@@ -153,7 +153,7 @@ export default function Chatbot() {
         id: 'err-' + Date.now(),
         sender: 'bot',
         text: lang === 'ar'
-          ? 'تعذر الاتصال بـ Webhook الخاص بـ n8n. تأكد من تشغيل n8n محلياً (Active) وأن مسار webhook-test متاح.'
+          ? 'تعذر الاتصال بـ Webhook الخاص بـ n8n. تأكد من تشغيل n8n محلياً (Active) وأن مسار webhook متاح.'
           : 'Could not connect to n8n Webhook. Please verify n8n is running and the webhook is active.',
         time: new Date().toLocaleTimeString(lang === 'ar' ? 'ar-SA' : 'en-US', { 
           hour: '2-digit', 
