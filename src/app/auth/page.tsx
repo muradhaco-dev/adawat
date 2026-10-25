@@ -8,13 +8,16 @@ import {
   Lock, 
   User, 
   ArrowLeft, 
+  ArrowRight,
   CheckCircle2, 
   AlertCircle 
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function AuthPage() {
   const router = useRouter();
+  const { lang } = useLanguage();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,7 +50,7 @@ export default function AuthPage() {
       if (error) throw error;
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || 'حدث خطأ أثناء محاولة تسجيل الدخول عبر Google');
+      setErrorMsg(err.message || (lang === 'ar' ? 'حدث خطأ أثناء محاولة تسجيل الدخول عبر Google' : 'Error signing in with Google'));
       setLoading(false);
     }
   };
@@ -58,7 +61,7 @@ export default function AuthPage() {
     setSuccessMsg(null);
 
     if (!email || !password) {
-      setErrorMsg('يرجى إدخال البريد الإلكتروني وكلمة المرور');
+      setErrorMsg(lang === 'ar' ? 'يرجى إدخال البريد الإلكتروني وكلمة المرور' : 'Please enter your email and password');
       return;
     }
 
@@ -79,7 +82,7 @@ export default function AuthPage() {
 
         if (error) throw error;
 
-        setSuccessMsg('تم إنشاء الحساب بنجاح! تم تسجيل دخولك.');
+        setSuccessMsg(lang === 'ar' ? 'تم إنشاء الحساب بنجاح! تم تسجيل دخولك.' : 'Account created successfully! You are logged in.');
         setTimeout(() => {
           router.push(target);
         }, 1200);
@@ -91,14 +94,14 @@ export default function AuthPage() {
 
         if (error) throw error;
 
-        setSuccessMsg('تم تسجيل الدخول بنجاح!');
+        setSuccessMsg(lang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 'Signed in successfully!');
         setTimeout(() => {
           router.push(target);
         }, 1000);
       }
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || 'حدث خطأ أثناء المحاولة، يرجى التأكد من البيانات');
+      setErrorMsg(err.message || (lang === 'ar' ? 'حدث خطأ أثناء المحاولة، يرجى التأكد من البيانات' : 'An error occurred, please check your credentials'));
     } finally {
       setLoading(false);
     }
@@ -111,16 +114,18 @@ export default function AuthPage() {
         {/* Brand / Title */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
-            <span className="text-2xl font-bold font-serif text-[#ffffff]">أدواتك</span>
+            <span className="text-2xl font-bold font-serif text-[#ffffff]">{lang === 'ar' ? 'أدواتك' : 'Adawat'}</span>
             <span className="text-xs text-[#cc9166] font-mono">/ AUTH</span>
           </Link>
           <h2 className="text-xl font-serif text-[#ffffff]">
-            {mode === 'signin' ? 'تسجيل الدخول إلى حسابك' : 'إنشاء حساب جديد'}
+            {mode === 'signin' 
+              ? (lang === 'ar' ? 'تسجيل الدخول إلى حسابك' : 'Sign in to your account') 
+              : (lang === 'ar' ? 'إنشاء حساب جديد' : 'Create a new account')}
           </h2>
           <p className="text-xs text-[#9194a1] mt-1">
             {mode === 'signin'
-              ? 'الوصول إلى مستنداتك وسيرك الذاتية المحفوظة'
-              : 'ابدأ بحفظ وتعديل سيرتك الذاتية في أي وقت مجاناً'}
+              ? (lang === 'ar' ? 'الوصول إلى مستنداتك وسيرك الذاتية المحفوظة' : 'Access your saved documents and resumes')
+              : (lang === 'ar' ? 'ابدأ بحفظ وتعديل سيرتك الذاتية في أي وقت مجاناً' : 'Save and edit your CVs anytime for free')}
           </p>
         </div>
 
@@ -136,7 +141,7 @@ export default function AuthPage() {
               mode === 'signin' ? 'bg-[#ffffff] text-[#000000] font-semibold' : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            تسجيل الدخول
+            {lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}
           </button>
           <button
             type="button"
@@ -148,7 +153,7 @@ export default function AuthPage() {
               mode === 'signup' ? 'bg-[#ffffff] text-[#000000] font-semibold' : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            حساب جديد
+            {lang === 'ar' ? 'حساب جديد' : 'Sign Up'}
           </button>
         </div>
 
@@ -177,14 +182,14 @@ export default function AuthPage() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
             />
           </svg>
-          <span>المتابعة عبر Google</span>
+          <span>{lang === 'ar' ? 'المتابعة عبر Google' : 'Continue with Google'}</span>
         </button>
 
         {/* Hairline Divider */}
         <div className="relative flex items-center justify-center my-6">
           <div className="border-t border-[#1c1d22] w-full" />
           <span className="bg-[#040406] px-3 text-[10px] font-mono uppercase tracking-wider text-[#5e616e] absolute">
-            أو عبر البريد
+            {lang === 'ar' ? 'أو عبر البريد' : 'or with email'}
           </span>
         </div>
 
@@ -203,43 +208,43 @@ export default function AuthPage() {
           </div>
         )}
 
-        {/* Form Fields: Slash pill inputs */}
+        {/* Form Fields */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'signup' && (
             <div>
-              <label className="block text-xs font-mono text-[#9194a1] mb-1.5">الاسم الكامل</label>
+              <label className="block text-xs font-mono text-[#9194a1] mb-1.5">{lang === 'ar' ? 'الاسم الكامل' : 'Full Name'}</label>
               <div className="relative">
-                <User className="w-4 h-4 text-[#5e616e] absolute right-3.5 top-3" />
+                <User className="w-4 h-4 text-[#5e616e] absolute start-3.5 top-3" />
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="محمد أحمد"
-                  className="w-full pr-10 pl-4 py-2.5 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] placeholder-[#5e616e] outline-none transition-colors"
+                  placeholder={lang === 'ar' ? 'محمد أحمد' : 'Alex Johnson'}
+                  className="w-full ps-10 pe-4 py-2.5 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] placeholder-[#5e616e] outline-none transition-colors"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-mono text-[#9194a1] mb-1.5">البريد الإلكتروني</label>
+            <label className="block text-xs font-mono text-[#9194a1] mb-1.5">{lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-[#5e616e] absolute right-3.5 top-3" />
+              <Mail className="w-4 h-4 text-[#5e616e] absolute start-3.5 top-3" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
                 required
-                className="w-full pr-10 pl-4 py-2.5 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] placeholder-[#5e616e] outline-none transition-colors"
+                className="w-full ps-10 pe-4 py-2.5 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] placeholder-[#5e616e] outline-none transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-mono text-[#9194a1] mb-1.5">كلمة المرور</label>
+            <label className="block text-xs font-mono text-[#9194a1] mb-1.5">{lang === 'ar' ? 'كلمة المرور' : 'Password'}</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-[#5e616e] absolute right-3.5 top-3" />
+              <Lock className="w-4 h-4 text-[#5e616e] absolute start-3.5 top-3" />
               <input
                 type="password"
                 value={password}
@@ -247,12 +252,12 @@ export default function AuthPage() {
                 placeholder="••••••••"
                 required
                 minLength={6}
-                className="w-full pr-10 pl-4 py-2.5 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] placeholder-[#5e616e] outline-none transition-colors"
+                className="w-full ps-10 pe-4 py-2.5 bg-[#121317] border border-[#1c1d22] focus:border-[#ffffff] rounded-full text-xs text-[#ffffff] placeholder-[#5e616e] outline-none transition-colors"
               />
             </div>
           </div>
 
-          {/* Primary Action Button — White pill button */}
+          {/* Primary Action Button */}
           <button
             type="submit"
             disabled={loading}
@@ -260,17 +265,17 @@ export default function AuthPage() {
           >
             <span>
               {loading
-                ? 'جاري المعالجة...'
+                ? (lang === 'ar' ? 'جاري المعالجة...' : 'Processing...')
                 : mode === 'signin'
-                ? 'تسجيل الدخول'
-                : 'إنشاء الحساب مجاناً'}
+                ? (lang === 'ar' ? 'تسجيل الدخول' : 'Sign In')
+                : (lang === 'ar' ? 'إنشاء الحساب مجاناً' : 'Create Free Account')}
             </span>
-            <ArrowLeft className="w-3.5 h-3.5" />
+            {lang === 'ar' ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-[#1c1d22] text-center text-[11px] text-[#5e616e] font-mono">
-          أمان ومصادقة مشفرة بواسطة Supabase
+          {lang === 'ar' ? 'أمان ومصادقة مشفرة بواسطة Supabase' : 'Encrypted authentication powered by Supabase'}
         </div>
 
       </div>

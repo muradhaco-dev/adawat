@@ -64,17 +64,10 @@ export default function Navbar() {
     },
     {
       href: '/pdf-tools',
-      title: lang === 'ar' ? 'دمج وترتيب ملفات PDF' : 'PDF Merge & Organize',
-      desc: lang === 'ar' ? 'دمج سريع للمستندات محلياً بدون خوادم' : 'Merge multiple PDF documents',
+      title: lang === 'ar' ? 'أدوات الـ PDF والتوقيع الإلكتروني' : 'PDF Tools & E-Signature',
+      desc: lang === 'ar' ? 'دمج وترتيب وتوقيع المستندات وتحويل الصور محلياً' : 'Merge, sign, and convert PDF documents locally',
       icon: Layers,
-      badge: null,
-    },
-    {
-      href: '/pdf-tools?tab=sign',
-      title: lang === 'ar' ? 'توقيع المستندات إلكترونياً' : 'Sign PDF Online',
-      desc: lang === 'ar' ? 'رسم وتثبيت توقيعك على العقود والأوراق' : 'Draw and place signatures',
-      icon: PenTool,
-      badge: null,
+      badge: lang === 'ar' ? 'محلي 100%' : 'Local',
     },
     {
       href: '/remove-bg',
@@ -89,13 +82,6 @@ export default function Navbar() {
       desc: lang === 'ar' ? 'تحويل الروابط والصور لـ QR مع دمج شعارك' : 'Custom logos, links, and high-res export',
       icon: QrCode,
       badge: lang === 'ar' ? 'جديد' : 'New',
-    },
-    {
-      href: '/pdf-tools?tab=convert',
-      title: lang === 'ar' ? 'محول الصور إلى PDF' : 'Image to PDF Converter',
-      desc: lang === 'ar' ? 'تجميع الصور والمستندات في ملف واحد' : 'Convert JPG/PNG to PDF document',
-      icon: FileCheck,
-      badge: null,
     },
   ];
 
@@ -168,7 +154,7 @@ export default function Navbar() {
                       {lang === 'ar' ? 'منظومة الأدوات السريعة' : 'DIGITAL SUITE'}
                     </span>
                     <span className="text-[10px] text-[#5e616e] font-mono">
-                      6 {lang === 'ar' ? 'أدوات' : 'tools'}
+                      {toolsList.length} {lang === 'ar' ? 'أدوات' : 'tools'}
                     </span>
                   </div>
 
@@ -365,7 +351,7 @@ export default function Navbar() {
               <span className="flex items-center gap-2">
                 <span>{t('nav.tools')}</span>
                 <span className="text-[10px] text-[#cc9166] border border-[#cc9166]/40 px-1.5 py-0.2 rounded-full font-mono">
-                  6
+                  {toolsList.length}
                 </span>
               </span>
               <ChevronDown className={`w-4 h-4 text-[#cc9166] transition-transform ${mobileToolsOpen ? 'rotate-180' : ''}`} />

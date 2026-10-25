@@ -28,6 +28,7 @@ import AdBanner from '@/components/AdBanner';
 import { supabase } from '@/lib/supabase/client';
 import AuthGuard from '@/components/AuthGuard';
 import { useSubscription } from '@/context/SubscriptionContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export interface CVData {
   fullName: string;
@@ -57,6 +58,7 @@ export interface CVData {
 }
 
 export default function CVBuilderPage() {
+  const { lang } = useLanguage();
   const { isPro, openPaywall } = useSubscription();
   const resumeRef = useRef<HTMLDivElement>(null);
   
@@ -83,12 +85,12 @@ export default function CVBuilderPage() {
 
   // Theme Color Presets
   const colorPresets = [
-    { name: 'أزرق ملكي (Sapphire)', hex: '#2563eb' },
-    { name: 'نحاسي مذهب (Copper)', hex: '#cc9166' },
-    { name: 'زمردي راقٍ (Emerald)', hex: '#059669' },
-    { name: 'كحلي تنفيذي (Navy)', hex: '#1e293b' },
-    { name: 'ياقوتي ملكي (Ruby)', hex: '#dc2626' },
-    { name: 'بنفسجي حديث (Violet)', hex: '#7c3aed' },
+    { name: lang === 'ar' ? 'أزرق ملكي (Sapphire)' : 'Sapphire Blue', hex: '#2563eb' },
+    { name: lang === 'ar' ? 'نحاسي مذهب (Copper)' : 'Copper Gold', hex: '#cc9166' },
+    { name: lang === 'ar' ? 'زمردي راقٍ (Emerald)' : 'Emerald Green', hex: '#059669' },
+    { name: lang === 'ar' ? 'كحلي تنفيذي (Navy)' : 'Executive Navy', hex: '#1e293b' },
+    { name: lang === 'ar' ? 'ياقوتي ملكي (Ruby)' : 'Royal Ruby', hex: '#dc2626' },
+    { name: lang === 'ar' ? 'بنفسجي حديث (Violet)' : 'Modern Violet', hex: '#7c3aed' },
   ];
 
   // Primary CV Data State
@@ -330,20 +332,22 @@ export default function CVBuilderPage() {
   };
 
   return (
-    <AuthGuard toolName="صانع السيرة الذاتية المهنية (CV)">
+    <AuthGuard toolName={lang === 'ar' ? 'صانع السيرة الذاتية المهنية (CV)' : 'Professional CV Builder'}>
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-6 pb-8 border-b border-[#1c1d22]">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-3">
-            <span>ATS & EUROPASS READY / معتمد للتوظيف الدولي</span>
+            <span>{lang === 'ar' ? 'ATS & EUROPASS READY / معتمد للتوظيف الدولي' : 'ATS & EUROPASS READY / Globally Certified'}</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-serif text-[#ffffff] font-normal tracking-tight">
-            صانع السيرة الذاتية الاحترافية
+            {lang === 'ar' ? 'صانع السيرة الذاتية الاحترافية' : 'Professional CV & Resume Builder'}
           </h1>
           <p className="text-xs sm:text-sm text-[#9194a1] mt-2">
-            استورد سيرتك السابقة عبر PDF أو ابنها بالذكاء الاصطناعي مع تخصيص الألوان واختيار القوالب المعتمدة عالمياً.
+            {lang === 'ar'
+              ? 'استورد سيرتك السابقة عبر PDF أو ابنها بالذكاء الاصطناعي مع تخصيص الألوان واختيار القوالب المعتمدة عالمياً.'
+              : 'Import an existing PDF or build with AI, customize theme colors, and choose globally recognized templates.'}
           </p>
         </div>
 
@@ -354,7 +358,11 @@ export default function CVBuilderPage() {
             className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#cc9166]/60 hover:border-[#cc9166] bg-[#040406] text-[#cc9166] hover:bg-[#121317] text-xs font-mono transition-colors shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>{aiOpen ? 'إغلاق مساعد الذكاء الاصطناعي' : 'المساعد الذكي واستيراد PDF ✨'}</span>
+            <span>
+              {aiOpen
+                ? (lang === 'ar' ? 'إغلاق مساعد الذكاء الاصطناعي' : 'Close AI Assistant')
+                : (lang === 'ar' ? 'المساعد الذكي واستيراد PDF ✨' : 'AI Assistant & PDF Import ✨')}
+            </span>
           </button>
 
           <button
@@ -365,12 +373,12 @@ export default function CVBuilderPage() {
             {saveSuccess ? (
               <>
                 <Check className="w-3.5 h-3.5 text-[#cc9166]" />
-                <span className="text-[#cc9166]">تم الحفظ في حسابك</span>
+                <span className="text-[#cc9166]">{lang === 'ar' ? 'تم الحفظ في حسابك' : 'Saved to Account'}</span>
               </>
             ) : (
               <>
                 <Save className="w-3.5 h-3.5 text-[#777a88]" />
-                <span>{saving ? 'جاري الحفظ...' : 'حفظ في حسابي'}</span>
+                <span>{saving ? (lang === 'ar' ? 'جاري الحفظ...' : 'Saving...') : (lang === 'ar' ? 'حفظ في حسابي' : 'Save to Account')}</span>
               </>
             )}
           </button>
@@ -381,7 +389,7 @@ export default function CVBuilderPage() {
             className="flex items-center gap-2 px-5 py-2 rounded-full bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-semibold transition-all active:scale-95 shadow-md"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>{downloading ? 'جاري تصدير A4...' : 'تحميل PDF عالي الدقة'}</span>
+            <span>{downloading ? (lang === 'ar' ? 'جاري تصدير A4...' : 'Exporting A4...') : (lang === 'ar' ? 'تحميل PDF عالي الدقة' : 'Download High-Res PDF')}</span>
           </button>
         </div>
       </div>
@@ -392,7 +400,7 @@ export default function CVBuilderPage() {
         {/* Templates System: ATS, Modern, EuroPass */}
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
           <span className="text-xs font-mono uppercase text-[#cc9166] ml-2">
-            القالب المختار:
+            {lang === 'ar' ? 'القالب المختار:' : 'Template:'}
           </span>
           
           <button
@@ -403,7 +411,7 @@ export default function CVBuilderPage() {
                 : 'text-[#9194a1] hover:text-[#ffffff]'
             }`}
           >
-            قالب Modern (العصري مع عمود جانبي)
+            {lang === 'ar' ? 'قالب Modern (العصري مع عمود جانبي)' : 'Modern (Two-Column)'}
           </button>
 
           <button
@@ -425,7 +433,7 @@ export default function CVBuilderPage() {
             }`}
           >
             {!isPro && <Crown className="w-3 h-3 text-[#cc9166]" />}
-            <span>قالب ATS Classic (بسيط ورسمي)</span>
+            <span>{lang === 'ar' ? 'قالب ATS Classic (بسيط ورسمي)' : 'ATS Classic (Official)'}</span>
             {!isPro && <span className="text-[9px] font-mono bg-[#cc9166]/20 text-[#cc9166] px-1.5 rounded-full">PRO</span>}
           </button>
 
@@ -448,7 +456,7 @@ export default function CVBuilderPage() {
             }`}
           >
             {!isPro && <Crown className="w-3 h-3 text-[#cc9166]" />}
-            <span>قالب EuroPass (المعايير الأوروبية)</span>
+            <span>{lang === 'ar' ? 'قالب EuroPass (المعايير الأوروبية)' : 'EuroPass (EU Standard)'}</span>
             {!isPro && <span className="text-[9px] font-mono bg-[#cc9166]/20 text-[#cc9166] px-1.5 rounded-full">PRO</span>}
           </button>
         </div>
@@ -457,7 +465,7 @@ export default function CVBuilderPage() {
         <div className="flex items-center gap-3 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-[#1c1d22]">
           <div className="flex items-center gap-1.5 text-xs font-mono text-[#9194a1]">
             <Palette className="w-3.5 h-3.5 text-[#cc9166]" />
-            <span>لون السمة:</span>
+            <span>{lang === 'ar' ? 'لون السمة:' : 'Theme Color:'}</span>
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -479,7 +487,7 @@ export default function CVBuilderPage() {
               value={primaryColor}
               onChange={(e) => setPrimaryColor(e.target.value)}
               className="w-6 h-6 rounded-full bg-transparent border-0 cursor-pointer ml-1"
-              title="اختيار لون مخصص عبر لوحة الألوان"
+              title={lang === 'ar' ? 'اختيار لون مخصص عبر لوحة الألوان' : 'Custom color picker'}
             />
           </div>
         </div>
@@ -1449,21 +1457,33 @@ export default function CVBuilderPage() {
       <div className="mt-12 p-6 rounded-[10px] bg-[#040406] border border-[#1c1d22]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#9194a1]">
           <div>
-            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">01 / متوافق مع خوارزميات ATS</h4>
+            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">
+              {lang === 'ar' ? '01 / متوافق مع خوارزميات ATS' : '01 / ATS Algorithm Compliant'}
+            </h4>
             <p className="leading-relaxed">
-              تعتمد القوالب على هيكلية قراءة نصية واضحة ومباشرة تفهمها أنظمة الفرز الآلي دون أخطاء في التعرف على الخبرات.
+              {lang === 'ar'
+                ? 'تعتمد القوالب على هيكلية قراءة نصية واضحة ومباشرة تفهمها أنظمة الفرز الآلي دون أخطاء في التعرف على الخبرات.'
+                : 'Templates adhere to a clear textual layout easily parsed by Applicant Tracking Systems without data loss.'}
             </p>
           </div>
           <div>
-            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">02 / معايير EuroPass للاتحاد الأوروبي</h4>
+            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">
+              {lang === 'ar' ? '02 / معايير EuroPass للاتحاد الأوروبي' : '02 / EU EuroPass Standards'}
+            </h4>
             <p className="leading-relaxed">
-              قالب EuroPass مصمم طبقاً للأطر الرسمية للمفوضية الأوروبية مع تصنيف مهارات اللغات حسب معايير CEFR.
+              {lang === 'ar'
+                ? 'قالب EuroPass مصمم طبقاً للأطر الرسمية للمفوضية الأوروبية مع تصنيف مهارات اللغات حسب معايير CEFR.'
+                : 'Designed according to official European Commission formats with CEFR language proficiency standards.'}
             </p>
           </div>
           <div>
-            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">03 / تصدير A4 عالي الدقة</h4>
+            <h4 className="font-mono text-[#cc9166] uppercase text-[11px] mb-1">
+              {lang === 'ar' ? '03 / تصدير A4 عالي الدقة' : '03 / High-Res A4 Export'}
+            </h4>
             <p className="leading-relaxed">
-              توليد ملفات PDF بنقاء 300 DPI وأبعاد A4 عالمية مع طباعة دقيقة وحفاظ كامل على الخطوط والألوان.
+              {lang === 'ar'
+                ? 'توليد ملفات PDF بنقاء 300 DPI وأبعاد A4 عالمية مع طباعة دقيقة وحفاظ كامل على الخطوط والألوان.'
+                : 'Generates 300 DPI print-ready international A4 PDFs preserving complete typographical and color fidelity.'}
             </p>
           </div>
         </div>

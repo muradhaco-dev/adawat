@@ -21,9 +21,11 @@ import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
 import AuthGuard from '@/components/AuthGuard';
 import { useSubscription } from '@/context/SubscriptionContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Crown } from 'lucide-react';
 
 export default function RemoveBgPage() {
+  const { lang } = useLanguage();
   const { isPro, checkCanUse, openPaywall, recordUsage, dailyUsage } = useSubscription();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [processedSrc, setProcessedSrc] = useState<string | null>(null);
@@ -45,8 +47,8 @@ export default function RemoveBgPage() {
   const samplePresets = [
     {
       id: 1,
-      title: 'منتج تجاري (حذاء رياضي)',
-      category: 'التجارة الإلكترونية',
+      title: lang === 'ar' ? 'منتج تجاري (حذاء رياضي)' : 'Commercial Product (Sneakers)',
+      category: lang === 'ar' ? 'التجارة الإلكترونية' : 'E-Commerce',
       svg: `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
         <rect width="400" height="300" fill="#cbd5e1"/>
         <g transform="translate(60, 60)">
@@ -60,8 +62,8 @@ export default function RemoveBgPage() {
     },
     {
       id: 2,
-      title: 'زجاجة عطر فاخرة',
-      category: 'مستحضرات وتجميل',
+      title: lang === 'ar' ? 'زجاجة عطر فاخرة' : 'Luxury Perfume Bottle',
+      category: lang === 'ar' ? 'مستحضرات وتجميل' : 'Cosmetics',
       svg: `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
         <rect width="400" height="300" fill="#94a3b8"/>
         <g transform="translate(140, 40)">
@@ -75,8 +77,8 @@ export default function RemoveBgPage() {
     },
     {
       id: 3,
-      title: 'ساعة يد ذكية',
-      category: 'إلكترونيات وإكسسوار',
+      title: lang === 'ar' ? 'ساعة يد ذكية' : 'Smart Watch',
+      category: lang === 'ar' ? 'إلكترونيات وإكسسوار' : 'Electronics',
       svg: `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
         <rect width="400" height="300" fill="#e2e8f0"/>
         <g transform="translate(130, 30)">
@@ -255,20 +257,22 @@ export default function RemoveBgPage() {
   };
 
   return (
-    <AuthGuard toolName="إزالة وتفريغ خلفية الصور">
+    <AuthGuard toolName={lang === 'ar' ? 'إزالة وتفريغ خلفية الصور' : 'AI Background Remover'}>
       <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
           <Sparkles className="w-3.5 h-3.5 text-[#cc9166]" />
-          <span>محرك الذكاء الاصطناعي الرسمي (remove.bg API v1.0)</span>
+          <span>{lang === 'ar' ? 'محرك الذكاء الاصطناعي الرسمي (remove.bg API v1.0)' : 'Official AI Engine (remove.bg API v1.0)'}</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
-          إزالة وتفريغ خلفية الصور باحترافية
+          {lang === 'ar' ? 'إزالة وتفريغ خلفية الصور باحترافية' : 'Professional AI Background Remover'}
         </h1>
         <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
-          عزل فائق الدقة للأشخاص، المنتجات التجارية، والسيارات بواسطة واجهة برمجة remove.bg الرسمية بأعلى جودة وتفريغ مليمتر للأطراف.
+          {lang === 'ar'
+            ? 'عزل فائق الدقة للأشخاص، المنتجات التجارية، والسيارات بواسطة واجهة برمجة remove.bg الرسمية بأعلى جودة وتفريغ مليمتر للأطراف.'
+            : 'Ultra-accurate cutout for portraits, e-commerce products, and objects powered by the official remove.bg engine.'}
         </p>
       </div>
 
@@ -277,7 +281,7 @@ export default function RemoveBgPage() {
         <div className="max-w-4xl mx-auto mb-8 p-4 rounded-[10px] bg-red-950/40 border border-red-500/40 text-red-200 flex items-start gap-3 shadow-lg">
           <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h4 className="text-sm font-semibold text-red-200">تنبيه في معالجة الصورة</h4>
+            <h4 className="text-sm font-semibold text-red-200">{lang === 'ar' ? 'تنبيه في معالجة الصورة' : 'Processing Alert'}</h4>
             <p className="text-xs text-red-300/90 mt-1 leading-relaxed">{errorMessage}</p>
             {originalBlobRef.current && (
               <button
@@ -285,7 +289,7 @@ export default function RemoveBgPage() {
                 className="mt-3 px-3 py-1 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-100 text-xs font-mono rounded-full inline-flex items-center gap-1.5 transition-colors"
               >
                 <RefreshCw className="w-3 h-3" />
-                <span>إعادة المحاولة عبر السيرفر</span>
+                <span>{lang === 'ar' ? 'إعادة المحاولة عبر السيرفر' : 'Retry via Server'}</span>
               </button>
             )}
           </div>
@@ -308,13 +312,13 @@ export default function RemoveBgPage() {
               <Upload className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-medium text-[#ffffff] mb-1">
-              اسحب صورة المنتج أو الصورة الشخصية هنا
+              {lang === 'ar' ? 'اسحب صورة المنتج أو الصورة الشخصية هنا' : 'Drag product or portrait image here'}
             </h3>
             <p className="text-xs text-[#5e616e] max-w-md mx-auto font-mono mb-5">
-              يدعم JPG, PNG, WEBP بدقة كاملة عبر محرك remove.bg
+              {lang === 'ar' ? 'يدعم JPG, PNG, WEBP بدقة كاملة عبر محرك remove.bg' : 'Supports JPG, PNG, WEBP with full resolution via remove.bg'}
             </p>
             <span className="inline-block px-5 py-2 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-semibold rounded-full transition-colors shadow-md">
-              اختيار صورة من جهازك
+              {lang === 'ar' ? 'اختيار صورة من جهازك' : 'Choose Image from Device'}
             </span>
           </div>
 
@@ -322,7 +326,7 @@ export default function RemoveBgPage() {
           <div className="p-4 rounded-[10px] bg-[#040406] border border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[#cc9166]" />
-              <span className="text-xs font-mono text-[#ffffff]">المحرك النشط:</span>
+              <span className="text-xs font-mono text-[#ffffff]">{lang === 'ar' ? 'المحرك النشط:' : 'Active Engine:'}</span>
               <span className="text-xs font-mono text-[#cc9166]">
                 {isPro ? 'remove.bg Cloud API (Ultra-HD Pro)' : 'remove.bg Cloud API (SD Standard)'}
               </span>
@@ -332,11 +336,13 @@ export default function RemoveBgPage() {
               {isPro ? (
                 <span className="flex items-center gap-1.5 text-[#cc9166] bg-[#cc9166]/10 px-3 py-1 rounded-full border border-[#cc9166]/30">
                   <Crown className="w-3.5 h-3.5" />
-                  <span>باقة Pro: استخدام غير محدود فائق الدقة</span>
+                  <span>{lang === 'ar' ? 'باقة Pro: استخدام غير محدود فائق الدقة' : 'Pro Plan: Unlimited Ultra-HD'}</span>
                 </span>
               ) : (
                 <span className="text-[#9194a1] bg-[#121317] px-3 py-1 rounded-full border border-[#1c1d22]">
-                  المجاني: متبقي لك اليوم ({Math.max(0, 2 - (dailyUsage.bgCount || 0))} من 2)
+                  {lang === 'ar'
+                    ? `المجاني: متبقي لك اليوم (${Math.max(0, 2 - (dailyUsage.bgCount || 0))} من 2)`
+                    : `Free Plan: ${Math.max(0, 2 - (dailyUsage.bgCount || 0))} of 2 remaining today`}
                 </span>
               )}
             </div>
@@ -348,15 +354,15 @@ export default function RemoveBgPage() {
               <div>
                 <span className="text-xs font-mono uppercase tracking-wider text-[#cc9166] flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>نماذج حيّة للتجربة السريعة</span>
+                  <span>{lang === 'ar' ? 'نماذج حيّة للتجربة السريعة' : 'Live Demo Samples'}</span>
                 </span>
                 <h3 className="text-lg font-serif text-[#ffffff] mt-1">
-                  اضغط على أي نموذج لتجربة العزل فائق الدقة فوراً
+                  {lang === 'ar' ? 'اضغط على أي نموذج لتجربة العزل فائق الدقة فوراً' : 'Click any sample to test high-res removal instantly'}
                 </h3>
               </div>
               <div className="flex items-center gap-2 text-xs font-mono text-[#5e616e]">
                 <ShieldCheck className="w-4 h-4 text-[#cc9166]" />
-                <span>معالجة محلية داخل المتصفح</span>
+                <span>{lang === 'ar' ? 'معالجة محلية داخل المتصفح' : 'Fast browser processing'}</span>
               </div>
             </div>
 
@@ -382,7 +388,7 @@ export default function RemoveBgPage() {
                       {preset.title}
                     </h4>
                     <span className="text-[11px] text-[#5e616e] mt-2 inline-flex items-center gap-1">
-                      <span>اضغط لتفريغ النموذج فوراً ←</span>
+                      <span>{lang === 'ar' ? 'اضغط لتفريغ النموذج فوراً ←' : 'Click to cutout sample →'}</span>
                     </span>
                   </div>
                 </button>
@@ -399,7 +405,7 @@ export default function RemoveBgPage() {
             
             {/* View switcher */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-[#5e616e]">العرض:</span>
+              <span className="text-xs font-mono text-[#5e616e]">{lang === 'ar' ? 'العرض:' : 'View:'}</span>
               <div className="bg-[#121317] p-1 rounded-full border border-[#1c1d22] flex items-center">
                 <button
                   onClick={() => setViewMode('processed')}
@@ -409,7 +415,7 @@ export default function RemoveBgPage() {
                       : 'text-[#9194a1] hover:text-[#ffffff]'
                   }`}
                 >
-                  النتيجة (مفرغة)
+                  {lang === 'ar' ? 'النتيجة (مفرغة)' : 'Cutout (Result)'}
                 </button>
                 <button
                   onClick={() => setViewMode('original')}
@@ -419,14 +425,14 @@ export default function RemoveBgPage() {
                       : 'text-[#9194a1] hover:text-[#ffffff]'
                   }`}
                 >
-                  الأصلية (قبل)
+                  {lang === 'ar' ? 'الأصلية (قبل)' : 'Original (Before)'}
                 </button>
               </div>
             </div>
 
             {/* Background type */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-[#5e616e]">الخلفية البديلة:</span>
+              <span className="text-xs font-mono text-[#5e616e]">{lang === 'ar' ? 'الخلفية البديلة:' : 'Background:'}</span>
               <div className="bg-[#121317] p-1 rounded-full border border-[#1c1d22] flex items-center gap-1">
                 <button
                   onClick={() => {
@@ -439,7 +445,7 @@ export default function RemoveBgPage() {
                       : 'text-[#9194a1] hover:text-[#ffffff]'
                   }`}
                 >
-                  شفافة (PNG)
+                  {lang === 'ar' ? 'شفافة (PNG)' : 'Transparent (PNG)'}
                 </button>
                 <button
                   onClick={() => {
@@ -452,7 +458,7 @@ export default function RemoveBgPage() {
                       : 'text-[#9194a1] hover:text-[#ffffff]'
                   }`}
                 >
-                  أبيض نقي
+                  {lang === 'ar' ? 'أبيض نقي' : 'Pure White'}
                 </button>
                 <button
                   onClick={() => {
@@ -466,7 +472,7 @@ export default function RemoveBgPage() {
                   }`}
                 >
                   <Palette className="w-3 h-3 text-[#cc9166]" />
-                  <span>لون مخصص</span>
+                  <span>{lang === 'ar' ? 'لون مخصص' : 'Custom'}</span>
                 </button>
               </div>
 
@@ -480,7 +486,7 @@ export default function RemoveBgPage() {
                     if (rawCutoutDataUrlRef.current) applyBackgroundStyle(rawCutoutDataUrlRef.current, 'custom', c);
                   }}
                   className="w-7 h-7 rounded-full bg-transparent border-0 cursor-pointer"
-                  title="اختر لون الخلفية"
+                  title={lang === 'ar' ? 'اختر لون الخلفية' : 'Choose background color'}
                 />
               )}
             </div>
@@ -488,7 +494,7 @@ export default function RemoveBgPage() {
             {/* Re-process / New Upload */}
             <div className="flex items-center gap-2">
               <label className="text-xs font-mono text-[#9194a1] hover:text-[#ffffff] cursor-pointer bg-[#121317] hover:bg-[#1c1d22] px-3.5 py-1.5 rounded-full border border-[#1c1d22] transition-colors">
-                رفع صورة أخرى
+                {lang === 'ar' ? 'رفع صورة أخرى' : 'Upload Another Image'}
                 <input
                   type="file"
                   accept="image/*"
@@ -532,7 +538,7 @@ export default function RemoveBgPage() {
                   </div>
                   <span className="text-xs font-mono text-[#cc9166]">{progressPercent}%</span>
                   <span className="text-[11px] text-[#5e616e] mt-2 font-mono">
-                    معالجة فائقة الدقة عبر محرك remove.bg الرسمي
+                    {lang === 'ar' ? 'معالجة فائقة الدقة عبر محرك remove.bg الرسمي' : 'High-precision processing via official remove.bg engine'}
                   </span>
                 </div>
               )}
@@ -542,13 +548,13 @@ export default function RemoveBgPage() {
                 {viewMode === 'processed' && processedSrc ? (
                   <img
                     src={processedSrc}
-                    alt="الصورة بعد تفريغ وعزل الخلفية"
+                    alt="Processed result"
                     className="max-h-[460px] max-w-full object-contain rounded-[6px]"
                   />
                 ) : (
                   <img
                     src={imageSrc}
-                    alt="الصورة الأصلية"
+                    alt="Original image"
                     className="max-h-[460px] max-w-full object-contain rounded-[6px]"
                   />
                 )}
@@ -559,7 +565,7 @@ export default function RemoveBgPage() {
             <div className="mt-6 pt-4 border-t border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-xs text-[#5e616e] font-mono">
                 <Check className="w-3.5 h-3.5 text-[#cc9166]" />
-                <span>جاهز للتحميل بجودة PNG فائقة الدقة والأبعاد الأصلية</span>
+                <span>{lang === 'ar' ? 'جاهز للتحميل بجودة PNG فائقة الدقة والأبعاد الأصلية' : 'Ready to download in high-res PNG with original dimensions'}</span>
               </div>
 
               <button
@@ -568,7 +574,7 @@ export default function RemoveBgPage() {
                 className="w-full sm:w-auto px-7 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-semibold rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 shadow-md"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>تحميل الصورة المفرغة (PNG)</span>
+                <span>{lang === 'ar' ? 'تحميل الصورة المفرغة (PNG)' : 'Download Cutout (PNG)'}</span>
               </button>
             </div>
           </div>
@@ -577,7 +583,9 @@ export default function RemoveBgPage() {
           <div className="p-5 bg-[#040406] rounded-[10px] border border-[#1c1d22] text-xs text-[#9194a1] flex items-start gap-3">
             <span className="text-[#cc9166] font-mono font-bold shrink-0">TIP /</span>
             <p className="leading-relaxed text-[#5e616e]">
-              لأصحاب المتاجر الإلكترونية والبائعين: استخدم خيار <strong className="text-[#ffffff]">"أبيض نقي"</strong> للحصول على صور متوافقة فوراً مع اشتراطات منصات Amazon وShopify وNoon.
+              {lang === 'ar'
+                ? 'لأصحاب المتاجر الإلكترونية والبائعين: استخدم خيار "أبيض نقي" للحصول على صور متوافقة فوراً مع اشتراطات منصات Amazon وShopify وNoon.'
+                : 'For e-commerce sellers: Use the "Pure White" option for instant compliance with Amazon, Shopify, and Noon guidelines.'}
             </p>
           </div>
 

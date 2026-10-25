@@ -19,9 +19,11 @@ import confetti from 'canvas-confetti';
 import AdBanner from '@/components/AdBanner';
 import AuthGuard from '@/components/AuthGuard';
 import { useSubscription } from '@/context/SubscriptionContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Crown, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function PDFToolsPage() {
+  const { lang } = useLanguage();
   const { isPro, checkCanUse, openPaywall, recordUsage, dailyUsage } = useSubscription();
   const [activeTab, setActiveTab] = useState<'merge' | 'sign' | 'convert'>('merge');
 
@@ -108,7 +110,7 @@ export default function PDFToolsPage() {
 
   const executeMerge = async () => {
     if (mergeFiles.length < 2) {
-      alert('يرجى اختيار ملفين PDF على الأقل للدمج');
+      alert(lang === 'ar' ? 'يرجى اختيار ملفين PDF على الأقل للدمج' : 'Please select at least 2 PDF files to merge');
       return;
     }
 
@@ -129,7 +131,7 @@ export default function PDFToolsPage() {
 
       const link = document.createElement('a');
       link.href = url;
-      link.download = `دمج_ملفات_${Date.now()}.pdf`;
+      link.download = `merged_${Date.now()}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
 
@@ -140,7 +142,7 @@ export default function PDFToolsPage() {
       });
     } catch (err) {
       console.error(err);
-      alert('حدث خطأ أثناء دمج الملفات. تأكد أن الملفات غير محمية بكلمة سر.');
+      alert(lang === 'ar' ? 'حدث خطأ أثناء دمج الملفات. تأكد أن الملفات غير محمية بكلمة سر.' : 'Error merging PDFs. Ensure files are not password-protected.');
     } finally {
       setMerging(false);
     }
@@ -312,7 +314,7 @@ export default function PDFToolsPage() {
 
   const executeImagesToPDF = async () => {
     if (convertFiles.length === 0) {
-      alert('يرجى اختيار صورة واحدة على الأقل لتحويلها إلى PDF');
+      alert(lang === 'ar' ? 'يرجى اختيار صورة واحدة على الأقل لتحويلها إلى PDF' : 'Please select at least one image to convert to PDF');
       return;
     }
 
@@ -356,34 +358,36 @@ export default function PDFToolsPage() {
 
       const link = document.createElement('a');
       link.href = url;
-      link.download = `صور_محولة_${Date.now()}.pdf`;
+      link.download = `converted_${Date.now()}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
 
       confetti({ particleCount: 75, spread: 60, origin: { y: 0.6 } });
     } catch (err) {
       console.error(err);
-      alert('حدث خطأ أثناء تحويل الصور إلى PDF.');
+      alert(lang === 'ar' ? 'حدث خطأ أثناء تحويل الصور إلى PDF.' : 'Error converting images to PDF.');
     } finally {
       setConverting(false);
     }
   };
 
   return (
-    <AuthGuard toolName="أدوات الـ PDF والتوقيع الإلكتروني">
+    <AuthGuard toolName={lang === 'ar' ? 'أدوات الـ PDF والتوقيع الإلكتروني' : 'PDF & E-Signature Tools'}>
       <div className="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Top Heading */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#2e3038] bg-[#040406] text-[#cc9166] text-xs font-mono mb-6">
           <ShieldCheck className="w-3.5 h-3.5 text-[#cc9166]" />
-          <span>معالجة مشفرة داخل متصفحك مباشرة وبخصوصية مطلقة</span>
+          <span>{lang === 'ar' ? 'معالجة مشفرة داخل متصفحك مباشرة وبخصوصية مطلقة' : 'Encrypted client-side processing with complete privacy'}</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-serif text-[#ffffff] font-normal tracking-tight">
-          أدوات الـ PDF المتقدمة
+          {lang === 'ar' ? 'أدوات الـ PDF المتقدمة' : 'Advanced PDF Suite'}
         </h1>
         <p className="text-sm sm:text-base text-[#9194a1] mt-4 leading-relaxed">
-          ادمج ملفات PDF متعددة، وقّع مستنداتك وعقودك إلكترونياً، أو حوّل صورك إلى مستند PDF موحد في ثوانٍ وبدون رفع لأي سيرفر.
+          {lang === 'ar' 
+            ? 'ادمج ملفات PDF متعددة، وقّع مستنداتك وعقودك إلكترونياً، أو حوّل صورك إلى مستند PDF موحد في ثوانٍ وبدون رفع لأي سيرفر.'
+            : 'Merge multiple PDFs, electronically sign documents and contracts, or convert images to unified PDFs in seconds without uploading to any server.'}
         </p>
       </div>
 
@@ -399,7 +403,7 @@ export default function PDFToolsPage() {
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            دمج ملفات PDF
+            {lang === 'ar' ? 'دمج ملفات PDF' : 'Merge PDFs'}
           </button>
           
           <button
@@ -411,7 +415,7 @@ export default function PDFToolsPage() {
             }`}
           >
             <PenTool className="w-3.5 h-3.5" />
-            توقيع ملف PDF
+            {lang === 'ar' ? 'توقيع ملف PDF' : 'Sign PDF'}
           </button>
 
           <button
@@ -423,7 +427,7 @@ export default function PDFToolsPage() {
             }`}
           >
             <ImageIcon className="w-3.5 h-3.5" />
-            تحويل الصور إلى PDF
+            {lang === 'ar' ? 'تحويل الصور إلى PDF' : 'Convert Images to PDF'}
           </button>
         </div>
       </div>
@@ -444,10 +448,12 @@ export default function PDFToolsPage() {
               <Upload className="w-5 h-5" />
             </div>
             <h3 className="text-base font-medium text-[#ffffff] mb-1">
-              اسحب وأفلت ملفات الـ PDF هنا، أو اضغط للاختيار
+              {lang === 'ar' ? 'اسحب وأفلت ملفات الـ PDF هنا، أو اضغط للاختيار' : 'Drag & drop PDF files here, or click to browse'}
             </h3>
             <p className="text-xs text-[#5e616e] max-w-md mx-auto">
-              يمكنك اختيار ملفين أو أكثر معاً، وترتيب تسلسلها بحرية قبل التصدير.
+              {lang === 'ar' 
+                ? 'يمكنك اختيار ملفين أو أكثر معاً، وترتيب تسلسلها بحرية قبل التصدير.'
+                : 'Choose two or more files and reorder them freely before merging.'}
             </p>
           </div>
 
@@ -456,13 +462,13 @@ export default function PDFToolsPage() {
             <div className="bg-[#040406] rounded-[10px] border border-[#1c1d22] p-6">
               <div className="flex items-center justify-between pb-4 border-b border-[#1c1d22] mb-4">
                 <h3 className="text-xs font-mono uppercase text-[#e2e3e9] flex items-center gap-2">
-                  <span>الملفات المحددة ({mergeFiles.length})</span>
+                  <span>{lang === 'ar' ? `الملفات المحددة (${mergeFiles.length})` : `Selected Files (${mergeFiles.length})`}</span>
                 </h3>
                 <button
                   onClick={() => setMergeFiles([])}
                   className="text-xs text-[#777a88] hover:text-[#ffffff] font-mono"
                 >
-                  مسح الكل
+                  {lang === 'ar' ? 'مسح الكل' : 'Clear All'}
                 </button>
               </div>
 
@@ -491,7 +497,7 @@ export default function PDFToolsPage() {
                         onClick={() => moveFile(idx, 'up')}
                         disabled={idx === 0}
                         className="p-1.5 text-[#5e616e] hover:text-[#ffffff] disabled:opacity-20"
-                        title="تحريك لأعلى"
+                        title={lang === 'ar' ? 'تحريك لأعلى' : 'Move Up'}
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
                       </button>
@@ -499,14 +505,14 @@ export default function PDFToolsPage() {
                         onClick={() => moveFile(idx, 'down')}
                         disabled={idx === mergeFiles.length - 1}
                         className="p-1.5 text-[#5e616e] hover:text-[#ffffff] disabled:opacity-20"
-                        title="تحريك لأسفل"
+                        title={lang === 'ar' ? 'تحريك لأسفل' : 'Move Down'}
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => removeMergeFile(idx)}
                         className="p-1.5 text-[#5e616e] hover:text-red-400 mr-2"
-                        title="حذف"
+                        title={lang === 'ar' ? 'حذف' : 'Remove'}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -517,7 +523,7 @@ export default function PDFToolsPage() {
 
               <div className="mt-6 pt-4 border-t border-[#1c1d22] flex items-center justify-between">
                 <span className="text-xs text-[#5e616e] font-mono">
-                  سيتم دمج {mergeFiles.length} ملفات بالترتيب الظاهر أعلاه
+                  {lang === 'ar' ? `سيتم دمج ${mergeFiles.length} ملفات بالترتيب الظاهر أعلاه` : `${mergeFiles.length} files will be merged in the order above`}
                 </span>
                 <button
                   onClick={executeMerge}
@@ -525,7 +531,7 @@ export default function PDFToolsPage() {
                   className="w-full sm:w-auto px-6 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Layers className="w-3.5 h-3.5" />
-                  <span>{merging ? 'جاري الدمج...' : 'دمج وتنزيل ملف PDF'}</span>
+                  <span>{merging ? (lang === 'ar' ? 'جاري الدمج...' : 'Merging...') : (lang === 'ar' ? 'دمج وتنزيل ملف PDF' : 'Merge & Download PDF')}</span>
                 </button>
               </div>
             </div>
@@ -539,7 +545,7 @@ export default function PDFToolsPage() {
           {/* Upload PDF */}
           <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22]">
             <h3 className="text-xs font-mono uppercase text-[#cc9166] mb-3 flex items-center gap-2">
-              <span>01 / اختر ملف PDF المراد توقيعه</span>
+              <span>{lang === 'ar' ? '01 / اختر ملف PDF المراد توقيعه' : '01 / Select PDF file to sign'}</span>
             </h3>
 
             {signFile ? (
@@ -555,14 +561,14 @@ export default function PDFToolsPage() {
                   onClick={() => setSignFile(null)}
                   className="text-xs text-[#777a88] hover:text-[#ffffff] font-mono"
                 >
-                  تغيير الملف
+                  {lang === 'ar' ? 'تغيير الملف' : 'Change File'}
                 </button>
               </div>
             ) : (
               <label className="border border-dashed border-[#2e3038] hover:border-[#cc9166] rounded-[10px] p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-[#08080a]">
                 <Upload className="w-6 h-6 text-[#5e616e] mb-2" />
-                <span className="text-xs font-medium text-[#ffffff]">اضغط لرفع ملف الـ PDF</span>
-                <span className="text-[11px] text-[#5e616e] mt-1 font-mono">عقود رسمية، استمارات، وثائق</span>
+                <span className="text-xs font-medium text-[#ffffff]">{lang === 'ar' ? 'اضغط لرفع ملف الـ PDF' : 'Click to upload PDF file'}</span>
+                <span className="text-[11px] text-[#5e616e] mt-1 font-mono">{lang === 'ar' ? 'عقود رسمية، استمارات، وثائق' : 'Official contracts, forms, documents'}</span>
                 <input
                   type="file"
                   accept="application/pdf"
@@ -577,7 +583,7 @@ export default function PDFToolsPage() {
           <div className="bg-[#040406] p-6 rounded-[10px] border border-[#1c1d22] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#1c1d22]">
               <h3 className="text-xs font-mono uppercase text-[#cc9166]">
-                <span>02 / ارسم توقيعك في الصندوق</span>
+                <span>{lang === 'ar' ? '02 / ارسم توقيعك في الصندوق' : '02 / Draw your signature in the box'}</span>
               </h3>
               
               <div className="flex items-center gap-2">
@@ -585,17 +591,17 @@ export default function PDFToolsPage() {
                   <button
                     onClick={() => setSignColor('#000000')}
                     className={`w-4 h-4 rounded-full bg-black border border-white/40 ${signColor === '#000000' ? 'ring-2 ring-[#cc9166]' : ''}`}
-                    title="أسود"
+                    title={lang === 'ar' ? 'أسود' : 'Black'}
                   />
                   <button
                     onClick={() => setSignColor('#1d4ed8')}
                     className={`w-4 h-4 rounded-full bg-blue-700 border border-white/40 ${signColor === '#1d4ed8' ? 'ring-2 ring-[#cc9166]' : ''}`}
-                    title="أزرق"
+                    title={lang === 'ar' ? 'أزرق' : 'Blue'}
                   />
                   <button
                     onClick={() => setSignColor('#b91c1c')}
                     className={`w-4 h-4 rounded-full bg-red-700 border border-white/40 ${signColor === '#b91c1c' ? 'ring-2 ring-[#cc9166]' : ''}`}
-                    title="أحمر"
+                    title={lang === 'ar' ? 'أحمر' : 'Red'}
                   />
                 </div>
 
@@ -604,7 +610,7 @@ export default function PDFToolsPage() {
                   className="flex items-center gap-1 text-xs text-[#777a88] hover:text-[#ffffff] font-mono bg-[#121317] hover:bg-[#1c1d22] px-3 py-1 rounded-full border border-[#1c1d22]"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  مسح
+                  {lang === 'ar' ? 'مسح' : 'Clear'}
                 </button>
               </div>
             </div>
@@ -626,7 +632,7 @@ export default function PDFToolsPage() {
               />
             </div>
             <p className="text-[11px] text-[#5e616e] text-center font-mono">
-              يدعم الرسم بالماوس أو مباشرة بالإصبع على شاشات اللمس والهواتف
+              {lang === 'ar' ? 'يدعم الرسم بالماوس أو مباشرة بالإصبع على شاشات اللمس والهواتف' : 'Supports drawing with mouse or stylus/finger on touchscreens'}
             </p>
 
             {/* Execute Button */}
@@ -637,7 +643,7 @@ export default function PDFToolsPage() {
                 className="px-6 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all flex items-center gap-2 disabled:opacity-50"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>{signing ? 'جاري التثبيت...' : 'تثبيت التوقيع وتحميل الـ PDF'}</span>
+                <span>{signing ? (lang === 'ar' ? 'جاري التثبيت...' : 'Applying...') : (lang === 'ar' ? 'تثبيت التوقيع وتحميل الـ PDF' : 'Sign & Download PDF')}</span>
               </button>
             </div>
           </div>
@@ -660,10 +666,12 @@ export default function PDFToolsPage() {
               <ImageIcon className="w-5 h-5" />
             </div>
             <h3 className="text-base font-medium text-[#ffffff] mb-1">
-              اسحب وأفلت صور المستندات أو الأوراق هنا، أو اضغط للاختيار
+              {lang === 'ar' ? 'اسحب وأفلت صور المستندات أو الأوراق هنا، أو اضغط للاختيار' : 'Drag & drop document images or scans here, or click to browse'}
             </h3>
             <p className="text-xs text-[#5e616e] max-w-md mx-auto">
-              يدعم صور JPG, PNG, WEBP. سيتم تحويل كل صورة إلى صفحة PDF عالية الدقة بترتيبها.
+              {lang === 'ar' 
+                ? 'يدعم صور JPG, PNG, WEBP. سيتم تحويل كل صورة إلى صفحة PDF عالية الدقة بترتيبها.'
+                : 'Supports JPG, PNG, WEBP. Each image will be converted into a high-res PDF page.'}
             </p>
           </div>
 
@@ -672,13 +680,13 @@ export default function PDFToolsPage() {
             <div className="bg-[#040406] rounded-[10px] border border-[#1c1d22] p-6">
               <div className="flex items-center justify-between pb-4 border-b border-[#1c1d22] mb-4">
                 <h3 className="text-xs font-mono uppercase text-[#e2e3e9] flex items-center gap-2">
-                  <span>الصور المحددة ({convertFiles.length})</span>
+                  <span>{lang === 'ar' ? `الصور المحددة (${convertFiles.length})` : `Selected Images (${convertFiles.length})`}</span>
                 </h3>
                 <button
                   onClick={() => setConvertFiles([])}
                   className="text-xs text-[#777a88] hover:text-[#ffffff] font-mono"
                 >
-                  مسح الكل
+                  {lang === 'ar' ? 'مسح الكل' : 'Clear All'}
                 </button>
               </div>
 
@@ -698,7 +706,7 @@ export default function PDFToolsPage() {
                     
                     <div className="flex items-center justify-between text-xs pt-1">
                       <span className="font-mono text-[#cc9166] text-[11px]">
-                        صفحة {idx + 1}
+                        {lang === 'ar' ? `صفحة ${idx + 1}` : `Page ${idx + 1}`}
                       </span>
                       <span className="text-[10px] text-[#5e616e] truncate max-w-[120px]">
                         {item.file.name}
@@ -711,7 +719,7 @@ export default function PDFToolsPage() {
                           onClick={() => moveConvertImage(idx, 'up')}
                           disabled={idx === 0}
                           className="p-1 text-[#5e616e] hover:text-[#ffffff] disabled:opacity-20"
-                          title="تحريك للأمام"
+                          title={lang === 'ar' ? 'تحريك للأمام' : 'Move Up'}
                         >
                           <ArrowUp className="w-3.5 h-3.5" />
                         </button>
@@ -719,7 +727,7 @@ export default function PDFToolsPage() {
                           onClick={() => moveConvertImage(idx, 'down')}
                           disabled={idx === convertFiles.length - 1}
                           className="p-1 text-[#5e616e] hover:text-[#ffffff] disabled:opacity-20"
-                          title="تحريك للخلف"
+                          title={lang === 'ar' ? 'تحريك للخلف' : 'Move Down'}
                         >
                           <ArrowDown className="w-3.5 h-3.5" />
                         </button>
@@ -727,7 +735,7 @@ export default function PDFToolsPage() {
                       <button
                         onClick={() => removeConvertImage(idx)}
                         className="p-1 text-[#5e616e] hover:text-red-400"
-                        title="حذف الصورة"
+                        title={lang === 'ar' ? 'حذف الصورة' : 'Remove Image'}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -738,7 +746,7 @@ export default function PDFToolsPage() {
 
               <div className="mt-6 pt-4 border-t border-[#1c1d22] flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-xs text-[#5e616e] font-mono">
-                  سيتم إنشاء مستند PDF يتضمن {convertFiles.length} صفحات
+                  {lang === 'ar' ? `سيتم إنشاء مستند PDF يتضمن ${convertFiles.length} صفحات` : `A ${convertFiles.length}-page PDF document will be generated`}
                 </span>
                 <button
                   onClick={executeImagesToPDF}
@@ -746,7 +754,7 @@ export default function PDFToolsPage() {
                   className="w-full sm:w-auto px-6 py-2.5 bg-[#ffffff] hover:bg-[#e2e3e9] text-[#000000] text-xs font-medium rounded-full transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>{converting ? 'جاري التحويل...' : 'تحويل وتنزيل مستند PDF'}</span>
+                  <span>{converting ? (lang === 'ar' ? 'جاري التحويل...' : 'Converting...') : (lang === 'ar' ? 'تحويل وتنزيل مستند PDF' : 'Convert & Download PDF')}</span>
                 </button>
               </div>
             </div>
